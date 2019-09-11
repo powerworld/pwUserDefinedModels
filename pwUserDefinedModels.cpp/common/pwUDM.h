@@ -15,25 +15,25 @@ typedef char*			TStringParamsArray	[INT_MAX / 480];
 
 struct	TTxMyModelData
 {
-	TDoubleArray*		FloatParams;
-	TIntegerArray*		IntParams;
+	TDoubleArray* FloatParams;
+	TIntegerArray* IntParams;
 	TStringParamsArray* StrParams;
-	TDoubleArray*		HardCodedSignals;
-	TDoubleArray*		States;
-	TBooleanArray*		IgnoreStates;
-	TDoubleArray*		Algebraics;
+	TDoubleArray* HardCodedSignals;
+	TDoubleArray* States;
+	TBooleanArray* IgnoreStates;
+	TDoubleArray* Algebraics;
 };
 
 struct	TTxSystemOptions
 {
-	bool	IgnoreLimitChecking;
-	double	TimeStepSeconds;
-	double	SimulationTimeSeconds;
-	double	WBase;
-	double	SBase;
-	double	PUSolutionTolerance;
-	double	MinVoltSLoad;
-	double	MinVoltILoad;
+	bool IgnoreLimitChecking;
+	double TimeStepSeconds;
+	double SimulationTimeSeconds;
+	double WBase;
+	double SBase;
+	double PUSolutionTolerance;
+	double MinVoltSLoad;
+	double MinVoltILoad;
 };
 
 struct	TTxNonWindUpLimits
