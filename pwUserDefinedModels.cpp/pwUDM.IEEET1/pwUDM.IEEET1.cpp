@@ -7,7 +7,6 @@
 
 PW_UDM_DllExport(int) DLLVersion()
 {
-
     return(1);
 }
 
