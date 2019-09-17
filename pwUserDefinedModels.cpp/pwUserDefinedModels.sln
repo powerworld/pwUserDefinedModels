@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pwUDM.IEEET1.cpp", "pwUDM.IEEET1\pwUDM.IEEET1.vcxproj", "{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pwUDM.TGOV1UDM.cpp", "pwUDM.TGOV1\pwUDM.TGOV1.vcxproj", "{A597716F-97BF-47EB-B0A8-EBE787915CFD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -19,6 +21,12 @@ Global
 		{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}.Release|x64.ActiveCfg = Release|x64
 		{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}.Release|x64.Build.0 = Release|x64
 		{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}.Release|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Release|Win32
+		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Debug|x64.ActiveCfg = Debug|x64
+		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Debug|x64.Build.0 = Debug|x64
+		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Debug|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Debug|Win32
+		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Release|x64.ActiveCfg = Release|x64
+		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Release|x64.Build.0 = Release|x64
+		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Release|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
