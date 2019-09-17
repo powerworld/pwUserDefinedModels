@@ -1,5 +1,8 @@
-#include <limits>
+#ifndef PW_UDM_TGOV1
+#define PW_UDM_TGOV1
 
+// This implements the existing TGOV1 model as an example
+// ----------------------------------------------------------------------------------------------
 // For the Model
 const	int	N_F_PARAMS				= 8;	// number of float model params
 const	int N_I_PARAMS				= 0;	// number of int model params
@@ -30,15 +33,4 @@ const	int NONWINDUPINDEX_ValvePos = 0; // index for list of non-windup limited s
 // Algebraic Value Indices
 // None ALG_TSXXX             = 0;
 
-// These functions WILL be in the Export Directory
-PW_UDM_DllExport(int) DLLVersion();
-PW_UDM_DllExport(int) modelClassName(int* StrSize, wchar_t* StrBuf, int dummy);
-PW_UDM_DllExport(void) allParamCounts(TTxParamCounts* numbersOfEverything, double* timeStepSeconds);
-PW_UDM_DllExport(int) parameterName(int* ParamNum, int* StrSize, wchar_t* StrBuf, int dummy);
-PW_UDM_DllExport(int) stateName(int* StateNum, int* StrSize, wchar_t* StrBuf, int dummy);
-PW_UDM_DllExport(void) getDefaultParameterValue(TTxMyModelData* ParamsAndStates);
-PW_UDM_DllExport(int) SubIntervalPower2Exponent(TTxMyModelData* ParamsAndStates, double* timeStepSeconds);
-PW_UDM_DllExport(void) initializeYourself(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions);
-PW_UDM_DllExport(void) calculateFofX(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, TTxNonWindUpLimits* nonWindUpLimits, TDoubleArray* dotX);
-PW_UDM_DllExport(void) PropagateIgnoredStateAndInput(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions);
-PW_UDM_DllExport(int) getNonWindUpLimits(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, TTxNonWindUpLimits* nonWindUpLimits);
+#endif //PW_UDM_TGOV1
