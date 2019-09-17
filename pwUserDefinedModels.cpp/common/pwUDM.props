@@ -4,20 +4,21 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_PropertySheetDisplayName>pwUDM</_PropertySheetDisplayName>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup>
-    <Link>
       <DataExecutionPrevention>false</DataExecutionPrevention>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <ClCompile />
-    <ClCompile />
-    <ClCompile />
-    <ClCompile />
+    <ClCompile>
+    <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;PW_UDM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
   </ItemDefinitionGroup>
-  <ItemGroup />
 </Project>
