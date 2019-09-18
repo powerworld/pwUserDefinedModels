@@ -208,19 +208,31 @@ PW_UDM_DllExport(double) MachineSpeedDeviationOut(TTxMyModelData* ParamsAndState
 }
 
 
-PW_UDM_DllExport(void) MachineTheveninImpedance(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* theR, double* theX)
+/* Either   MachineNortonCurrent is required,
+   Or       MachineTheveninVoltage and MachineTheveninImpedance are required,
+   and OPTIONAL_MACHINE_NORTON_CURRENT helps in doing that */
+/* Comment out OPTIONAL_MACHINE_NORTON_CURRENT if MachineNortonCurrent needs to be defined */
+#define OPTIONAL_MACHINE_NORTON_CURRENT
+#ifndef OPTIONAL_MACHINE_NORTON_CURRENT
+PW_UDM_DllExport(double) MachineNortonCurrent(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* IReal, double* IImag)
 {
-	*theR = (*((*ParamsAndStates).FloatParams))[PARAM_Ra ];
-	*theX = (*((*ParamsAndStates).FloatParams))[PARAM_Xdp];
+    return(0);
 }
-
-
+#else
 PW_UDM_DllExport(void) MachineTheveninVoltage(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* Delta, double* Vd, double* Vq)
 {
-	*Delta = (*((*ParamsAndStates).States))[STATE_Angle];
-	*Vd = 0;
-	*Vq = (*((*ParamsAndStates).HardCodedSignals))[HARDCODE_MACHINE_TSGenFieldV];
+    *Delta = (*((*ParamsAndStates).States))[STATE_Angle];
+    *Vd = 0;
+    *Vq = (*((*ParamsAndStates).HardCodedSignals))[HARDCODE_MACHINE_TSGenFieldV];
 }
+
+
+PW_UDM_DllExport(void) MachineTheveninImpedance(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* theR, double* theX)
+{
+    *theR = (*((*ParamsAndStates).FloatParams))[PARAM_Ra];
+    *theX = (*((*ParamsAndStates).FloatParams))[PARAM_Xdp];
+}
+#endif //OPTIONAL_MACHINE_NORTON_CURRENT
 
 
 PW_UDM_DllExport(double) MachineFieldCurrent(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions)
@@ -241,25 +253,28 @@ PW_UDM_DllExport(double) MachineElectricalTorque(TTxMyModelData* ParamsAndStates
 }
 
 
-PW_UDM_DllExport(double) MachineNortonCurrent(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* IReal, double* IImag)
-{
-    return(0);
-}
-
-
+#define OPTIONAL_HIGH_V_REACTIVE_CURRENT_LIMIT
+#ifndef OPTIONAL_HIGH_V_REACTIVE_CURRENT_LIMIT
 PW_UDM_DllExport(double) MachineHighVReactiveCurrentLim(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions)
 {
     return(0);
 }
+#endif //OPTIONAL_HIGH_V_REACTIVE_CURRENT_LIMIT
 
 
+#define OPTIONAL_MACHINE_LOW_V_ACTIVE_CURRENT_POINTS
+#ifndef OPTIONAL_MACHINE_LOW_V_ACTIVE_CURRENT_POINTS
 PW_UDM_DllExport(void) MachineLowVActiveCurrentPoints(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* LVPnt1, double* LVPnt0)
 {
 
 }
+#endif //OPTIONAL_MACHINE_LOW_V_ACTIVE_CURRENT_POINTS
 
 
+#define OPTIONAL_MACHINE_COMPENSATING_IMPEDANCE
+#ifndef OPTIONAL_MACHINE_COMPENSATING_IMPEDANCE
 PW_UDM_DllExport(void) MachineCompensatingImpedance(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* RComp, double* XComp)
 {
 
 }
+#endif //OPTIONAL_MACHINE_COMPENSATING_IMPEDANCE
