@@ -9,32 +9,58 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pwUDM.TGOV1UDM.cpp", "pwUDM
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pwUDM.GENCLS.cpp", "pwUDM.GENCLS\pwUDM.GENCLS.vcxproj", "{DE6B209C-A67F-4B79-9F91-32F4E953002D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pwUDM.IEEEST.cpp", "pwUDM.IEEEST\pwUDM.IEEEST.vcxproj", "{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Debug|x86 [Legacy, not supported in Simulator 21 and later] = Debug|x86 [Legacy, not supported in Simulator 21 and later]
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 		Release|x86 [Legacy, not supported in Simulator 21 and later] = Release|x86 [Legacy, not supported in Simulator 21 and later]
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}.Debug|x64.ActiveCfg = Debug|x64
 		{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}.Debug|x64.Build.0 = Debug|x64
+		{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}.Debug|x86.ActiveCfg = Debug|Win32
+		{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}.Debug|x86.Build.0 = Debug|Win32
 		{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}.Debug|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Debug|Win32
 		{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}.Release|x64.ActiveCfg = Release|x64
 		{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}.Release|x64.Build.0 = Release|x64
+		{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}.Release|x86.ActiveCfg = Release|Win32
+		{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}.Release|x86.Build.0 = Release|Win32
 		{6FC0B6D2-64D0-4221-9768-9CA5FDBA0E70}.Release|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Release|Win32
 		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Debug|x64.ActiveCfg = Debug|x64
 		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Debug|x64.Build.0 = Debug|x64
+		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Debug|x86.ActiveCfg = Debug|Win32
+		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Debug|x86.Build.0 = Debug|Win32
 		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Debug|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Debug|Win32
 		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Release|x64.ActiveCfg = Release|x64
 		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Release|x64.Build.0 = Release|x64
+		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Release|x86.ActiveCfg = Release|Win32
+		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Release|x86.Build.0 = Release|Win32
 		{A597716F-97BF-47EB-B0A8-EBE787915CFD}.Release|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Release|Win32
 		{DE6B209C-A67F-4B79-9F91-32F4E953002D}.Debug|x64.ActiveCfg = Debug|x64
 		{DE6B209C-A67F-4B79-9F91-32F4E953002D}.Debug|x64.Build.0 = Debug|x64
+		{DE6B209C-A67F-4B79-9F91-32F4E953002D}.Debug|x86.ActiveCfg = Debug|Win32
+		{DE6B209C-A67F-4B79-9F91-32F4E953002D}.Debug|x86.Build.0 = Debug|Win32
 		{DE6B209C-A67F-4B79-9F91-32F4E953002D}.Debug|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Debug|Win32
 		{DE6B209C-A67F-4B79-9F91-32F4E953002D}.Release|x64.ActiveCfg = Release|x64
 		{DE6B209C-A67F-4B79-9F91-32F4E953002D}.Release|x64.Build.0 = Release|x64
+		{DE6B209C-A67F-4B79-9F91-32F4E953002D}.Release|x86.ActiveCfg = Release|Win32
+		{DE6B209C-A67F-4B79-9F91-32F4E953002D}.Release|x86.Build.0 = Release|Win32
 		{DE6B209C-A67F-4B79-9F91-32F4E953002D}.Release|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Release|Win32
+		{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}.Debug|x64.ActiveCfg = Debug|x64
+		{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}.Debug|x64.Build.0 = Debug|x64
+		{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}.Debug|x86.ActiveCfg = Debug|Win32
+		{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}.Debug|x86.Build.0 = Debug|Win32
+		{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}.Debug|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Debug|Win32
+		{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}.Release|x64.ActiveCfg = Release|x64
+		{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}.Release|x64.Build.0 = Release|x64
+		{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}.Release|x86.ActiveCfg = Release|Win32
+		{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}.Release|x86.Build.0 = Release|Win32
+		{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}.Release|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
