@@ -26,4 +26,4 @@ PW_UDM_DllExport(double) MachineHighVReactiveCurrentLim(TTxMyModelData* ParamsAn
 PW_UDM_DllExport(void) MachineLowVActiveCurrentPoints(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* LVPnt1, double* LVPnt0);
 PW_UDM_DllExport(void) MachineCompensatingImpedance(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* RComp, double* XComp);
 
-#endif // PW_UDM_EXCITER
+#endif // PW_UDM_MACHINE
