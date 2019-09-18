@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pwUDM.GENCLS.cpp", "pwUDM.G
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pwUDM.IEEEST.cpp", "pwUDM.IEEEST\pwUDM.IEEEST.vcxproj", "{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pwUDM.CLOD.cpp", "pwUDM.CLOD\pwUDM.CLOD.vcxproj", "{1FCA7C3E-DB35-441B-AB7D-937BCC97185B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -43,6 +45,12 @@ Global
 		{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}.Release|x64.ActiveCfg = Release|x64
 		{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}.Release|x64.Build.0 = Release|x64
 		{36D0E5C6-D5D6-40C4-842C-4EC5552A60EF}.Release|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Release|Win32
+		{1FCA7C3E-DB35-441B-AB7D-937BCC97185B}.Debug|x64.ActiveCfg = Debug|x64
+		{1FCA7C3E-DB35-441B-AB7D-937BCC97185B}.Debug|x64.Build.0 = Debug|x64
+		{1FCA7C3E-DB35-441B-AB7D-937BCC97185B}.Debug|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Debug|Win32
+		{1FCA7C3E-DB35-441B-AB7D-937BCC97185B}.Release|x64.ActiveCfg = Release|x64
+		{1FCA7C3E-DB35-441B-AB7D-937BCC97185B}.Release|x64.Build.0 = Release|x64
+		{1FCA7C3E-DB35-441B-AB7D-937BCC97185B}.Release|x86 [Legacy, not supported in Simulator 21 and later].ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
