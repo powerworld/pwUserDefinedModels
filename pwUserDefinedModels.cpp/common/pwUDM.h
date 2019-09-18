@@ -61,6 +61,8 @@ PW_UDM_DllExport(int) modelClassName(int* StrSize, wchar_t* StrBuf, int dummy);
 PW_UDM_DllExport(void) allParamCounts(TTxParamCounts* numbersOfEverything, double* timeStepSeconds);
 PW_UDM_DllExport(int) parameterName(int* ParamNum, int* StrSize, wchar_t* StrBuf, int dummy);
 PW_UDM_DllExport(int) stateName(int* StateNum, int* StrSize, wchar_t* StrBuf, int dummy);
+PW_UDM_DllExport(int) OtherObjectClass(int* Num, int* StrSize, wchar_t* StrBuf, int dummy);
+PW_UDM_DllExport(int) OtherObjectDescription(int* Num, int* StrSize, wchar_t* StrBuf, int dummy);
 PW_UDM_DllExport(void) getDefaultParameterValue(TTxMyModelData* ParamsAndStates);
 PW_UDM_DllExport(int) SubIntervalPower2Exponent(TTxMyModelData* ParamsAndStates, double* timeStepSeconds);
 PW_UDM_DllExport(void) initializeYourself(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions);
