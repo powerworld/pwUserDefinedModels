@@ -1,7 +1,7 @@
 #ifndef PW_UDM_GENCLS
 #define PW_UDM_GENCLS
 
-// This implements the existing TGOV1 model as an example
+// This implements the existing GENCLS model as an example
 // ----------------------------------------------------------------------------------------------
 // For the Model
 const	int	N_F_PARAMS				= 6;	// number of float model params
