@@ -27,3 +27,4 @@ PW_UDM_DllExport(void) MachineLowVActiveCurrentPoints(TTxMyModelData* ParamsAndS
 PW_UDM_DllExport(void) MachineCompensatingImpedance(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* RComp, double* XComp);
 
 #endif // PW_UDM_MACHINE
+
