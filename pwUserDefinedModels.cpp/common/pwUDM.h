@@ -69,5 +69,7 @@ PW_UDM_DllExport(void) initializeYourself(TTxMyModelData* ParamsAndStates, TTxSy
 PW_UDM_DllExport(void) calculateFofX(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, TTxNonWindUpLimits* nonWindUpLimits, TDoubleArray* dotX);
 PW_UDM_DllExport(void) PropagateIgnoredStateAndInput(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions);
 PW_UDM_DllExport(int) getNonWindUpLimits(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, TTxNonWindUpLimits* nonWindUpLimits);
+PW_UDM_DllExport(bool) TimeStepEnd(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, int* index, int* MaxPossibleEventIndex, double* EventTime, int* ExtraObjectIndex);
+PW_UDM_DllExport(int) TimeStepEndAction(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, int* index, int* StrSize, wchar_t* StrBuf, int dummy);
 
 #endif // PW_UDM

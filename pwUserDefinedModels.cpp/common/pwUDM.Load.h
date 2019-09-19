@@ -3,12 +3,19 @@
 
 #include "pwUDM.h"
 
-// Exciter Hard-Coded Input Signal Indices
+// Load Hard-Coded Input Signal Indices
 // Note: These are the SAME for all laods and are hard-coded values that Simulator ALWAYS passes to the DLL.  
 // If additional inputs are needed from Simulator, then you must define them in "Algebraics"
-// const int HARDCODE_LOAD_xxx = 0;
-// const int HARDCODE_LOAD_xxxxx = 1;
-// const int HARDCODE_LOAD_xx = 2;
+// Load Hard-Coded Input Signal Indices
+  // Note: These are the SAME for all loads and are hard-cded values that
+  // Simulator ALWAYS passes to the DLL
+  // If additional inputs are needed from Simulator, then you MUST define them
+  // using the "Algebraics" signals and include them at the BEGINNING of the ALG vector
+const int HARDCODE_LOAD_DeviceVPU = 0;
+const int HARDCODE_LOAD_DeviceAngleRad = 1;
+const int HARDCODE_LOAD_DeltaFreqPU = 2;
+const int HARDCODE_LOAD_DeviceStatus = 3;
+const int HARDCODE_LOAD_LoadScalar = 4;
 
 // These functions need to be exported in the DLL
 PW_UDM_DllExport(double) LoadNortonAdmittance(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* theG, double* theB);
