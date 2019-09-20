@@ -1,0 +1,84 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{1F5FEF70-643F-4580-899C-1EE9DE9F3666}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="pwUDM.IEEET1\pwUDM.IEEET1.pas.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="pwUDM.CLOD\pwUDM.CLOD.pas.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="pwUDM.GENCLS\pwUDM.GENCLS.pas.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="pwUDM.IEEEST\pwUDM.IEEEST.pas.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="pwUDM.TGOV1\pwUDM.TGOV1.pas.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="pwUDM_IEEET1_pas">
+        <MSBuild Projects="pwUDM.IEEET1\pwUDM.IEEET1.pas.dproj"/>
+    </Target>
+    <Target Name="pwUDM_IEEET1_pas:Clean">
+        <MSBuild Projects="pwUDM.IEEET1\pwUDM.IEEET1.pas.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="pwUDM_IEEET1_pas:Make">
+        <MSBuild Projects="pwUDM.IEEET1\pwUDM.IEEET1.pas.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="pwUDM_CLOD_pas">
+        <MSBuild Projects="pwUDM.CLOD\pwUDM.CLOD.pas.dproj"/>
+    </Target>
+    <Target Name="pwUDM_CLOD_pas:Clean">
+        <MSBuild Projects="pwUDM.CLOD\pwUDM.CLOD.pas.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="pwUDM_CLOD_pas:Make">
+        <MSBuild Projects="pwUDM.CLOD\pwUDM.CLOD.pas.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="pwUDM_GENCLS_pas">
+        <MSBuild Projects="pwUDM.GENCLS\pwUDM.GENCLS.pas.dproj"/>
+    </Target>
+    <Target Name="pwUDM_GENCLS_pas:Clean">
+        <MSBuild Projects="pwUDM.GENCLS\pwUDM.GENCLS.pas.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="pwUDM_GENCLS_pas:Make">
+        <MSBuild Projects="pwUDM.GENCLS\pwUDM.GENCLS.pas.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="pwUDM_IEEEST_pas">
+        <MSBuild Projects="pwUDM.IEEEST\pwUDM.IEEEST.pas.dproj"/>
+    </Target>
+    <Target Name="pwUDM_IEEEST_pas:Clean">
+        <MSBuild Projects="pwUDM.IEEEST\pwUDM.IEEEST.pas.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="pwUDM_IEEEST_pas:Make">
+        <MSBuild Projects="pwUDM.IEEEST\pwUDM.IEEEST.pas.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="pwUDM_TGOV1_pas">
+        <MSBuild Projects="pwUDM.TGOV1\pwUDM.TGOV1.pas.dproj"/>
+    </Target>
+    <Target Name="pwUDM_TGOV1_pas:Clean">
+        <MSBuild Projects="pwUDM.TGOV1\pwUDM.TGOV1.pas.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="pwUDM_TGOV1_pas:Make">
+        <MSBuild Projects="pwUDM.TGOV1\pwUDM.TGOV1.pas.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="pwUDM_IEEET1_pas;pwUDM_CLOD_pas;pwUDM_GENCLS_pas;pwUDM_IEEEST_pas;pwUDM_TGOV1_pas"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="pwUDM_IEEET1_pas:Clean;pwUDM_CLOD_pas:Clean;pwUDM_GENCLS_pas:Clean;pwUDM_IEEEST_pas:Clean;pwUDM_TGOV1_pas:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="pwUDM_IEEET1_pas:Make;pwUDM_CLOD_pas:Make;pwUDM_GENCLS_pas:Make;pwUDM_IEEEST_pas:Make;pwUDM_TGOV1_pas:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
