@@ -3,3 +3,8 @@ x64/
 *.vcxproj.user
 Debug/
 Release/
+__history/
+*.dproj.local
+*.res
+*.stat
+*.groupproj.local
