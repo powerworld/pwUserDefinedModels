@@ -8,3 +8,4 @@ __history/
 *.res
 *.stat
 *.groupproj.local
+*identcache
