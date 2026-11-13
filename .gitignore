@@ -1,11 +1,16 @@
+# C++ (pwUserDefinedModels.cpp): CMake build trees and clangd index
+build/
+.cache/
+
+# Visual Studio / IDE state
 .vs/
-x64/
-*.vcxproj.user
+
+# Delphi (pwUserDefinedModels.pas): build output and per-user files
 Debug/
 Release/
 __history/
 *.dproj.local
+*.groupproj.local
+*.identcache
 *.res
 *.stat
-*.groupproj.local
-*identcache
