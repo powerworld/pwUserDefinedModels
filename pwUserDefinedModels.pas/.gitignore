@@ -1,0 +1,11 @@
+# Delphi build output (Debug\Win64, Release\Win64, ...)
+Debug/
+Release/
+
+# Delphi history and per-user files
+__history/
+*.dproj.local
+*.groupproj.local
+*.identcache
+*.res
+*.stat

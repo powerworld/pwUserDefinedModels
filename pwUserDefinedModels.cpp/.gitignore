@@ -1,0 +1,9 @@
+# CMake build trees and clangd index
+build/
+.cache/
+
+# Visual Studio / IDE state
+.vs/
+
+# Local-only build tools (check_rules, new_module)
+tools/

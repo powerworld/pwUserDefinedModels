@@ -1,8 +1,8 @@
 {
   "version": 6,
   "cmakeMinimumRequired": {
-    "major": 3,
-    "minor": 30,
+    "major": 4,
+    "minor": 2,
     "patch": 0
   },
   "configurePresets": [
@@ -12,27 +12,31 @@
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        "CMAKE_CXX_COMPILER": "clang++"
       }
     },
     {
-      "name": "windows-debug",
-      "displayName": "Windows Clang Debug (-O0 + lld)",
+      "name": "base-windows",
+      "hidden": true,
       "inherits": "base-ninja",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
-      },
+      }
+    },
+    {
+      "name": "windows-debug",
+      "displayName": "Windows Clang Debug",
+      "inherits": "base-windows",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
       "name": "windows-release",
-      "displayName": "Windows Clang Release (-O3)",
-      "inherits": "windows-debug",
+      "displayName": "Windows Clang Release",
+      "inherits": "base-windows",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
