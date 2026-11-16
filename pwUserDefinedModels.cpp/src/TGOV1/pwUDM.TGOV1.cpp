@@ -131,7 +131,8 @@ extern "C" __declspec(dllexport) void __stdcall initializeYourself(TTxMyModelDat
 	
 	PMechObjectInitInternal	= hardCodedSignals[HARDCODE_GOV_InitPmech]; 
 	GenObjectMVABase		= hardCodedSignals[HARDCODE_GOV_GenMVABase];
-	GovResponseLimits		= (unsigned char) hardCodedSignals[HARDCODE_GOV_GovResponseLimits];
+	// Same as Delphi Round: halves go to even, and the integer result wraps modulo 256 into the byte
+	GovResponseLimits		= std::llrint(hardCodedSignals[HARDCODE_GOV_GovResponseLimits]);
 
 	if (fTrate == 0) {
 		fTrate = GenObjectMVABase;
@@ -215,10 +216,10 @@ extern "C" __declspec(dllexport) void __stdcall calculateFofX(TTxMyModelData* Pa
 	dotStateValve = fInvT1*((Pref_In - deltaWPU_In)*fInvR - stateValve);
 
 	if (fActiveLimitHLState2 > 0) {
-		if ((fActiveLimitHLState2 = 1) & (dotStateValve > 0)) {
+		if ((fActiveLimitHLState2 == 1) && (dotStateValve > 0)) {
 			dotStateValve = 0;
 		}
-		else if ((fActiveLimitHLState2 = 2) & (dotStateValve < 0)) {
+		else if ((fActiveLimitHLState2 == 2) && (dotStateValve < 0)) {
 			dotStateValve = 0;
 		}
 	}

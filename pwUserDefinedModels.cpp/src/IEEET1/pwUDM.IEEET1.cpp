@@ -235,8 +235,8 @@ extern "C" __declspec(dllexport) void __stdcall getDefaultParameterValue(TTxMyMo
     floatParams[PARAM_Ta] = 0.04;
     floatParams[PARAM_Vrmax] = 1.0;
     floatParams[PARAM_Vrmin] = -1.0;
-    floatParams[PARAM_Ke] = 0.06;
-    floatParams[PARAM_Te] = 0.06;
+    floatParams[PARAM_Ke] = -0.06;
+    floatParams[PARAM_Te] = 0.6;
     floatParams[PARAM_Kf] = 0.09;
     floatParams[PARAM_Tf] = 1.46;
     floatParams[PARAM_Switch] = 0.0;
@@ -357,17 +357,17 @@ extern "C" __declspec(dllexport) void __stdcall calculateFofX(TTxMyModelData* Pa
     fE2 = floatParams[PARAM_E2];
     fSEE2 = floatParams[PARAM_SE2];
 
-    StateVsWith_OEL_UEL_In = hardCodedSignals[HARDCODE_EXCITER_OELSignal];
+    StateVsWith_OEL_UEL_In = hardCodedSignals[HARDCODE_EXCITER_StabilizerSignal];
     GenObjectVTerminalMayBeCompensated_In = hardCodedSignals[HARDCODE_EXCITER_GenVComp];
     VRef_In = hardCodedSignals[HARDCODE_EXCITER_Vref];
 
     if (hardCodedSignals[HARDCODE_EXCITER_OELActive] > 0)
     {
-        StateVsWith_OEL_UEL_In = hardCodedSignals[HARDCODE_EXCITER_OELSignal];
+        StateVsWith_OEL_UEL_In = StateVsWith_OEL_UEL_In + hardCodedSignals[HARDCODE_EXCITER_OELSignal];
     }
     if (hardCodedSignals[HARDCODE_EXCITER_UELActive] > 0)
     {
-        StateVsWith_OEL_UEL_In = hardCodedSignals[HARDCODE_EXCITER_UELSignal];
+        StateVsWith_OEL_UEL_In = StateVsWith_OEL_UEL_In + hardCodedSignals[HARDCODE_EXCITER_UELSignal];
     }
 
     if (fTr == 0) { fInvTR = 0;} else { fInvTR = 1/fTr; }

@@ -220,7 +220,7 @@ extern "C" __declspec(dllexport) int __stdcall SubIntervalPower2Exponent(TTxMyMo
 	if (((fA1 != 0) && (fA1 < 2*timeStep) && (std::abs(fA2) < 2*timeStep)) || ((fA3 != 0) && (fA3 < 2*timeStep) && (std::abs(fA4) < 2*timeStep))) {
 		return(6);
 	}
-	else if (((fA3 != 0) && (fA2 < 2*timeStep) && (std::abs(fA2) < 4*timeStep)) || ((fA3 != 0) && (fA3 < 2*timeStep) && (std::abs(fA4) < 4*timeStep))) {
+	else if (((fA1 != 0) && (fA1 < 4*timeStep) && (std::abs(fA2) < 4*timeStep)) || ((fA3 != 0) && (fA3 < 4*timeStep) && (std::abs(fA4) < 4*timeStep))) {
 		return(4);
 	}
 	else {

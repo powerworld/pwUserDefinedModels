@@ -17,9 +17,11 @@ inline constexpr int HARDCODE_LOAD_DeviceStatus = 3;
 inline constexpr int HARDCODE_LOAD_LoadScalar = 4;
 
 // These functions need to be exported in the DLL
-extern "C" __declspec(dllexport) double __stdcall LoadNortonAdmittance(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* theG, double* theB);
-extern "C" __declspec(dllexport) double __stdcall LoadNortonCurrent(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* IReal, double* IImag);
-extern "C" __declspec(dllexport) double __stdcall LoadNortonCurrentAlgebraicDerivative(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* dIr_de, double* dIr_df, double* dIi_de, double* dIi_df);
-extern "C" __declspec(dllexport) bool __stdcall LoadInitializeAlgebraic(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* thePUTol, double* P, double* Q, double* V, double* UsedP, double* UsedQ);
+// The signatures follow the Delphi reference implementation (pwUserDefinedModels.pas): the three Norton
+// functions return nothing, and LoadInitializeAlgebraic takes its first four values by value.
+extern "C" __declspec(dllexport) void __stdcall LoadNortonAdmittance(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* theG, double* theB);
+extern "C" __declspec(dllexport) void __stdcall LoadNortonCurrent(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* IReal, double* IImag);
+extern "C" __declspec(dllexport) void __stdcall LoadNortonCurrentAlgebraicDerivative(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double* IReal_dVreal, double* IReal_dVimag, double* IImag_dVreal, double* IImag_dVimag);
+extern "C" __declspec(dllexport) bool __stdcall LoadInitializeAlgebraic(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, double INPUT_PUTol, double SteadyStateP, double SteadyStateQ, double SteadyStateV, double* InitLoadP, double* InitLoadQ);
 
 }
