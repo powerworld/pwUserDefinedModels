@@ -681,7 +681,7 @@ end;
 }
 
 //******************************************************************************
-function SubIntervalPower2Exponent(ParamsAndStates : PTxMyModelData; TimeStepSeconds : double) : integer; stdcall;
+function SubIntervalPower2Exponent(ParamsAndStates : PTxMyModelData; TimeStepSeconds : PDouble) : integer; stdcall;
 begin
   // Return an integer value between 0 and 7
   // This function returns the EXPONENT of 2 for the number subintervals.
@@ -975,7 +975,7 @@ begin
 end;
 
 //******************************************************************************
-procedure PropogateIgnoredStateAndInput(ParamsAndStates : PTxMyModelData;
+procedure PropagateIgnoredStateAndInput(ParamsAndStates : PTxMyModelData;
                                         SystemOptions : PTxSystemOptions); stdcall;
 begin
   // nothing here
@@ -1443,8 +1443,10 @@ begin
       { Otherwise voltage is between the extinction value and the breakpoint voltage, then real and reactive power is being linearly ramped according
         to equation (P(DL_VoltBP)+jQ(DL_VoltBP))*(V - Vext)/(Vbp - Vext). }
       Else Begin
-        DL_TotalP := GetDL_Total(local_BusVoltMag, GLOBAL_DL_PCoeff, GLOBAL_DL_VoltBP, GLOBAL_DL_VoltExt, DL_P_at_1_PU);
-        DL_TotalQ := GetDL_Total(local_BusVoltMag, GLOBAL_DL_QCoeff, GLOBAL_DL_VoltBP, GLOBAL_DL_VoltExt, DL_Q_at_1_PU);
+        // Power at the breakpoint voltage. The voltage-dependent scalar local_ks below supplies the ramp,
+        // so using the power at the present voltage here would apply the ramp twice.
+        DL_TotalP := GetDL_Total(GLOBAL_DL_VoltBP, GLOBAL_DL_PCoeff, GLOBAL_DL_VoltBP, GLOBAL_DL_VoltExt, DL_P_at_1_PU);
+        DL_TotalQ := GetDL_Total(GLOBAL_DL_VoltBP, GLOBAL_DL_QCoeff, GLOBAL_DL_VoltBP, GLOBAL_DL_VoltExt, DL_Q_at_1_PU);
 
         local_e := LoadObjBusVolt_In.r;
         local_f := LoadObjBusVolt_In.i;
@@ -1457,7 +1459,7 @@ begin
 
         // Calculate the numerator portion of Ir and Ii.
         local_Ir_Num := DL_TotalP*local_e + DL_TotalQ*local_f;
-        local_Ii_Num := DL_TotalQ*local_f - DL_TotalQ*local_e;
+        local_Ii_Num := DL_TotalP*local_f - DL_TotalQ*local_e;
 
         // Since voltage is between extinction value and breakpoint value, calculate the scalar, ks, and its sensitivities.
         // Then use the chain rule for differentiation.
@@ -1845,7 +1847,7 @@ exports DLLVersion
         , SubIntervalPower2Exponent
         , initializeYourself
         , calculateFofX
-        , PropogateIgnoredStateAndInput
+        , PropagateIgnoredStateAndInput
         , getNonWindUpLimits
         , TimeStepEnd
         , TimeStepEndAction
