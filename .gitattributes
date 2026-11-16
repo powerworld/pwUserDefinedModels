@@ -1,0 +1,4 @@
+# Text files are stored with LF in the repository. On checkout each platform gets its own native
+# line endings: CRLF on Windows (which Delphi expects), LF on Linux and macOS.
+# Git detects binary files (.dll, .exe, .res, ...) by content and leaves them alone.
+* text=auto
