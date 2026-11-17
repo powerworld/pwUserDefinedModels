@@ -19,7 +19,6 @@ using DoubleArray = double[MaxInt / 64];
 using IntegerArray = int[MaxInt / 32];
 using ByteArray = unsigned char[MaxInt / 8];
 using BooleanArray = bool[MaxInt / 8];
-using StringParamsArray = char*[MaxInt / 480];
 
 // The kinds of user defined model; the DLL reports which one it is through modelClassName.
 enum class ModelClass
@@ -45,7 +44,7 @@ struct TxMyModelData
 {
     DoubleArray* FloatParams;  // Array of float parameters
     IntegerArray* IntParams;   // Array of integer parameters
-    StringParamsArray* StrParams;  // Array of string parameters
+    wchar_t** StrParams;  // Array of string parameters
 
     DoubleArray* HardCodedSignals;  // Array of Input signals
 
