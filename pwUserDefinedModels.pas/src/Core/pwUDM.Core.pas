@@ -20,6 +20,8 @@ type
   PByteArray         = ^TByteArray;
   TBooleanArray      = array[0..MaxInt div 8] of Boolean;
   PBooleanArray      = ^TBooleanArray;
+  TStringParamsArray = array[0..MaxInt div 480] of string;
+  PStringParamsArray = ^TStringParamsArray;
   //----------------------------------------------------------------------------
 
 type
@@ -39,7 +41,7 @@ type
   TTxMyModelData = record
     FloatParams  : PDoubleArray;  // Array of float parameters
     IntParams    : PIntegerArray; // Array of integer parameters
-    StrParams    : PPChar;        // Array of string parameters
+    StrParams    : PStringParamsArray; // Array of string parameters
 
     HardCodedSignals : PDoubleArray;  // Array of Input signals
 
