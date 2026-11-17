@@ -1,11 +1,13 @@
-# Delphi build output (Debug\Win64, Release\Win64, ...)
-Debug/
-Release/
+# Build output: DLLs, debug symbols and compiled units (build\Win64\<Release|Debug>, build\dcu\...)
+build/
 
 # Delphi history and per-user files
 __history/
+__recovery/
 *.dproj.local
 *.groupproj.local
 *.identcache
 *.res
 *.stat
+*.dcu
+*.rsm

@@ -1,6 +1,10 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <DCC_ExeOutput>..\.\$(Config)\$(Platform)</DCC_ExeOutput>
+        <DCC_ExeOutput>build\$(Platform)\Debug</DCC_ExeOutput>
+        <DCC_DcuOutput>build\$(Platform)\Debug\dcu</DCC_DcuOutput>
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
     </PropertyGroup>
     <ProjectExtensions>
         <Borland.Personality>Delphi.Personality.12</Borland.Personality>

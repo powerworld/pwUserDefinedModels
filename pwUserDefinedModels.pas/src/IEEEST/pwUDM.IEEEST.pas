@@ -1,9 +1,11 @@
-library pwUDM.IEEEST.pas;
+unit pwUDM.IEEEST;
 // This implements the existing IEEEST model as an example
 
+interface
+
 uses
-  pwUDM in '..\common\pwUDM.pas',
-  SysUtils;
+  System.SysUtils,
+  pwUDM.Core;
 
 const
   // For the Model
@@ -15,7 +17,7 @@ const
   // For the NonWindUpLimits
   N_NONWINDUPLIMITS = 0;  // number of nonwindup
 
-  // ---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // These are just to make the code easier to read
   // Parameter Value indices.
 
@@ -54,47 +56,68 @@ const
   // Algebraic Value Indices
   // None ALG_TSXXX             = 0;
 
-  // Stabilizer Hard-Coded Input Signal Indices
-  // Note: These are the SAME for all stabilizers and are hard-cded values that
-  // Simulator ALWAYS passes to the DLL
-  // If additional inputs are needed from Simulator, then you MUST define them
-  // using the "Algebraics"
-  HARDCODE_STAB_GenSpeedDeviationPU    = 0;
-  HARDCODE_STAB_BusFreqDeviationPU     = 1;
-  HARDCODE_STAB_GenPElecPU             = 2;
-  HARDCODE_STAB_GenPAccelPU            = 3;
-  HARDCODE_STAB_BusVoltMagPU           = 4;
-  HARDCODE_STAB_GenVcomp               = 5;
-
-{$R *.res}
-
-//******************************************************************************
-// This functions handles the exchange of string length and copying the string
-function LOCAL_StringProcess(StrBuf: PChar; StrSize: PInteger; SourceString: PChar): Integer;
-begin
-  result := length(SourceString);
-  if (result > 0) and (StrSize^ >= Result) then strcopy(StrBuf, SourceString);
-end;
-
-//******************************************************************************
+// The routines below are the DLL contract that Simulator calls: each one is exported by the
+// exports clause that follows them (the optional ones are commented out unless the model needs them)
 function DLLVersion:Integer; stdcall;
+function modelClassName(StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer; stdcall;
+procedure allParamCounts(numbersOfEverything : PTxParamCounts; TimeStepSeconds : PDouble); stdcall;
+function parameterName(ParamNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+function stateName(StateNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+function OtherObjectClass(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+function OtherObjectDescription(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData); stdcall;
+// function getStringParamDefaultValue(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+// function signalSelection(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer; stdcall;
+function SubIntervalPower2Exponent(ParamsAndStates : PTxMyModelData; TimeStepSeconds : PDouble) : integer; stdcall;
+procedure initializeYourself(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions); stdcall;
+procedure calculateFofX(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits; dotX : PDoubleArray); stdcall;
+procedure PropagateIgnoredStateAndInput(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions); stdcall;
+function getNonWindUpLimits(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits): Integer; stdcall;
+function StabilizerVsOut(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions) : double; stdcall;
+// function StabilizerPitchOut(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions) : double; stdcall;
+
+exports DLLVersion
+        , modelClassName
+        , allParamCounts
+        , parameterName
+        , stateName
+        , OtherObjectClass
+        , OtherObjectDescription
+        , getDefaultParameterValue
+     // , getStringParamDefaultValue
+     // , signalSelection
+
+        , SubIntervalPower2Exponent
+        , initializeYourself
+        , calculateFofX
+        , PropagateIgnoredStateAndInput
+        , getNonWindUpLimits
+
+        , StabilizerVsOut
+        // , StabilizerPitchOut
+        ;
+
+implementation
+
+uses
+  pwUDM.Stabilizer;
+
+
+
+//******************************************************************************
+function DLLVersion:Integer;
 begin
   result := 1;
 end;
 
 //******************************************************************************
-function modelClassName(StrSize: PInteger;
-                        StrBuf: PChar;
-                        dummy: Integer): Integer; stdcall;
-var ts : PChar;
+function modelClassName(StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer;
 begin
-	ts := 'UserDefinedStabilizer';
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, pwModelClassString(mcStabilizer));
 end;
 
 //******************************************************************************
-procedure allParamCounts(numbersOfEverything : PTxParamCounts;
-                         TimeStepSeconds : PDouble); stdcall;
+procedure allParamCounts(numbersOfEverything : PTxParamCounts; TimeStepSeconds : PDouble);
 begin
   with numbersOfEverything^ do begin
     // -------The model-specific parameters-----
@@ -109,10 +132,7 @@ begin
 end;
 
 //******************************************************************************
-function parameterName(ParamNum: PInteger;
-                       StrSize: PInteger;
-                       StrBuf: PChar;
-                       dummy : Integer): Integer; stdcall;
+function parameterName(ParamNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
 var ts : PChar;
 begin
   // Integer parameters
@@ -145,14 +165,11 @@ begin
      else            ts := '';
     end;
   end;
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, ts);
 end;
 
 //******************************************************************************
-function stateName(StateNum: PInteger;
-                   StrSize: PInteger;
-                   StrBuf: PChar;
-                   dummy : Integer): Integer; stdcall;
+function stateName(StateNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
 var ts : PChar;
 begin
   case StateNum^ of
@@ -165,48 +182,42 @@ begin
     STATE_UnlimitedSignal : ts := 'Unlimited Signal';
    else ts := '';
   end;
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, ts);
 end;
 
 //******************************************************************************
-function OtherObjectClass(Num: PInteger;
-                          StrSize: PInteger;
-                          StrBuf: PChar;
-                          dummy : Integer): Integer; stdcall;
+function OtherObjectClass(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
 var ts : PChar;
 begin
   case Num^ of
     0 : ts := 'Bus';
    else ts := '';
   end;
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, ts);
 end;
 
 //******************************************************************************
-function OtherObjectDescription(Num: PInteger;
-                                StrSize: PInteger;
-                                StrBuf: PChar;
-                                dummy : Integer): Integer; stdcall;
+function OtherObjectDescription(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
 var ts : PChar;
 begin
   case Num^ of
     0 : ts := 'Signal Bus';
    else ts := '';
   end;
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, ts);
 end;
 
 //******************************************************************************
-procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData); stdcall;
+procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData);
 var pDoubArr: PDoubleArray;
     pIntegerArr : PIntegerArray;
 begin
   // Integers
-  pIntegerArr := PIntegerArray(ParamsAndStates^.IntParams);
+  pIntegerArr := ParamsAndStates^.IntParams;
   pIntegerArr^[PARAM_Ics   ] := 1;
 
   // Doubles
-  pDoubArr := PDoubleArray(ParamsAndStates^.FloatParams);
+  pDoubArr := ParamsAndStates^.FloatParams;
   pDoubArr^[PARAM_A1    ] :=  1.013;
   pDoubArr^[PARAM_A2    ] :=  0.013;
   pDoubArr^[PARAM_A3    ] :=  0.0;
@@ -228,26 +239,20 @@ begin
 end;
 
 { non specified for this model
-function getStringParamDefaultValue(Num: PInteger;
-                                    StrSize: PInteger;
-                                    StrBuf: PChar;
-                                    dummy : Integer): Integer; stdcall;
+function getStringParamDefaultValue(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
 var ts : PChar;
 begin
   case Num^ of
     0 : ts := 'DefaultString0';
    else ts := '';
   end;
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, ts);
 end;
 }
 
 { non specified for this model
 //******************************************************************************
-function signalSelection(Num: PInteger;
-                         StrSize: PInteger;
-                         StrBuf: PChar;
-                         dummy: Integer): Integer; stdcall;
+function signalSelection(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer; stdcall;
 var ts : PChar;
 begin
   ts := ''; // there are none!
@@ -255,13 +260,13 @@ begin
     ALG_XXX         : ts := 'TSXXX';
    else ts := '';
   end;
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, ts);
 end;
 }
 
 
 //******************************************************************************
-function SubIntervalPower2Exponent(ParamsAndStates : PTxMyModelData; TimeStepSeconds : PDouble) : integer; stdcall;
+function SubIntervalPower2Exponent(ParamsAndStates : PTxMyModelData; TimeStepSeconds : PDouble) : integer;
 var fA1, fA2, fA3, fA4, timeStep: Double;
     pFloatParamArr: PDoubleArray;
 begin
@@ -272,7 +277,7 @@ begin
   //--------------------------------------------------------------------
   // Setup local array variables to make code easier to read
   //--------------------------------------------------------------------
-  pFloatParamArr := PDoubleArray(ParamsAndStates.FloatParams);
+  pFloatParamArr := ParamsAndStates.FloatParams;
   fA1     := pFloatParamArr^[PARAM_A1    ];
   fA2     := pFloatParamArr^[PARAM_A2    ];
   fA3     := pFloatParamArr^[PARAM_A3    ];
@@ -288,8 +293,7 @@ begin
 end;
 
 //******************************************************************************
-procedure initializeYourself(ParamsAndStates : PTxMyModelData;
-                             SystemOptions : PTxSystemOptions); stdcall;
+procedure initializeYourself(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions);
 var local_Signal : Double;
     coef_a0, coef_a1, coef_a2, coef_a3, coef_a4 : Double;
     fIcs : integer;
@@ -304,11 +308,11 @@ begin
   //--------------------------------------------------------------------
   // Setup local array variables to make code easier to read
   //--------------------------------------------------------------------
-  pIntParamArr := PIntegerArray(ParamsAndStates.IntParams);
-  pFloatParamArr := PDoubleArray(ParamsAndStates.FloatParams);
-  pStatesArr := PDoubleArray(ParamsAndStates.States);
-  pHardCodedArr := PDoubleArray(ParamsAndStates.HardCodedSignals);
-  pIgnoreStatesArr := PBooleanArray(ParamsAndStates.IgnoreStates);
+  pIntParamArr := ParamsAndStates.IntParams;
+  pFloatParamArr := ParamsAndStates.FloatParams;
+  pStatesArr := ParamsAndStates.States;
+  pHardCodedArr := ParamsAndStates.HardCodedSignals;
+  pIgnoreStatesArr := ParamsAndStates.IgnoreStates;
 
   //--------------------------------------------------------------------
   // Grab States, Params, Algebraics Needed for this method
@@ -368,11 +372,7 @@ begin
 end;
 
 //******************************************************************************
-procedure calculateFofX(ParamsAndStates : PTxMyModelData;
-                        SystemOptions : PTxSystemOptions;
-                        nonWindUpLimits : PTxNonWindUpLimits;
-                        dotX : PDouble
-                        ); stdcall;
+procedure calculateFofX(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits; dotX : PDoubleArray);
 var // parameters
     fIcs : integer;
     fA1, fA2, fA3, fA4, fA5, fA6, fT1, fT2, fT3, fT4, fT5, fT6, fKs, fLsmax, fLsmin, fVcu, fVcl, fTdelay : Double;
@@ -404,11 +404,11 @@ begin
   //--------------------------------------------------------------------
   // Setup local array variables to make code easier to read
   //--------------------------------------------------------------------
-  pIntParamArr := PIntegerArray(ParamsAndStates.IntParams);
-  pFloatParamArr := PDoubleArray(ParamsAndStates.FloatParams);
-  pStatesArr := PDoubleArray(ParamsAndStates.States);
-  pHardCodedArr := PDoubleArray(ParamsAndStates.HardCodedSignals);
-  pDotXArr := PDoubleArray(dotX);
+  pIntParamArr := ParamsAndStates.IntParams;
+  pFloatParamArr := ParamsAndStates.FloatParams;
+  pStatesArr := ParamsAndStates.States;
+  pHardCodedArr := ParamsAndStates.HardCodedSignals;
+  pDotXArr := dotX;
 
   //--------------------------------------------------------------------
   // Grab States, Params, Algebraics Needed for this method
@@ -441,6 +441,11 @@ begin
   fVcu    := pFloatParamArr^[PARAM_Vcu   ];
   fVcl    := pFloatParamArr^[PARAM_Vcl   ];
   fTdelay := pFloatParamArr^[PARAM_Tdelay];
+
+  dotStateFilter[0] := 0;
+  dotStateFilter[1] := 0;
+  dotStateFilter[2] := 0;
+  dotStateFilter[3] := 0;
 
   //  kate 1/5/12 Reading in parameters we need for the network:  inNetworkParams
   if (fIcs > 5) or (fIcs < 0) then local_Signal := 0 // error check for bad input
@@ -595,8 +600,7 @@ begin
 end;
 
 //******************************************************************************
-procedure PropagateIgnoredStateAndInput(ParamsAndStates : PTxMyModelData;
-                                        SystemOptions : PTxSystemOptions); stdcall;
+procedure PropagateIgnoredStateAndInput(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions);
 Var fIcs : integer;
     local_Signal : double;
 
@@ -608,11 +612,11 @@ Begin
   //--------------------------------------------------------------------
   // Setup local array variables to make code easier to read
   //--------------------------------------------------------------------
-  pStatesArr := PDoubleArray(ParamsAndStates.States);
-  pIgnoreStatesArr := PBooleanArray(ParamsAndStates.IgnoreStates);
-  pHardCodedArr := PDoubleArray(ParamsAndStates.HardCodedSignals);
+  pStatesArr := ParamsAndStates.States;
+  pIgnoreStatesArr := ParamsAndStates.IgnoreStates;
+  pHardCodedArr := ParamsAndStates.HardCodedSignals;
 
-  pIntParamArr := PIntegerArray(ParamsAndStates.IntParams);
+  pIntParamArr := ParamsAndStates.IntParams;
   fIcs := pIntParamArr^[PARAM_Ics];
 
   if (fIcs > 5) or (fIcs < 0) then local_Signal := 0 // error check for bad input
@@ -630,9 +634,7 @@ Begin
 end;
 
 //******************************************************************************
-function getNonWindUpLimits(ParamsAndStates : PTxMyModelData;
-                            SystemOptions : PTxSystemOptions;
-                            nonWindUpLimits : PTxNonWindUpLimits): Integer; stdcall;
+function getNonWindUpLimits(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits): Integer;
 begin
   Result := 0;   // None
 end;
@@ -640,8 +642,9 @@ end;
 //******************************************************************************
 // Stabilizer-Specific Functions
 //******************************************************************************
-function StabilizerVsOut(ParamsAndStates : PTxMyModelData;
-                         SystemOptions : PTxSystemOptions) : double; stdcall;
+// At least one of StabilizerVsOut and StabilizerPitchOut is required (declared in pwUDM.Stabilizer).
+// This model implements StabilizerVsOut only.
+function StabilizerVsOut(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions) : double;
 var fLsmax, fLsmin, fVcu, fVcl : Double;
     stateUnlimitedSignal : Double;
     GenVcomp : Double;
@@ -653,9 +656,9 @@ begin
   //--------------------------------------------------------------------
   // Setup local array variables to make code easier to read
   //--------------------------------------------------------------------
-  pFloatParamArr := PDoubleArray(ParamsAndStates.FloatParams);
-  pStatesArr := PDoubleArray(ParamsAndStates.States);
-  pHardCodedArr := PDoubleArray(ParamsAndStates.HardCodedSignals);
+  pFloatParamArr := ParamsAndStates.FloatParams;
+  pStatesArr := ParamsAndStates.States;
+  pHardCodedArr := ParamsAndStates.HardCodedSignals;
 
   //--------------------------------------------------------------------
   // Grab States, Params, Algebraics Needed for this method
@@ -683,31 +686,29 @@ begin
 end;
 
 { NOT defined for this object
-function StabilizerPitchOut(ParamsAndStates : PTxMyModelData;
-                         SystemOptions : PTxSystemOptions) : double; stdcall;
+function StabilizerPitchOut(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions) : double; stdcall;
 }
 
 //******************************************************************************
-exports DLLVersion
-        , modelClassName
-        , allParamCounts
-        , parameterName
-        , stateName
-        , OtherObjectClass
-        , OtherObjectDescription
-        , getDefaultParameterValue
-     // , getStringParamDefaultValue
-     // , signalSelection
+// Compile-time check: each exported routine must have the signature of the DLL contract
+// (pwUDM.Core and the model class unit), otherwise this unit does not compile
+const
+  Check_DLLVersion : TDLLVersion = DLLVersion;
+  Check_modelClassName : TModelClassName = modelClassName;
+  Check_allParamCounts : TAllParamCounts = allParamCounts;
+  Check_parameterName : TParameterName = parameterName;
+  Check_stateName : TStateName = stateName;
+  Check_OtherObjectClass : TOtherObjectClass = OtherObjectClass;
+  Check_OtherObjectDescription : TOtherObjectDescription = OtherObjectDescription;
+  Check_getDefaultParameterValue : TGetDefaultParameterValue = getDefaultParameterValue;
+//  Check_getStringParamDefaultValue : TGetStringParamDefaultValue = getStringParamDefaultValue;
+//  Check_signalSelection : TSignalSelection = signalSelection;
+  Check_SubIntervalPower2Exponent : TSubIntervalPower2Exponent = SubIntervalPower2Exponent;
+  Check_initializeYourself : TInitializeYourself = initializeYourself;
+  Check_calculateFofX : TCalculateFofX = calculateFofX;
+  Check_PropagateIgnoredStateAndInput : TPropagateIgnoredStateAndInput = PropagateIgnoredStateAndInput;
+  Check_getNonWindUpLimits : TGetNonWindUpLimits = getNonWindUpLimits;
+  Check_StabilizerVsOut : TStabilizerVsOut = StabilizerVsOut;
+//  Check_StabilizerPitchOut : TStabilizerPitchOut = StabilizerPitchOut;
 
-        , SubIntervalPower2Exponent
-        , initializeYourself
-        , calculateFofX
-        , PropagateIgnoredStateAndInput
-        , getNonWindUpLimits
-
-        , StabilizerVsOut
-        // , StabilizerPitchOut
-        ;
-begin
-//
 end.

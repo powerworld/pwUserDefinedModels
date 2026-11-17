@@ -1,22 +1,17 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{EE646311-EE30-41E4-8C0B-85B14334384F}</ProjectGuid>
-        <MainSource>pwUDM.GENCLS.pas.dpr</MainSource>
+        <ProjectGuid>{CF59EC8F-A2EB-4B44-86BD-9545CA39EAC8}</ProjectGuid>
+        <MainSource>pwUDM.dpr</MainSource>
         <ProjectVersion>18.4</ProjectVersion>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">pwUDM.CLOD_Release</Config>
         <AppType>Library</AppType>
         <FrameworkType>None</FrameworkType>
         <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
-        <TargetedPlatforms>3</TargetedPlatforms>
+        <TargetedPlatforms>2</TargetedPlatforms>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
-        <Base>true</Base>
-    </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
-        <Base_Win32>true</Base_Win32>
-        <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
@@ -24,76 +19,212 @@
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Win64' or '$(Cfg_3)'!=''">
+        <Cfg_3>true</Cfg_3>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
         <Cfg_1>true</Cfg_1>
-        <CfgParent>Base</CfgParent>
+        <CfgParent>Cfg_3</CfgParent>
+        <Cfg_3>true</Cfg_3>
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
         <Cfg_2>true</Cfg_2>
-        <CfgParent>Base</CfgParent>
+        <CfgParent>Cfg_3</CfgParent>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.CLOD_Release' or '$(Cfg_4)'!=''">
+        <Cfg_4>true</Cfg_4>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.CLOD_Debug' or '$(Cfg_5)'!=''">
+        <Cfg_5>true</Cfg_5>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.GENCLS_Release' or '$(Cfg_6)'!=''">
+        <Cfg_6>true</Cfg_6>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.GENCLS_Debug' or '$(Cfg_7)'!=''">
+        <Cfg_7>true</Cfg_7>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.IEEEST_Release' or '$(Cfg_8)'!=''">
+        <Cfg_8>true</Cfg_8>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.IEEEST_Debug' or '$(Cfg_9)'!=''">
+        <Cfg_9>true</Cfg_9>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.IEEET1_Release' or '$(Cfg_10)'!=''">
+        <Cfg_10>true</Cfg_10>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.IEEET1_Debug' or '$(Cfg_11)'!=''">
+        <Cfg_11>true</Cfg_11>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.TGOV1_Release' or '$(Cfg_12)'!=''">
+        <Cfg_12>true</Cfg_12>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.TGOV1_Debug' or '$(Cfg_13)'!=''">
+        <Cfg_13>true</Cfg_13>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Cfg_3>true</Cfg_3>
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_UsePackage>vcl;rtl;vclx;vclactnband;xmlrtl;VclSmp;vclimg;svnui;svn;vcldb;dbrtl;vcldbx;bdertl;vcltouch;dsnap;dsnapcon;vclib;ibxpress;adortl;IndyCore;IndySystem;IndyProtocols;inet;intrawebdb_110_150;Intraweb_110_150;vclie;inetdb;webdsnap;websnap;inetdbbde;inetdbxpress;soaprtl;vclribbon;dbexpress;DbxCommonDriver;DbxClientDriver;AzureCloud;DBXInterBaseDriver;DBXMySQLDriver;dbxcds;CodeSiteExpressVcl;TsiLang_2011r;dxCoreD15;cxLibraryD15;dxDockingD15;dxBarD15;dxBarDBNavD15;dxBarExtDBItemsD15;dxBarExtItemsD15;dxRibbonD15;dxComnD15;dxsbD15;TeeImage915;TeeWorld915;TeeLanguage915;TeePro915;TeeGL915;TeeUI915;TeeDB915;Tee915;TeeTree2D15Tee9;pwpacks_d2009;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_DcuOutput>.\$(Config)\$(Platform)</DCC_DcuOutput>
-        <DCC_E>false</DCC_E>
-        <DCC_ImageBase>00400000</DCC_ImageBase>
-        <DCC_ExeOutput>.\$(Config)\$(Platform)</DCC_ExeOutput>
-        <DCC_S>false</DCC_S>
-        <GenDll>true</GenDll>
-        <DCC_N>false</DCC_N>
-        <DCC_F>false</DCC_F>
-        <DCC_K>false</DCC_K>
-        <SanitizedProjectName>pwUDM_GENCLS_pas</SanitizedProjectName>
-        <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <SanitizedProjectName>pwUDM</SanitizedProjectName>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <BT_BuildType>Debug</BT_BuildType>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
-        <VerInfo_Locale>1033</VerInfo_Locale>
-        <Debugger_HostApplication>C:\pw\version.170\code170\pwrworld.exe</Debugger_HostApplication>
+    <Import Project="options\Base.optset" Condition="'$(Base)'!='' And Exists('options\Base.optset')"/>
+    <Import Project="options\Win64.optset" Condition="'$(Cfg_3)'!='' And Exists('options\Win64.optset')"/>
+    <PropertyGroup Condition="'$(Cfg_3)'!=''">
+        <CfgDependentOn>options\Win64.optset</CfgDependentOn>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Base_Win64)'!=''">
-        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
-        <BT_BuildType>Debug</BT_BuildType>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <Manifest_File>(None)</Manifest_File>
-    </PropertyGroup>
+    <Import Project="options\Debug.optset" Condition="'$(Cfg_1)'!='' And Exists('options\Debug.optset')"/>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
-        <DCC_RemoteDebug>true</DCC_RemoteDebug>
-        <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
-        <DCC_Optimize>false</DCC_Optimize>
-        <DCC_DebugDCUs>true</DCC_DebugDCUs>
-        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
-        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <CfgDependentOn>options\Debug.optset</CfgDependentOn>
     </PropertyGroup>
+    <Import Project="options\Release.optset" Condition="'$(Cfg_2)'!='' And Exists('options\Release.optset')"/>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
-        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
-        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
-        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
-        <DCC_DebugInformation>0</DCC_DebugInformation>
+        <CfgDependentOn>options\Release.optset</CfgDependentOn>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_4)'!=''">
+        <DCC_Define>MODEL_CLOD;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_5)'!=''">
+        <DCC_Define>MODEL_CLOD;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_6)'!=''">
+        <DCC_Define>MODEL_GENCLS;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_7)'!=''">
+        <DCC_Define>MODEL_GENCLS;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_8)'!=''">
+        <DCC_Define>MODEL_IEEEST;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_9)'!=''">
+        <DCC_Define>MODEL_IEEEST;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_10)'!=''">
+        <DCC_Define>MODEL_IEEET1;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_11)'!=''">
+        <DCC_Define>MODEL_IEEET1;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_12)'!=''">
+        <DCC_Define>MODEL_TGOV1;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_13)'!=''">
+        <DCC_Define>MODEL_TGOV1;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="..\common\pwUDM.pas"/>
+        <DCCReference Include="src\Core\pwUDM.Core.pas"/>
+        <DCCReference Include="src\Core\pwUDM.Exciter.pas"/>
+        <DCCReference Include="src\Core\pwUDM.Governor.pas"/>
+        <DCCReference Include="src\Core\pwUDM.Load.pas"/>
+        <DCCReference Include="src\Core\pwUDM.Machine.pas"/>
+        <DCCReference Include="src\Core\pwUDM.Stabilizer.pas"/>
+        <DCCReference Include="src\CLOD\pwUDM.CLOD.pas"/>
+        <DCCReference Include="src\GENCLS\pwUDM.GENCLS.pas"/>
+        <DCCReference Include="src\IEEEST\pwUDM.IEEEST.pas"/>
+        <DCCReference Include="src\IEEET1\pwUDM.IEEET1.pas"/>
+        <DCCReference Include="src\TGOV1\pwUDM.TGOV1.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
-            <CfgParent>Base</CfgParent>
+            <CfgParent>Cfg_3</CfgParent>
+            <DependentOn>options\Release.optset</DependentOn>
         </BuildConfiguration>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
+            <DependentOn>options\Base.optset</DependentOn>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Win64">
+            <Key>Cfg_3</Key>
+            <CfgParent>Base</CfgParent>
+            <DependentOn>options\Win64.optset</DependentOn>
         </BuildConfiguration>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_1</Key>
-            <CfgParent>Base</CfgParent>
+            <CfgParent>Cfg_3</CfgParent>
+            <DependentOn>options\Debug.optset</DependentOn>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.CLOD_Release">
+            <Key>Cfg_4</Key>
+            <CfgParent>Cfg_2</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.CLOD_Debug">
+            <Key>Cfg_5</Key>
+            <CfgParent>Cfg_1</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.GENCLS_Release">
+            <Key>Cfg_6</Key>
+            <CfgParent>Cfg_2</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.GENCLS_Debug">
+            <Key>Cfg_7</Key>
+            <CfgParent>Cfg_1</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.IEEEST_Release">
+            <Key>Cfg_8</Key>
+            <CfgParent>Cfg_2</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.IEEEST_Debug">
+            <Key>Cfg_9</Key>
+            <CfgParent>Cfg_1</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.IEEET1_Release">
+            <Key>Cfg_10</Key>
+            <CfgParent>Cfg_2</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.IEEET1_Debug">
+            <Key>Cfg_11</Key>
+            <CfgParent>Cfg_1</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.TGOV1_Release">
+            <Key>Cfg_12</Key>
+            <CfgParent>Cfg_2</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.TGOV1_Debug">
+            <Key>Cfg_13</Key>
+            <CfgParent>Cfg_1</CfgParent>
         </BuildConfiguration>
     </ItemGroup>
     <Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
@@ -131,20 +262,13 @@
                     <VersionInfoKeys Name="Comments"/>
                 </VersionInfoKeys>
                 <Source>
-                    <Source Name="MainSource">pwUDM.GENCLS.pas.dpr</Source>
+                    <Source Name="MainSource">pwUDM.dpr</Source>
                 </Source>
-                <Parameters>
-                    <Parameters Name="HostApplication">C:\pw\version.170\code170\pwrworld.exe</Parameters>
-                </Parameters>
-                <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k250.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp250.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
-                </Excluded_Packages>
             </Delphi.Personality>
             <Platforms>
-                <Platform value="Win32">True</Platform>
+                <Platform value="Linux64">False</Platform>
+                <Platform value="OSX32">False</Platform>
+                <Platform value="Win32">False</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>
             <Deployment Version="3">
@@ -165,12 +289,6 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Release\Win32\pwUDM.GENCLS.pas.dll" Configuration="Release" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>pwUDM_GENCLS_pas.dll</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

@@ -1,9 +1,12 @@
-library pwUDM.CLOD.pas;
+unit pwUDM.CLOD;
+// This implements the existing CLOD model as an example
+
+interface
 
 uses
-  pwUDM in '..\common\pwUDM.pas',
-  SysUtils;
-// -----------------------------------------------------------------------------
+  System.SysUtils,
+  pwUDM.Core;
+
 const
   // For the Model
   N_F_PARAMS   =  9;     // number of float model params
@@ -14,7 +17,7 @@ const
   // For the NonWindUpLimits
   N_NONWINDUPLIMITS = 0; // number of nonwindup
 
-  // ---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // These are just to make the code easier to read
   // Parameter Value indices.
 
@@ -74,22 +77,71 @@ const
   ALG_TIMER_LowVoltTimeSet = 28;
   ALG_TIMER_LowVoltTime = 29;
 
-  // Load Hard-Coded Input Signal Indices
-  // Note: These are the SAME for all loads and are hard-cded values that
-  // Simulator ALWAYS passes to the DLL
-  // If additional inputs are needed from Simulator, then you MUST define them
-  // using the "Algebraics" signals and include them at the BEGINNING of the ALG vector
-  HARDCODE_LOAD_DeviceVPU      =  0;
-  HARDCODE_LOAD_DeviceAngleRad =  1;
-  HARDCODE_LOAD_DeltaFreqPU    =  2;
-  HARDCODE_LOAD_DeviceStatus   =  3;
-  HARDCODE_LOAD_LoadScalar     =  4;
 
   // These are hard-coded parameters for modeling the discharge lighting load
   GLOBAL_DL_PCoeff  = 1.0; // constant CURRENT Real Power
   GLOBAL_DL_QCoeff  = 4.5; // much higher coefficent for Reactive Power
   GLOBAL_DL_VoltBP  = 0.75;
   GLOBAL_DL_VoltExt = 0.65;
+
+// The routines below are the DLL contract that Simulator calls: each one is exported by the
+// exports clause that follows them (the optional ones are commented out unless the model needs them)
+function DLLVersion:Integer; stdcall;
+function modelClassName(StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer; stdcall;
+procedure allParamCounts(numbersOfEverything : PTxParamCounts; TimeStepSeconds : PDouble); stdcall;
+function parameterName(ParamNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+function stateName(StateNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+// function OtherObjectClass(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+// function OtherObjectDescription(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData); stdcall;
+// function signalSelection(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer; stdcall;
+function SubIntervalPower2Exponent(ParamsAndStates : PTxMyModelData; TimeStepSeconds : PDouble) : integer; stdcall;
+procedure initializeYourself(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions); stdcall;
+procedure calculateFofX(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits; dotX : PDoubleArray); stdcall;
+procedure PropagateIgnoredStateAndInput(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions); stdcall;
+function getNonWindUpLimits(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits): Integer; stdcall;
+function TimeStepEnd(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; index : PInteger; MaxPossibleEventIndex : PInteger; EventTime : PDouble; ExtraObjectIndex : PInteger) : boolean; stdcall;
+function TimeStepEndAction(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; index : Pinteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+procedure LoadNortonAdmittance(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; theG : PDouble; theB : PDouble); stdcall;
+procedure LoadNortonCurrent(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; IReal : PDouble; IImag : PDouble); stdcall;
+procedure LoadNortonCurrentAlgebraicDerivative(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; IReal_dVreal : PDouble; IReal_dVimag : PDouble; IImag_dVreal : PDouble; IImag_dVimag : PDouble); stdcall;
+// InitLoadP and InitLoadQ will most frequently
+// be equal to the SteadyStateP and SteadyStateQ
+// Any difference will be automatically made-up for within
+// Simulator by embedding an impedance with the load that makes the
+// NetP and NetQ match SteadyStateP and SteadyStateQ initially
+function LoadInitializeAlgebraic(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; INPUT_PUTol, SteadyStateP, SteadyStateQ, SteadyStateV : Double; InitLoadP, InitLoadQ : PDouble) : boolean; stdcall;
+
+exports DLLVersion
+        , modelClassName
+        , allParamCounts
+        , parameterName
+        , stateName
+     // , OtherObjectClass
+     // , OtherObjectDescription
+        , getDefaultParameterValue
+     // , getStringParamDefaultValue
+     // , signalSelection
+
+        , SubIntervalPower2Exponent
+        , initializeYourself
+        , calculateFofX
+        , PropagateIgnoredStateAndInput
+        , getNonWindUpLimits
+        , TimeStepEnd
+        , TimeStepEndAction
+
+        , LoadNortonAdmittance
+        , LoadNortonCurrent
+        , LoadNortonCurrentAlgebraicDerivative
+        , LoadInitializeAlgebraic
+
+        ;
+
+implementation
+
+uses
+  pwUDM.Load;
 
 type
   // Complex Number object to make some of the code easier to read.
@@ -104,7 +156,6 @@ type
   End;
 
 
-{$R *.res}
 
 //******************************************************************************
 Procedure PWDComplex.Init(tr,ti : double);
@@ -533,35 +584,23 @@ Begin
   fQInit := -fVr*fIq + fVi*fId;
 End;
 
-//******************************************************************************
-// This functions handles the exchange of string length and copying the string
-function LOCAL_StringProcess(StrBuf: PChar; StrSize: PInteger; SourceString: PChar): Integer;
-begin
-  result := length(SourceString);
-  if (result > 0) and (StrSize^ >= Result) then strcopy(StrBuf, SourceString);
-end;
 
 //******************************************************************************
-function DLLVersion:Integer; stdcall;
+function DLLVersion:Integer;
 begin
   result := 1;
 end;
 
 //******************************************************************************
-function modelClassName(StrSize: PInteger;
-                        StrBuf: PChar;
-                        dummy: Integer): Integer; stdcall;
-var ts : PChar;
+function modelClassName(StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer;
 begin
-	ts := 'UserDefinedLoadModel';
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, pwModelClassString(mcLoad));
 end;
 
 //******************************************************************************
-procedure allParamCounts(var numbersOfEverything : TTxParamCounts;
-                         TimeStepSeconds : double); stdcall;
+procedure allParamCounts(numbersOfEverything : PTxParamCounts; TimeStepSeconds : PDouble);
 begin
-  with numbersOfEverything do begin
+  with numbersOfEverything^ do begin
     // -------The model-specific parameters-----
     nFloatParams  := N_F_PARAMS;
     nIntParams    := N_I_PARAMS;
@@ -574,10 +613,7 @@ begin
 end;
 
 //******************************************************************************
-function parameterName(ParamNum: PInteger;
-                       StrSize: PInteger;
-                       StrBuf: PChar;
-                       dummy : Integer): Integer; stdcall;
+function parameterName(ParamNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
 var ts : PChar;
 begin
   // Double parameters
@@ -593,14 +629,11 @@ begin
     PARAM_Tb          : ts := 'Low V Trip Breaker Delay (sec)';
    else                 ts := '';
   end;
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, ts);
 end;
 
 //******************************************************************************
-function stateName(StateNum: PInteger;
-                   StrSize: PInteger;
-                   StrBuf: PChar;
-                   dummy : Integer): Integer; stdcall;
+function stateName(StateNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
 var ts : PChar;
 begin
   case StateNum^ of
@@ -612,46 +645,40 @@ begin
     STATE_IM2Epi     : ts := 'IM 2 Epi';
    else ts := '';
   end;
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, ts);
 end;
 
 //******************************************************************************
 { non specified for this model
-function OtherObjectClass(Num: PInteger;
-                          StrSize: PInteger;
-                          StrBuf: PChar;
-                          dummy : Integer): Integer; stdcall;
+function OtherObjectClass(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
 var ts : PChar;
 begin
   case Num^ of
     0 : ts := 'Bus';
    else ts := '';
   end;
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, ts);
 end;
 }
 
 //******************************************************************************
 { non specified for this model
-function OtherObjectDescription(Num: PInteger;
-                                StrSize: PInteger;
-                                StrBuf: PChar;
-                                dummy : Integer): Integer; stdcall;
+function OtherObjectDescription(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
 var ts : PChar;
 begin
   case Num^ of
     0 : ts := 'Signal Bus';
    else ts := '';
   end;
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, ts);
 end;
 }
 
 //******************************************************************************
-procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData); stdcall;
+procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData);
 var pDoubArr: PDoubleArray;
 begin
-  pDoubArr := PDoubleArray(ParamsAndStates^.FloatParams);
+  pDoubArr := ParamsAndStates^.FloatParams;
   pDoubArr^[PARAM_PercLmotor]  := 25.0;
   pDoubArr^[PARAM_PercSmotor]  := 25.0;
   pDoubArr^[PARAM_PercTex   ]  :=  0.0;
@@ -665,10 +692,7 @@ end;
 
 { non specified for this model
 //******************************************************************************
-function signalSelection(Num: PInteger;
-                         StrSize: PInteger;
-                         StrBuf: PChar;
-                         dummy: Integer): Integer; stdcall;
+function signalSelection(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer; stdcall;
 var ts : PChar;
 begin
   ts := ''; // there are none!
@@ -676,12 +700,12 @@ begin
     ALG_XXX         : ts := 'TSXXX';
    else ts := '';
   end;
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, ts);
 end;
 }
 
 //******************************************************************************
-function SubIntervalPower2Exponent(ParamsAndStates : PTxMyModelData; TimeStepSeconds : PDouble) : integer; stdcall;
+function SubIntervalPower2Exponent(ParamsAndStates : PTxMyModelData; TimeStepSeconds : PDouble) : integer;
 begin
   // Return an integer value between 0 and 7
   // This function returns the EXPONENT of 2 for the number subintervals.
@@ -691,8 +715,7 @@ begin
 end;
 
 //******************************************************************************
-procedure initializeYourself(ParamsAndStates : PTxMyModelData;
-                             SystemOptions : PTxSystemOptions); stdcall;
+procedure initializeYourself(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions);
 
   //--------------------------------------------------------------------------
   procedure LOCAL_InitalizeMotor(LoadObjBusVolt_In : PWDComplex;
@@ -759,9 +782,9 @@ begin
   //--------------------------------------------------------------------
   // Setup local array variables to make code easier to read
   //--------------------------------------------------------------------
-  pStatesArr := PDoubleArray(ParamsAndStates.States);
-  pHardCodedArr := PDoubleArray(ParamsAndStates.HardCodedSignals);
-  pAlgebraicsArr := PDoubleArray(ParamsAndStates.Algebraics);
+  pStatesArr := ParamsAndStates.States;
+  pHardCodedArr := ParamsAndStates.HardCodedSignals;
+  pAlgebraicsArr := ParamsAndStates.Algebraics;
 
   LoadObjV_In           := pHardCodedArr^[HARDCODE_LOAD_DeviceVPU];
   LoadObjThetaRadian_In := pHardCodedArr^[HARDCODE_LOAD_DeviceAngleRad];
@@ -830,11 +853,7 @@ begin
 end;
 
 //******************************************************************************
-procedure calculateFofX(ParamsAndStates : PTxMyModelData;
-                        SystemOptions : PTxSystemOptions;
-                        nonWindUpLimits : PTxNonWindUpLimits;
-                        dotX : PDouble
-                        ); stdcall;
+procedure calculateFofX(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits; dotX : PDoubleArray);
 
   procedure LOCAL_GetMotorDerivatives(LoadObjBusVolt_In : PWDComplex;
                                       inService_In : boolean;
@@ -887,8 +906,8 @@ var
   dotIMLSpeedState, dotIMLEprState, dotIMLEpiState,
   dotIMSSpeedState, dotIMSEprState, dotIMSEpiState : Double;
 
-  IML_fPInitial, IML_fWo, IMLfInvTp, IML_Rs, IML_Xs, IML_Xp, IML_X, IML_H, IML_D, IML_fInv2H, IML_Tnom : Double;
-  IMS_fPInitial, IMS_fWo, IMSfInvTp, IMS_Rs, IMS_Xs, IMS_Xp, IMS_X, IMS_H, IMS_D, IMS_fInv2H, IMS_Tnom : Double;
+  IML_fPInitial, IML_fWo, IMLfInvTp, IML_Rs, IML_Xp, IML_X, IML_H, IML_D, IML_fInv2H, IML_Tnom : Double;
+  IMS_fPInitial, IMS_fWo, IMSfInvTp, IMS_Rs, IMS_Xp, IMS_X, IMS_H, IMS_D, IMS_fInv2H, IMS_Tnom : Double;
 
   pStatesArr : PDoubleArray;
   pHardCodedArr : PDoubleArray;
@@ -898,10 +917,10 @@ begin
   //--------------------------------------------------------------------
   // Setup local array variables to make code easier to read
   //--------------------------------------------------------------------
-  pStatesArr := PDoubleArray(ParamsAndStates.States);
-  pHardCodedArr := PDoubleArray(ParamsAndStates.HardCodedSignals);
-  pAlgebraicsArr := PDoubleArray(ParamsAndStates.Algebraics);
-  pDotXArr := PDoubleArray(dotX);
+  pStatesArr := ParamsAndStates.States;
+  pHardCodedArr := ParamsAndStates.HardCodedSignals;
+  pAlgebraicsArr := ParamsAndStates.Algebraics;
+  pDotXArr := dotX;
 
   IMLSpeedState := pStatesArr^[STATE_IM1SpeedWr];
   IMLEprState   := pStatesArr^[STATE_IM1Epr    ];
@@ -916,7 +935,6 @@ begin
 
   // Following values are all calculation
   IML_Rs         := pAlgebraicsArr^[ALG_IML_Rs        ];
-  IML_Xs         := pAlgebraicsArr^[ALG_IML_Xs        ];
   IML_fWo        := pAlgebraicsArr^[ALG_IML_fWo       ];
   IMLfInvTp      := pAlgebraicsArr^[ALG_IMLfInvTp     ];
   IML_Xp         := pAlgebraicsArr^[ALG_IML_Xp        ];
@@ -924,7 +942,6 @@ begin
   IML_fPInitial  := pAlgebraicsArr^[ALG_IML_fPInitial ];
 
   IMS_Rs         := pAlgebraicsArr^[ALG_IMS_Rs        ];
-  IMS_Xs         := pAlgebraicsArr^[ALG_IMS_Xs        ];
   IMS_fWo        := pAlgebraicsArr^[ALG_IMS_fWo       ];
   IMSfInvTp      := pAlgebraicsArr^[ALG_IMSfInvTp     ];
   IMS_Xp         := pAlgebraicsArr^[ALG_IMS_Xp        ];
@@ -975,29 +992,20 @@ begin
 end;
 
 //******************************************************************************
-procedure PropagateIgnoredStateAndInput(ParamsAndStates : PTxMyModelData;
-                                        SystemOptions : PTxSystemOptions); stdcall;
+procedure PropagateIgnoredStateAndInput(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions);
 begin
   // nothing here
 end;
 
 //******************************************************************************
-function getNonWindUpLimits(ParamsAndStates : PTxMyModelData;
-                            SystemOptions : PTxSystemOptions;
-                            nonWindUpLimits : PTxNonWindUpLimits): Integer; stdcall;
+function getNonWindUpLimits(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits): Integer;
 begin
   Result := 0;   // None
 end;
 
 //------------------------------------------------------------------------------
 // 'TimeStepEnd'
-function TimeStepEnd(ParamsAndStates : PTxMyModelData;
-                     SystemOptions : PTxSystemOptions;
-                     index : PInteger;
-                     MaxPossibleEventIndex : PInteger;
-                     EventTime : PDouble;
-                     ExtraObjectIndex : PInteger
-                     ) : boolean; stdcall;
+function TimeStepEnd(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; index : PInteger; MaxPossibleEventIndex : PInteger; EventTime : PDouble; ExtraObjectIndex : PInteger) : boolean;
 var local_NewTime   : double;
     fVi, fTi, fTb   : double;
     local_VoltMag   : double;
@@ -1017,9 +1025,9 @@ begin
     //--------------------------------------------------------------------
     // Setup local array variables to make code easier to read
     //--------------------------------------------------------------------
-    pFloatParamArr := PDoubleArray(ParamsAndStates.FloatParams);
-    pHardCodedArr := PDoubleArray(ParamsAndStates.HardCodedSignals);
-    pAlgebraicsArr := PDoubleArray(ParamsAndStates.Algebraics);
+    pFloatParamArr := ParamsAndStates.FloatParams;
+    pHardCodedArr := ParamsAndStates.HardCodedSignals;
+    pAlgebraicsArr := ParamsAndStates.Algebraics;
 
     inService_In    := pHardCodedArr^[HARDCODE_LOAD_DeviceStatus] > 0.5; // Inservice
     fVi := pFloatParamArr^[PARAM_Vi];
@@ -1054,12 +1062,7 @@ begin
 end;
 
 //******************************************************************************
-function TimeStepEndAction(ParamsAndStates : PTxMyModelData;
-                           SystemOptions : PTxSystemOptions;
-                           index : Pinteger;
-                           StrSize: PInteger;
-                           StrBuf: PChar;
-                           dummy : Integer): Integer; stdcall;
+function TimeStepEndAction(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; index : Pinteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
 var ts : PChar;
 begin
   // Anything after the last Pipe character | will be treated as an extra log message to show in event reporting
@@ -1067,7 +1070,7 @@ begin
     0 : ts := 'OPEN|User_CLOD Under Voltage Trip: ';
    else ts := '';
   end;
-  result := LOCAL_StringProcess(StrBuf, StrSize, ts);
+  result := pwStringCopy(StrBuf, StrSize, ts);
 end;
 
 //******************************************************************************
@@ -1095,11 +1098,7 @@ Begin
   Else Result := Result + sin(pi*0.5*local_VoltMag/minVoltILoad_in)*local_VoltMag*fIVal;
 End;
 
-procedure LoadNortonAdmittance(ParamsAndStates : PTxMyModelData;
-                               SystemOptions : PTxSystemOptions;
-                               theG : PDouble;
-                               theB : PDouble
-                               ); stdcall;
+procedure LoadNortonAdmittance(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; theG : PDouble; theB : PDouble);
 var t : double;
     IML_Rs, IML_Xp : double;
     IMS_Rs, IMS_Xp : double;
@@ -1112,8 +1111,8 @@ Begin
   //--------------------------------------------------------------------
   // Setup local array variables to make code easier to read
   //--------------------------------------------------------------------
-  pAlgebraicsArr := PDoubleArray(ParamsAndStates.Algebraics);
-  pHardCodedArr := PDoubleArray(ParamsAndStates.HardCodedSignals);
+  pAlgebraicsArr := ParamsAndStates.Algebraics;
+  pHardCodedArr := ParamsAndStates.HardCodedSignals;
 
   theG^ := 0;
   theB^ := 0;
@@ -1149,13 +1148,8 @@ Begin
 end;
 
 //******************************************************************************
-procedure LoadNortonCurrent(ParamsAndStates : PTxMyModelData;
-                            SystemOptions : PTxSystemOptions;
-                            IReal : PDouble;
-                            IImag : PDouble
-                            ); stdcall;
-var ThevR, ThevX : double;
-    ImpSys : PWDComplex;
+procedure LoadNortonCurrent(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; IReal : PDouble; IImag : PDouble);
+var ImpSys : PWDComplex;
     IntVolt : PWDComplex;
     NortonCurrent : PWDComplex;
     LoadObjBusVolt_In : PWDComplex;
@@ -1170,8 +1164,8 @@ var ThevR, ThevX : double;
     LoadObjThetaRadian_In : double;
 
     DL_P_at_1_PU, DL_Q_at_1_PU,
-    ZIP_ZMW, ZIP_IMW, ZIP_SMW,
-    ZIP_ZMVR, ZIP_IMVR, ZIP_SMVR : double;
+    ZIP_IMW, ZIP_SMW,
+    ZIP_IMVR, ZIP_SMVR : double;
 
     loadScalar_in,
     local_e, local_f, local_v2Inv, local_BusVoltMagInv,
@@ -1190,9 +1184,9 @@ begin
   //--------------------------------------------------------------------
   // Setup local array variables to make code easier to read
   //--------------------------------------------------------------------
-  pStatesArr := PDoubleArray(ParamsAndStates.States);
-  pHardCodedArr := PDoubleArray(ParamsAndStates.HardCodedSignals);
-  pAlgebraicsArr := PDoubleArray(ParamsAndStates.Algebraics);
+  pStatesArr := ParamsAndStates.States;
+  pHardCodedArr := ParamsAndStates.HardCodedSignals;
+  pAlgebraicsArr := ParamsAndStates.Algebraics;
 
   loadScalar_in := pHardCodedArr^[HARDCODE_LOAD_LoadScalar];
   minVoltSLoad_in := SystemOptions^.MinVoltSLoad;
@@ -1315,13 +1309,7 @@ begin
 end;
 
 //******************************************************************************
-procedure LoadNortonCurrentAlgebraicDerivative(ParamsAndStates : PTxMyModelData;
-                                               SystemOptions : PTxSystemOptions;
-                                               IReal_dVreal : PDouble;
-                                               IReal_dVimag : PDouble;
-                                               IImag_dVreal : PDouble;
-                                               IImag_dVimag : PDouble
-                                               ); stdcall;
+procedure LoadNortonCurrentAlgebraicDerivative(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; IReal_dVreal : PDouble; IReal_dVimag : PDouble; IImag_dVreal : PDouble; IImag_dVimag : PDouble);
 //{****************************************************************************************************************}
 //  { Class Procedure TTxDynamicLoadModel.CurrentDerivativesExponentialVoltage returns with the derivatives of the current w.r.t. to the rectangular
 //  voltage for functions of the form local_Po*V^local_Pn and local_Qo*V^local_Qn. }
@@ -1368,25 +1356,20 @@ procedure LoadNortonCurrentAlgebraicDerivative(ParamsAndStates : PTxMyModelData;
     dIi_df := dIi_df + vp2 + (vp4*local_f - vq4*local_e)*local_f;
   End;
 
-var ThevR, ThevX : double;
-    ImpSys : PWDComplex;
-    IntVolt : PWDComplex;
-    NortonCurrent : PWDComplex;
-    LoadObjBusVolt_In : PWDComplex;
+var LoadObjBusVolt_In : PWDComplex;
 
     DL_TotalP, DL_TotalQ,
     local_BusVoltMag,
     LoadObjThetaRadian_In : double;
 
     DL_P_at_1_PU, DL_Q_at_1_PU,
-    ZIP_ZMW, ZIP_IMW, ZIP_SMW,
-    ZIP_ZMVR, ZIP_IMVR, ZIP_SMVR : double;
+    ZIP_IMW, ZIP_SMW,
+    ZIP_IMVR, ZIP_SMVR : double;
 
     loadScalar_in,
     local_Inv_v2,
     local_v,
-    local_e, local_f, local_v2, local_BusVoltMagInv,
-    local_ge, local_he, local_gf, local_hf,
+    local_e, local_f, local_v2,
     local_ki, local_ks,
     local_Ir_Num, local_Ii_Num,
     dks_dv, dks_de, dks_df, local_Inv_v4_ks,
@@ -1397,7 +1380,6 @@ var ThevR, ThevX : double;
     ZIP_dIr_de, ZIP_dIr_df, ZIP_dIi_de, ZIP_dIi_df,
     DL_dIr_de, DL_dIr_df, DL_dIi_de, DL_dIi_df : double;
 
-    pStatesArr : PDoubleArray;
     pHardCodedArr : PDoubleArray;
     pAlgebraicsArr : PDoubleArray;
 begin
@@ -1409,9 +1391,8 @@ begin
   //--------------------------------------------------------------------
   // Setup local array variables to make code easier to read
   //--------------------------------------------------------------------
-  pStatesArr := PDoubleArray(ParamsAndStates.States);
-  pHardCodedArr := PDoubleArray(ParamsAndStates.HardCodedSignals);
-  pAlgebraicsArr := PDoubleArray(ParamsAndStates.Algebraics);
+  pHardCodedArr := ParamsAndStates.HardCodedSignals;
+  pAlgebraicsArr := ParamsAndStates.Algebraics;
 
   loadScalar_in := pHardCodedArr^[HARDCODE_LOAD_LoadScalar];
   minVoltSLoad_in := SystemOptions^.MinVoltSLoad;
@@ -1575,18 +1556,12 @@ begin
 end;
 
 //******************************************************************************
-function LoadInitializeAlgebraic(ParamsAndStates : PTxMyModelData;
-                                 SystemOptions : PTxSystemOptions;
-
-                                 INPUT_PUTol, SteadyStateP, SteadyStateQ, SteadyStateV : Double;
-
-                                 // InitLoadP and InitLoadQ will most frequently
-                                 // be equal to the SteadyStateP and SteadyStateQ
-                                 // Any difference will be automatically made-up for within
-                                 // Simulator by embedding an impedance with the load that makes the
-                                 // NetP and NetQ match SteadyStateP and SteadyStateQ initially
-                                 InitLoadP, InitLoadQ : PDouble
-                                 ) : boolean; stdcall;
+// InitLoadP and InitLoadQ will most frequently
+// be equal to the SteadyStateP and SteadyStateQ
+// Any difference will be automatically made-up for within
+// Simulator by embedding an impedance with the load that makes the
+// NetP and NetQ match SteadyStateP and SteadyStateQ initially
+function LoadInitializeAlgebraic(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; INPUT_PUTol, SteadyStateP, SteadyStateQ, SteadyStateV : Double; InitLoadP, InitLoadQ : PDouble) : boolean;
   //----------------------------------------------------------------------------
   procedure LOCAL_InitializeAlgebraicMotor(INPUT_PUTol, loadObjNomFreq_In, SteadyStateV : double;
                                            var _fPInitial, _fQInitial, _SlipInitial,
@@ -1656,8 +1631,8 @@ begin
   //--------------------------------------------------------------------
   // Setup local array variables to make code easier to read
   //--------------------------------------------------------------------
-  pFloatParamArr := PDoubleArray(ParamsAndStates.FloatParams);
-  pAlgebraicsArr := PDoubleArray(ParamsAndStates.Algebraics);
+  pFloatParamArr := ParamsAndStates.FloatParams;
+  pAlgebraicsArr := ParamsAndStates.Algebraics;
 
   fLmotor    := pFloatParamArr^[PARAM_PercLmotor];
   fSmotor    := pFloatParamArr^[PARAM_PercSmotor];
@@ -1709,6 +1684,12 @@ begin
                                    );
     localUsedP_out := localUsedP_out + IMS_fPInitial;
     localUsedQ_out := localUsedQ_out + IMS_fQInitial;
+  end
+  else begin // No voltage to initialize the motors with, so write zeros to their algebraics
+    IML_Rs := 0; IML_Xs := 0; IML_fWo := 0; IMLfInvTp := 0; IML_Xp := 0; IML_X := 0;
+    IML_SlipInitial := 0; IML_fPInitial := 0; IML_fQInitial := 0;
+    IMS_Rs := 0; IMS_Xs := 0; IMS_fWo := 0; IMSfInvTp := 0; IMS_Xp := 0; IMS_X := 0;
+    IMS_SlipInitial := 0; IMS_fPInitial := 0; IMS_fQInitial := 0;
   end;
 
   //----------------------------------------------------------------------------
@@ -1833,32 +1814,29 @@ begin
   Result := true;
 end;
 
-exports DLLVersion
-        , modelClassName
-        , allParamCounts
-        , parameterName
-        , stateName
-     // , OtherObjectClass
-     // , OtherObjectDescription
-        , getDefaultParameterValue
-     // , getStringParamDefaultValue
-     // , signalSelection
+//******************************************************************************
+// Compile-time check: each exported routine must have the signature of the DLL contract
+// (pwUDM.Core and the model class unit), otherwise this unit does not compile
+const
+  Check_DLLVersion : TDLLVersion = DLLVersion;
+  Check_modelClassName : TModelClassName = modelClassName;
+  Check_allParamCounts : TAllParamCounts = allParamCounts;
+  Check_parameterName : TParameterName = parameterName;
+  Check_stateName : TStateName = stateName;
+//  Check_OtherObjectClass : TOtherObjectClass = OtherObjectClass;
+//  Check_OtherObjectDescription : TOtherObjectDescription = OtherObjectDescription;
+  Check_getDefaultParameterValue : TGetDefaultParameterValue = getDefaultParameterValue;
+//  Check_signalSelection : TSignalSelection = signalSelection;
+  Check_SubIntervalPower2Exponent : TSubIntervalPower2Exponent = SubIntervalPower2Exponent;
+  Check_initializeYourself : TInitializeYourself = initializeYourself;
+  Check_calculateFofX : TCalculateFofX = calculateFofX;
+  Check_PropagateIgnoredStateAndInput : TPropagateIgnoredStateAndInput = PropagateIgnoredStateAndInput;
+  Check_getNonWindUpLimits : TGetNonWindUpLimits = getNonWindUpLimits;
+  Check_TimeStepEnd : TTimeStepEnd = TimeStepEnd;
+  Check_TimeStepEndAction : TTimeStepEndAction = TimeStepEndAction;
+  Check_LoadNortonAdmittance : TLoadNortonAdmittance = LoadNortonAdmittance;
+  Check_LoadNortonCurrent : TLoadNortonCurrent = LoadNortonCurrent;
+  Check_LoadNortonCurrentAlgebraicDerivative : TLoadNortonCurrentAlgebraicDerivative = LoadNortonCurrentAlgebraicDerivative;
+  Check_LoadInitializeAlgebraic : TLoadInitializeAlgebraic = LoadInitializeAlgebraic;
 
-        , SubIntervalPower2Exponent
-        , initializeYourself
-        , calculateFofX
-        , PropagateIgnoredStateAndInput
-        , getNonWindUpLimits
-        , TimeStepEnd
-        , TimeStepEndAction
-
-        , LoadNortonAdmittance
-        , LoadNortonCurrent
-        , LoadNortonCurrentAlgebraicDerivative
-        , LoadInitializeAlgebraic
-
-        ;
-
-begin
-//
 end.
