@@ -7,18 +7,17 @@
   },
   "configurePresets": [
     {
-      "name": "base-ninja",
+      "name": "Base",
       "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "clang++"
       }
     },
     {
-      "name": "base-windows",
+      "name": "Win64",
       "hidden": true,
-      "inherits": "base-ninja",
+      "inherits": "Base",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -26,24 +25,26 @@
       }
     },
     {
-      "name": "windows-debug",
+      "name": "Debug",
       "displayName": "Windows Clang Debug",
-      "inherits": "base-windows",
+      "inherits": "Win64",
+      "binaryDir": "${sourceDir}/build/Win64/Debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
-      "name": "windows-release",
+      "name": "Release",
       "displayName": "Windows Clang Release",
-      "inherits": "base-windows",
+      "inherits": "Win64",
+      "binaryDir": "${sourceDir}/build/Win64/Release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
     }
   ],
   "buildPresets": [
-    { "name": "windows-debug", "configurePreset": "windows-debug" },
-    { "name": "windows-release", "configurePreset": "windows-release" }
+    { "name": "Debug", "configurePreset": "Debug" },
+    { "name": "Release", "configurePreset": "Release" }
   ]
 }

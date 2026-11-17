@@ -16,15 +16,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # The PowerWorld DLL contract uses __declspec(dllexport) and __stdcall, so this project is Windows-only.
 if(NOT WIN32)
-    message(FATAL_ERROR "pwUserDefinedModels builds Windows DLLs. Use: cmake --preset windows-debug")
+    message(FATAL_ERROR "pwUserDefinedModels builds Windows DLLs. Use: cmake --preset Debug")
 endif()
 
 if(NOT CMAKE_GENERATOR MATCHES "Ninja")
-    message(FATAL_ERROR "This project requires the Ninja generator for C++20 module dependency scanning. Use: cmake --preset windows-debug")
+    message(FATAL_ERROR "This project requires the Ninja generator for C++20 module dependency scanning. Use: cmake --preset Debug")
 endif()
 
 if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    message(FATAL_ERROR "This project requires clang (the compile and link options are clang/lld specific). Use: cmake --preset windows-debug")
+    message(FATAL_ERROR "This project requires clang (the compile and link options are clang/lld specific). Use: cmake --preset Debug")
 endif()
 
 # 23 is the version this project is built and tested with (import std; with libc++).
@@ -73,10 +73,10 @@ add_library(Core STATIC)
 target_link_libraries(Core PRIVATE pwudm_options)
 target_sources(Core
     PRIVATE
-        src/Core/pwUDM.cpp
+        src/Core/pwUDM.Core.cpp
     PUBLIC
         FILE_SET CXX_MODULES FILES
-        src/Core/pwUDM.cppm
+        src/Core/pwUDM.Core.cppm
         src/Core/pwUDM.Exciter.cppm
         src/Core/pwUDM.Governor.cppm
         src/Core/pwUDM.Load.cppm
@@ -85,28 +85,65 @@ target_sources(Core
 )
 
 # ==============================================================================
-# Models: one DLL per model, pwUDM.<NAME>.cpp.dll, built from
-#         src/<NAME>/pwUDM.<NAME>.{cppm,cpp}. Models never link each other.
+# Models: one DLL per model, pwUDM.<NAME>.cpp.dll. Each target spells out its own
+#         source files and DLL name; models never link each other.
 # ==============================================================================
-function(pwudm_add_model name)
-    add_library(pwUDM.${name} SHARED)
-    target_link_libraries(pwUDM.${name} PRIVATE pwudm_options Core)
-    target_sources(pwUDM.${name}
-        PRIVATE
-            src/${name}/pwUDM.${name}.cpp
-        PRIVATE
-            FILE_SET CXX_MODULES FILES
-            src/${name}/pwUDM.${name}.cppm
-    )
-    set_target_properties(pwUDM.${name} PROPERTIES
+# The settings every model shares
+function(pwudm_model_settings target outputName)
+    target_link_libraries(${target} PRIVATE pwudm_options Core)
+    set_target_properties(${target} PROPERTIES
         PREFIX ""                          # not libpwUDM.*
-        OUTPUT_NAME "pwUDM.${name}.cpp"
+        OUTPUT_NAME "${outputName}"
         SUFFIX ".dll"
     )
 endfunction()
 
-pwudm_add_model(CLOD)
-pwudm_add_model(GENCLS)
-pwudm_add_model(IEEEST)
-pwudm_add_model(IEEET1)
-pwudm_add_model(TGOV1)
+add_library(pwUDM.CLOD SHARED)
+target_sources(pwUDM.CLOD
+    PRIVATE
+        src/CLOD/pwUDM.CLOD.cpp
+    PRIVATE
+        FILE_SET CXX_MODULES FILES
+        src/CLOD/pwUDM.CLOD.cppm
+)
+pwudm_model_settings(pwUDM.CLOD pwUDM.CLOD.cpp)
+
+add_library(pwUDM.GENCLS SHARED)
+target_sources(pwUDM.GENCLS
+    PRIVATE
+        src/GENCLS/pwUDM.GENCLS.cpp
+    PRIVATE
+        FILE_SET CXX_MODULES FILES
+        src/GENCLS/pwUDM.GENCLS.cppm
+)
+pwudm_model_settings(pwUDM.GENCLS pwUDM.GENCLS.cpp)
+
+add_library(pwUDM.IEEEST SHARED)
+target_sources(pwUDM.IEEEST
+    PRIVATE
+        src/IEEEST/pwUDM.IEEEST.cpp
+    PRIVATE
+        FILE_SET CXX_MODULES FILES
+        src/IEEEST/pwUDM.IEEEST.cppm
+)
+pwudm_model_settings(pwUDM.IEEEST pwUDM.IEEEST.cpp)
+
+add_library(pwUDM.IEEET1 SHARED)
+target_sources(pwUDM.IEEET1
+    PRIVATE
+        src/IEEET1/pwUDM.IEEET1.cpp
+    PRIVATE
+        FILE_SET CXX_MODULES FILES
+        src/IEEET1/pwUDM.IEEET1.cppm
+)
+pwudm_model_settings(pwUDM.IEEET1 pwUDM.IEEET1.cpp)
+
+add_library(pwUDM.TGOV1 SHARED)
+target_sources(pwUDM.TGOV1
+    PRIVATE
+        src/TGOV1/pwUDM.TGOV1.cpp
+    PRIVATE
+        FILE_SET CXX_MODULES FILES
+        src/TGOV1/pwUDM.TGOV1.cppm
+)
+pwudm_model_settings(pwUDM.TGOV1 pwUDM.TGOV1.cpp)

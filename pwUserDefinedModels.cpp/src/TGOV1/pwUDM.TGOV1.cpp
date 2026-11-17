@@ -1,197 +1,289 @@
 module pwUDM.TGOV1;
 
 import std;
-import pwUDM;
+import pwUDM.Core;
 import pwUDM.Governor;
 
 namespace pwUDM::TGOV1 {
 
+//******************************************************************************
 extern "C" __declspec(dllexport) int __stdcall DLLVersion()
 {
 	return(1);
 }
 
-
+//******************************************************************************
 extern "C" __declspec(dllexport) int __stdcall modelClassName(int* StrSize, wchar_t* StrBuf, int dummy)
 {	
-    ModelClass udmClass;
-    const wchar_t* str;
-	int stringLength;
-	
-    udmClass = ModelClass::Governor;
-
-    str = pwModelClassString(udmClass);
-	stringLength = pwStringCopy(StrBuf, StrSize, str);
-	return(stringLength);
+    int result = pwStringCopy(StrBuf, StrSize, pwModelClassString(ModelClass::Governor));
+    return result;
 }
 
-
-extern "C" __declspec(dllexport) void __stdcall allParamCounts(TTxParamCounts* numbersOfEverything, double* timeStepSeconds)
+//******************************************************************************
+extern "C" __declspec(dllexport) void __stdcall allParamCounts(TxParamCounts* numbersOfEverything, double* TimeStepSeconds)
 {
+	// -------The model-specific parameters-----
 	numbersOfEverything->nFloatParams		= N_F_PARAMS;
 	numbersOfEverything->nIntParams		= N_I_PARAMS;
 	numbersOfEverything->nStrParams		= N_S_PARAMS;
 	numbersOfEverything->nStates			= N_STATES;
 	numbersOfEverything->nAlgebraics		= N_ALGEBRAICS;	
+
+	// ----For nonwindup limits of the model---
 	numbersOfEverything->nNonWindUpLimits	= N_NONWINDUPLIMITS;
 }
 
-
+//******************************************************************************
 extern "C" __declspec(dllexport) int __stdcall parameterName(int* ParamNum, int* StrSize, wchar_t* StrBuf, int dummy)
 {
-	const wchar_t* str;
-    int stringLength;
-	
-	if (*ParamNum == PARAM_R) {
-		str = L"R";
-	}
-	else if (*ParamNum == PARAM_T1) {
-		str = L"T1";
-	}
-	else if (*ParamNum == PARAM_Vmax) {
-		str = L"Vmax";
-	}
-	else if (*ParamNum == PARAM_Vmin) {
-		str = L"Vmin";
-	}
-	else if (*ParamNum == PARAM_T2) {
-		str = L"T2";
-	}
-	else if (*ParamNum == PARAM_T3) {
-		str = L"T3";
-	}
-	else if (*ParamNum == PARAM_Dt) {
-		str = L"Dt";
-	}
-	else if (*ParamNum == PARAM_Trate) {
-		str = L"Trate";
-	}
-	else {
-        str = L"";
-	}	
+	const wchar_t* ts;
 
-    stringLength = pwStringCopy(StrBuf, StrSize, str);
-    return(stringLength);
+	switch (*ParamNum)
+	{
+		case PARAM_R:     ts = L"R"; break;
+		case PARAM_T1:    ts = L"T1"; break;
+		case PARAM_Vmax:  ts = L"Vmax"; break;
+		case PARAM_Vmin:  ts = L"Vmin"; break;
+		case PARAM_T2:    ts = L"T2"; break;
+		case PARAM_T3:    ts = L"T3"; break;
+		case PARAM_Dt:    ts = L"Dt"; break;
+		case PARAM_Trate: ts = L"Trate"; break;
+		default:          ts = L""; break;
+	}
+
+	int result = pwStringCopy(StrBuf, StrSize, ts);
+	return result;
 }
 
-
+//******************************************************************************
 extern "C" __declspec(dllexport) int __stdcall stateName(int* StateNum, int* StrSize, wchar_t* StrBuf, int dummy)
 {
-	const wchar_t* str;
-	int stringLength;
+	const wchar_t* ts;
 
-	if (*StateNum == STATE_TurbPower) {
-		str = L"Turbine Power";
+	switch (*StateNum)
+	{
+		case STATE_TurbPower: ts = L"Turbine Power"; break;
+		case STATE_ValvePos:  ts = L"Valve Position"; break;
+		default:              ts = L""; break;
 	}
-	else if (*StateNum == STATE_ValvePos) {
-		str = L"Valve Position";
-	}
-	else {
-        str = L"";
-	}
-	
-    stringLength = pwStringCopy(StrBuf, StrSize, str);
-    return(stringLength);
+
+	int result = pwStringCopy(StrBuf, StrSize, ts);
+	return result;
 }
 
-
-extern "C" __declspec(dllexport) void __stdcall getDefaultParameterValue(TTxMyModelData* ParamsAndStates)
+//******************************************************************************
+/* non specified for this model
+extern "C" __declspec(dllexport) int __stdcall OtherObjectClass(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
 {
-	TDoubleArray& floatParams = *ParamsAndStates->FloatParams;
+    const wchar_t* ts;
 
-	floatParams[PARAM_R] = 0.05;
-	floatParams[PARAM_T1] = 0.5;
-	floatParams[PARAM_Vmax] = 1.0;
-	floatParams[PARAM_Vmin] = 0.0;
-	floatParams[PARAM_T2] = 2.5;
-	floatParams[PARAM_T3] = 7.5;
-	floatParams[PARAM_Dt] = 0.0;
-	floatParams[PARAM_Trate] = 0.0;
+    switch (*Num)
+    {
+        case 0:   ts = L"Bus"; break;
+        default:  ts = L""; break;
+    }
+
+    int result = pwStringCopy(StrBuf, StrSize, ts);
+    return result;
+}
+*/
+
+//******************************************************************************
+/* non specified for this model
+extern "C" __declspec(dllexport) int __stdcall OtherObjectDescription(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
+{
+    const wchar_t* ts;
+
+    switch (*Num)
+    {
+        case 0:   ts = L"Signal Bus"; break;
+        default:  ts = L""; break;
+    }
+
+    int result = pwStringCopy(StrBuf, StrSize, ts);
+    return result;
+}
+*/
+
+//******************************************************************************
+extern "C" __declspec(dllexport) void __stdcall getDefaultParameterValue(TxMyModelData* ParamsAndStates)
+{
+	DoubleArray* pDoubArr;
+
+	// Example TGOV1 parameters
+	pDoubArr = ParamsAndStates->FloatParams;
+	(*pDoubArr)[PARAM_R] = 0.05;
+	(*pDoubArr)[PARAM_T1] = 0.5;
+	(*pDoubArr)[PARAM_Vmax] = 1.0;
+	(*pDoubArr)[PARAM_Vmin] = 0.0;
+	(*pDoubArr)[PARAM_T2] = 2.5;
+	(*pDoubArr)[PARAM_T3] = 7.5;
+	(*pDoubArr)[PARAM_Dt] = 0.0;
+	(*pDoubArr)[PARAM_Trate] = 0.0;
 }
 
-
-extern "C" __declspec(dllexport) int __stdcall SubIntervalPower2Exponent(TTxMyModelData* ParamsAndStates, double* timeStepSeconds)
+/* non specified for this model
+extern "C" __declspec(dllexport) int __stdcall getStringParamDefaultValue(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
 {
+    const wchar_t* ts;
+
+    switch (*Num)
+    {
+        case 0:   ts = L"DefaultString0"; break;
+        default:  ts = L""; break;
+    }
+
+    int result = pwStringCopy(StrBuf, StrSize, ts);
+    return result;
+}
+*/
+
+//******************************************************************************
+/* non specified for this model
+extern "C" __declspec(dllexport) int __stdcall signalSelection(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
+{
+    const wchar_t* ts;
+
+    ts = L""; // there are none!
+    switch (*Num)
+    {
+        case ALG_XXX: ts = L"TSXXX"; break;
+        default:  ts = L""; break;
+    }
+
+    int result = pwStringCopy(StrBuf, StrSize, ts);
+    return result;
+}
+*/
+
+//******************************************************************************
+extern "C" __declspec(dllexport) int __stdcall SubIntervalPower2Exponent(TxMyModelData* ParamsAndStates, double* TimeStepSeconds)
+{
+	// Return an integer value between 0 and 7
+	// This function returns the EXPONENT of 2 for the number subintervals.
+	// Thus, if you want 8 subintervals, then this should return 3 because 2^3 = 8
+	// The maximum number of subintervals allowed is 128, so (2^7) = 128
 	return(0);
 }
 
-
-extern "C" __declspec(dllexport) void __stdcall initializeYourself(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions)
+//******************************************************************************
+extern "C" __declspec(dllexport) void __stdcall initializeYourself(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
-	TDoubleArray& floatParams = *ParamsAndStates->FloatParams;
-	TDoubleArray& states = *ParamsAndStates->States;
-	TDoubleArray& hardCodedSignals = *ParamsAndStates->HardCodedSignals;
-
+	// Parameters,
 	double fR, fTrate;
 	double local_PMech, PMechObjectInitInternal, GenObjectMVABase;
 	unsigned char GovResponseLimits;
-		
-	fR		= floatParams[PARAM_R    ];
-	fTrate	= floatParams[PARAM_Trate];
+
+	DoubleArray* pHardCodedArr;
+	DoubleArray* pFloatParamArr;
+	DoubleArray* pStatesArr;
+
+	//--------------------------------------------------------------------
+	// Setup local array variables to make code easier to read
+	//--------------------------------------------------------------------
+	pHardCodedArr = ParamsAndStates->HardCodedSignals;
+	pFloatParamArr = ParamsAndStates->FloatParams;
+	pStatesArr = ParamsAndStates->States;
+
+	//--------------------------------------------------------------------
+	// Grab States, Params, Algebraics Needed for this method
+	//--------------------------------------------------------------------
+	fR		= (*pFloatParamArr)[PARAM_R    ];
+	fTrate	= (*pFloatParamArr)[PARAM_Trate];
 	
-	PMechObjectInitInternal	= hardCodedSignals[HARDCODE_GOV_InitPmech]; 
-	GenObjectMVABase		= hardCodedSignals[HARDCODE_GOV_GenMVABase];
+	PMechObjectInitInternal	= (*pHardCodedArr)[HARDCODE_GOV_InitPmech]; 
+	GenObjectMVABase		= (*pHardCodedArr)[HARDCODE_GOV_GenMVABase];
 	// Same as Delphi Round: halves go to even, and the integer result wraps modulo 256 into the byte
-	GovResponseLimits		= std::llrint(hardCodedSignals[HARDCODE_GOV_GovResponseLimits]);
+	GovResponseLimits		= std::llrint((*pHardCodedArr)[HARDCODE_GOV_GovResponseLimits]);
 
 	if (fTrate == 0) {
 		fTrate = GenObjectMVABase;
 	}
 
+	//--------------------------------------------------------------------
+	// Back solve to determine the initial states.
+	//--------------------------------------------------------------------
 	local_PMech	= PMechObjectInitInternal;
-	local_PMech = local_PMech*GenObjectMVABase/fTrate;
+	local_PMech = local_PMech*GenObjectMVABase/fTrate;  // jamie 2/9/09
 
 	// Handle the Governor Response Limits Options
     // A value of 1 means it's "Down Only", 2 means it's "Fixed"
     // This automatically change the Vmax and Vmin parameters as necessary.
+
 	switch (GovResponseLimits)
 	{
-	case 1:
-		floatParams[PARAM_Vmax] = local_PMech;
-		if (floatParams[PARAM_Vmin] > local_PMech) {
-			floatParams[PARAM_Vmin] = local_PMech;
+	case 1:  // "Down Only"
+		(*pFloatParamArr)[PARAM_Vmax] = local_PMech;
+		// Make sure Min is less than Max still also...
+		if ((*pFloatParamArr)[PARAM_Vmin] > local_PMech) {
+			(*pFloatParamArr)[PARAM_Vmin] = local_PMech;
 		}
 		break;
-	case 2:
-		floatParams[PARAM_Vmax] = local_PMech;
-		floatParams[PARAM_Vmin] = local_PMech;
+	case 2:  // "Fixed"
+		(*pFloatParamArr)[PARAM_Vmax] = local_PMech;
+		(*pFloatParamArr)[PARAM_Vmin] = local_PMech;
 		break;
-	default:
+	default:  // do nothing otherwise
 		break;
 	}
 
-	hardCodedSignals[HARDCODE_GOV_Pref] = local_PMech*fR;
+	// No Ignored States
 
-	states[STATE_TurbPower] = local_PMech;
-	states[STATE_ValvePos ] = local_PMech;
+	// Must Set the initial PRef value
+	// The following parameters should actually get SET, not read in!
+	(*pHardCodedArr)[HARDCODE_GOV_Pref] = local_PMech*fR;
+
+	// Write out initial state vector
+	(*pStatesArr)[STATE_TurbPower] = local_PMech;
+	(*pStatesArr)[STATE_ValvePos ] = local_PMech;
 }
 
-
-extern "C" __declspec(dllexport) void __stdcall calculateFofX(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, TTxNonWindUpLimits* nonWindUpLimits, TDoubleArray* dotX)
+//******************************************************************************
+extern "C" __declspec(dllexport) void __stdcall calculateFofX(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits, DoubleArray* dotX)
 {
-	TDoubleArray& floatParams = *ParamsAndStates->FloatParams;
-	TDoubleArray& states = *ParamsAndStates->States;
-	TDoubleArray& hardCodedSignals = *ParamsAndStates->HardCodedSignals;
-	TByteArray& activeLimits = *nonWindUpLimits->activeLimits;
-
+	// Parameters
 	double fR, fT1, fT2, fT3;
 	double fInvR, fInvT1, fInvT3;
+
+	// State variables
 	double stateTurbinePower, stateValve;
+
+	// FofX or xdot,
 	double dotStateTurbinePower, dotStateValve;
 	double Pref_In, deltaWPU_In;
+
 	unsigned char fActiveLimitHLState2;
 
-	stateTurbinePower = states[STATE_TurbPower];
-	stateValve        = states[STATE_ValvePos];
+	DoubleArray* pFloatParamArr;
+	DoubleArray* pHardCodedArr;
+	DoubleArray* pStatesArr;
+	ByteArray* pByteActiveLimitArr;
+	DoubleArray* pDotXArr;
 
-	fR  = floatParams[PARAM_R ];
-	fT1 = floatParams[PARAM_T1];
-	fT2 = floatParams[PARAM_T2];
-	fT3 = floatParams[PARAM_T3];
+	//--------------------------------------------------------------------
+	// Setup local array variables to make code easier to read
+	//--------------------------------------------------------------------
+	pHardCodedArr = ParamsAndStates->HardCodedSignals;
+	pFloatParamArr = ParamsAndStates->FloatParams;
+	pStatesArr = ParamsAndStates->States;
+	pByteActiveLimitArr = nonWindUpLimits->activeLimits;
+	pDotXArr = dotX;
 
-	Pref_In     = hardCodedSignals[HARDCODE_GOV_Pref               ];
-	deltaWPU_In = hardCodedSignals[HARDCODE_GOV_GenSpeedDeviationPU];
+	//--------------------------------------------------------------------
+	// Grab States, Params, Algebraics Needed for this method
+	//--------------------------------------------------------------------
+	stateTurbinePower = (*pStatesArr)[STATE_TurbPower];
+	stateValve        = (*pStatesArr)[STATE_ValvePos];
 
+	fR  = (*pFloatParamArr)[PARAM_R ];
+	fT1 = (*pFloatParamArr)[PARAM_T1];
+	fT2 = (*pFloatParamArr)[PARAM_T2];
+	fT3 = (*pFloatParamArr)[PARAM_T3];
+
+	Pref_In     = (*pHardCodedArr)[HARDCODE_GOV_Pref               ];
+	deltaWPU_In = (*pHardCodedArr)[HARDCODE_GOV_GenSpeedDeviationPU];
+
+	// Calculate Inverse of appropriate values
 	if (fR  == 0) {
 		fInvR  = 0;
 	}
@@ -211,11 +303,17 @@ extern "C" __declspec(dllexport) void __stdcall calculateFofX(TTxMyModelData* Pa
 		fInvT3 = 1/fT3;
 	}
 
-	fActiveLimitHLState2 = activeLimits[NONWINDUPINDEX_ValvePos];
+	//--------------------------------------------------------------------
+	// fActiveLimitHL = 0 means not active, 1 means high limit, 2 means low limit
+	fActiveLimitHLState2 = (*pByteActiveLimitArr)[NONWINDUPINDEX_ValvePos];  // Only one nonwindup limit, so index is 0
 
+	// dot state 2
 	dotStateValve = fInvT1*((Pref_In - deltaWPU_In)*fInvR - stateValve);
 
+	// Note: state 2 has a limit, and when that limit is active, we want dotStateValve to be zero.
 	if (fActiveLimitHLState2 > 0) {
+		// 1 indicates it's stuck at the HIGH limit
+		// 2 indicates it's stuck at the LOW limit
 		if ((fActiveLimitHLState2 == 1) && (dotStateValve > 0)) {
 			dotStateValve = 0;
 		}
@@ -224,59 +322,71 @@ extern "C" __declspec(dllexport) void __stdcall calculateFofX(TTxMyModelData* Pa
 		}
 	}
 
+	// dot state 1
 	dotStateTurbinePower = fInvT3*(stateValve + fT2*dotStateValve - stateTurbinePower);
 
-	(*dotX)[STATE_TurbPower] = dotStateTurbinePower;
-	(*dotX)[STATE_ValvePos ] = dotStateValve;
+	//--------------------------------------------------------------------
+	// Push the resulting derivatives to the appropriate memory
+	//--------------------------------------------------------------------
+	(*pDotXArr)[STATE_TurbPower] = dotStateTurbinePower;
+	(*pDotXArr)[STATE_ValvePos ] = dotStateValve;
 }
 
-
-extern "C" __declspec(dllexport) void __stdcall PropagateIgnoredStateAndInput(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions)
+//******************************************************************************
+extern "C" __declspec(dllexport) void __stdcall PropagateIgnoredStateAndInput(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
-
+    // no ignored states or handling of algebraics here
 }
 
-
-extern "C" __declspec(dllexport) int __stdcall getNonWindUpLimits(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions, TTxNonWindUpLimits* nonWindUpLimits)
+//******************************************************************************
+extern "C" __declspec(dllexport) int __stdcall getNonWindUpLimits(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits)
 {
-	TDoubleArray& floatParams = *ParamsAndStates->FloatParams;
-	TDoubleArray& minLimits = *nonWindUpLimits->minLimits;
-	TDoubleArray& maxLimits = *nonWindUpLimits->maxLimits;
-	TIntegerArray& limitStates = *nonWindUpLimits->limitStates;
+	DoubleArray* pFloatParamArr;
 
+	pFloatParamArr = ParamsAndStates->FloatParams;
+	(*nonWindUpLimits->LimitStates)[NONWINDUPINDEX_ValvePos] = STATE_ValvePos;
 
-	limitStates[NONWINDUPINDEX_ValvePos] = STATE_ValvePos;
+	(*nonWindUpLimits->minLimits)[NONWINDUPINDEX_ValvePos] = (*pFloatParamArr)[PARAM_Vmin];
 
-	minLimits[NONWINDUPINDEX_ValvePos] = floatParams[PARAM_Vmin];
+	(*nonWindUpLimits->maxLimits)[NONWINDUPINDEX_ValvePos] = (*pFloatParamArr)[PARAM_Vmax];
 
-	maxLimits[NONWINDUPINDEX_ValvePos] = floatParams[PARAM_Vmax];
-
-	return(N_NONWINDUPLIMITS);
+	return(1);   // only one state has a non windup limit
 }
 
-
-extern "C" __declspec(dllexport) double __stdcall GovernorPmechOut(TTxMyModelData* ParamsAndStates, TTxSystemOptions* SystemOptions)
+extern "C" __declspec(dllexport) double __stdcall GovernorPmechOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
-	TDoubleArray& floatParams = *ParamsAndStates->FloatParams;
-	TDoubleArray& states = *ParamsAndStates->States;
-	TDoubleArray& hardCodedSignals = *ParamsAndStates->HardCodedSignals;
-
 	double fDt, fTrate;
-    double stateTurbinePower;
-    double GenObjectMVABase, deltaWPU_In;
+	double stateTurbinePower;
+	double GenObjectMVABase, deltaWPU_In;
+	DoubleArray* pFloatParamArr;
+	DoubleArray* pStatesArr;
+	DoubleArray* pHardCodedArr;
 
-	stateTurbinePower = states[STATE_TurbPower];
+	//--------------------------------------------------------------------
+	// Setup local array variables to make code easier to read
+	//--------------------------------------------------------------------
+	pFloatParamArr = ParamsAndStates->FloatParams;
+	pStatesArr = ParamsAndStates->States;
+	pHardCodedArr = ParamsAndStates->HardCodedSignals;
 
-	fDt		= floatParams[PARAM_Dt   ];
-	fTrate	= floatParams[PARAM_Trate];
+	//--------------------------------------------------------------------
+	// Grab States, Params, Algebraics Needed for this method
+	//--------------------------------------------------------------------
+	stateTurbinePower = (*pStatesArr)[STATE_TurbPower];
 
-	GenObjectMVABase = hardCodedSignals[HARDCODE_GOV_GenMVABase         ];
-	deltaWPU_In      = hardCodedSignals[HARDCODE_GOV_GenSpeedDeviationPU];
+	fDt		= (*pFloatParamArr)[PARAM_Dt   ];
+	fTrate	= (*pFloatParamArr)[PARAM_Trate];
+
+	GenObjectMVABase = (*pHardCodedArr)[HARDCODE_GOV_GenMVABase         ];
+	deltaWPU_In      = (*pHardCodedArr)[HARDCODE_GOV_GenSpeedDeviationPU];
 
 	if (fTrate == 0) {
 		fTrate = GenObjectMVABase;
 	}
 
+	//--------------------------------------------------------------------
+	// Calculate Pmech output
+	//--------------------------------------------------------------------
 	return((stateTurbinePower - fDt*deltaWPU_In)/GenObjectMVABase*fTrate);
 }
 
