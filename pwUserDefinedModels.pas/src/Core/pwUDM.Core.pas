@@ -20,8 +20,6 @@ type
   PByteArray         = ^TByteArray;
   TBooleanArray      = array[0..MaxInt div 8] of Boolean;
   PBooleanArray      = ^TBooleanArray;
-  TStringParamsArray = array[0..MaxInt div 480] of string;
-  PStringParamsArray = ^TStringParamsArray;
   //----------------------------------------------------------------------------
 
 type
