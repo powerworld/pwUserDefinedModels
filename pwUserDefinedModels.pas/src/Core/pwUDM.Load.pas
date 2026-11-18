@@ -29,15 +29,15 @@ const
 // The signatures of the Load-specific routines a model exports. The model unit checks its routines
 // against these types at compile time (see the end of its implementation section).
 type
-  TLoadNortonAdmittance = procedure(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; theG : PDouble; theB : PDouble); stdcall;
-  TLoadNortonCurrent = procedure(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; IReal : PDouble; IImag : PDouble); stdcall;
-  TLoadNortonCurrentAlgebraicDerivative = procedure(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; IReal_dVreal : PDouble; IReal_dVimag : PDouble; IImag_dVreal : PDouble; IImag_dVimag : PDouble); stdcall;
+  TLoadNortonAdmittance = procedure(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; theG : PDouble; theB : PDouble);
+  TLoadNortonCurrent = procedure(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; IReal : PDouble; IImag : PDouble);
+  TLoadNortonCurrentAlgebraicDerivative = procedure(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; IReal_dVreal : PDouble; IReal_dVimag : PDouble; IImag_dVreal : PDouble; IImag_dVimag : PDouble);
   // InitLoadP and InitLoadQ will most frequently
   // be equal to the SteadyStateP and SteadyStateQ
   // Any difference will be automatically made-up for within
   // Simulator by embedding an impedance with the load that makes the
   // NetP and NetQ match SteadyStateP and SteadyStateQ initially
-  TLoadInitializeAlgebraic = function(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; INPUT_PUTol, SteadyStateP, SteadyStateQ, SteadyStateV : Double; InitLoadP, InitLoadQ : PDouble) : boolean; stdcall;
+  TLoadInitializeAlgebraic = function(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; INPUT_PUTol, SteadyStateP, SteadyStateQ, SteadyStateV : Double; InitLoadP, InitLoadQ : PDouble) : boolean;
 
 implementation
 

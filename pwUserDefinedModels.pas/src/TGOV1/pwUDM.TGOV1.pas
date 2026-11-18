@@ -41,22 +41,22 @@ const
 
 // The routines below are the DLL contract that Simulator calls: each one is exported by the
 // exports clause that follows them (the optional ones are commented out unless the model needs them)
-function DLLVersion:Integer; stdcall;
-function modelClassName(StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer; stdcall;
-procedure allParamCounts(numbersOfEverything : PTxParamCounts; TimeStepSeconds : PDouble); stdcall;
-function parameterName(ParamNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
-function stateName(StateNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
-// function OtherObjectClass(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
-// function OtherObjectDescription(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
-procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData); stdcall;
-// function getStringParamDefaultValue(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
-// function signalSelection(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer; stdcall;
-function SubIntervalPower2Exponent(ParamsAndStates : PTxMyModelData; TimeStepSeconds : PDouble) : integer; stdcall;
-procedure initializeYourself(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions); stdcall;
-procedure calculateFofX(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits; dotX : PDoubleArray); stdcall;
-procedure PropagateIgnoredStateAndInput(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions); stdcall;
-function getNonWindUpLimits(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits): Integer; stdcall;
-function GovernorPmechOut(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions) : double; stdcall;
+function DLLVersion:Integer;
+function modelClassName(StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer;
+procedure allParamCounts(numbersOfEverything : PTxParamCounts; TimeStepSeconds : PDouble);
+function parameterName(ParamNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
+function stateName(StateNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
+// function OtherObjectClass(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
+// function OtherObjectDescription(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
+procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData);
+// function getStringParamDefaultValue(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
+// function signalSelection(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer;
+function SubIntervalPower2Exponent(ParamsAndStates : PTxMyModelData; TimeStepSeconds : PDouble) : integer;
+procedure initializeYourself(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions);
+procedure calculateFofX(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits; dotX : PDoubleArray);
+procedure PropagateIgnoredStateAndInput(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions);
+function getNonWindUpLimits(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits): Integer;
+function GovernorPmechOut(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions) : double;
 
 exports DLLVersion
         , modelClassName
@@ -94,7 +94,7 @@ end;
 //******************************************************************************
 function modelClassName(StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer;
 begin
-  result := pwStringCopy(StrBuf, StrSize, pwModelClassString(mcGovernor));
+  result := pwProvideString(StrBuf, StrSize, pwModelClassString(mcGovernor));
 end;
 
 //******************************************************************************
@@ -128,7 +128,7 @@ begin
     PARAM_Trate : ts := 'Trate';
     else          ts := '';
   end;
-  result := pwStringCopy(StrBuf, StrSize, ts);
+  result := pwProvideString(StrBuf, StrSize, ts);
 end;
 
 //******************************************************************************
@@ -140,32 +140,32 @@ begin
     STATE_ValvePos  : ts := 'Valve Position';
    else ts := '';
   end;
-  result := pwStringCopy(StrBuf, StrSize, ts);
+  result := pwProvideString(StrBuf, StrSize, ts);
 end;
 
 //******************************************************************************
 { non specified for this model
-function OtherObjectClass(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+function OtherObjectClass(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
 var ts : PChar;
 begin
   case Num^ of
     0 : ts := 'Bus';
    else ts := '';
   end;
-  result := pwStringCopy(StrBuf, StrSize, ts);
+  result := pwProvideString(StrBuf, StrSize, ts);
 end;
 }
 
 //******************************************************************************
 { non specified for this model
-function OtherObjectDescription(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+function OtherObjectDescription(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
 var ts : PChar;
 begin
   case Num^ of
     0 : ts := 'Signal Bus';
    else ts := '';
   end;
-  result := pwStringCopy(StrBuf, StrSize, ts);
+  result := pwProvideString(StrBuf, StrSize, ts);
 end;
 }
 
@@ -186,20 +186,20 @@ begin
 end;
 
 { non specified for this model
-function getStringParamDefaultValue(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+function getStringParamDefaultValue(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
 var ts : PChar;
 begin
   case Num^ of
     0 : ts := 'DefaultString0';
    else ts := '';
   end;
-  result := pwStringCopy(StrBuf, StrSize, ts);
+  result := pwProvideString(StrBuf, StrSize, ts);
 end;
 }
 
 { non specified for this model
 //******************************************************************************
-function signalSelection(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer; stdcall;
+function signalSelection(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer;
 var ts : PChar;
 begin
   ts := ''; // there are none!
@@ -207,7 +207,7 @@ begin
     ALG_XXX         : ts := 'TSXXX';
    else ts := '';
   end;
-  result := pwStringCopy(StrBuf, StrSize, ts);
+  result := pwProvideString(StrBuf, StrSize, ts);
 end;
 }
 

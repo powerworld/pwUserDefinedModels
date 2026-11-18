@@ -20,7 +20,7 @@ type
   PByteArray         = ^TByteArray;
   TBooleanArray      = array[0..MaxInt div 8] of Boolean;
   PBooleanArray      = ^TBooleanArray;
-  TStringParamsArray = array[0..MaxInt div 480] of string;
+  TStringParamsArray = array[0..MaxInt div 64] of string;
   PStringParamsArray = ^TStringParamsArray;
   //----------------------------------------------------------------------------
 
@@ -31,9 +31,12 @@ type
 // Returns the class name string that Simulator expects for a model class.
 function pwModelClassString(modelClass : TModelClass) : PChar;
 
+// Provides SourceString to Simulator for the name functions that return a string.
+// Simulator owns StrBuf: write into it only during this call, and never keep, free or resize it.
 // Copies SourceString (plus terminator) into StrBuf when it is non-empty and fits in StrSize^.
-// Always returns the length of SourceString so the caller can retry with a larger buffer.
-function pwStringCopy(StrBuf : PChar; StrSize : PInteger; SourceString : PChar) : Integer;
+// Always returns the length of SourceString, so Simulator can ask first with StrSize^ = 0
+// (and no buffer) and then supply a buffer of that length.
+function pwProvideString(StrBuf : PChar; StrSize : PInteger; SourceString : PChar) : Integer;
 
 //------------------------------------------------------------------------------
 // These types should be the same for all models and model types
@@ -90,23 +93,23 @@ type
 // The DLL contract: the signature of each routine a model exports. Each model unit checks
 // its routines against these types at compile time (see the end of its implementation section).
 type
-  TDLLVersion = function: Integer; stdcall;
-  TModelClassName = function(StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer; stdcall;
-  TAllParamCounts = procedure(numbersOfEverything : PTxParamCounts; TimeStepSeconds : PDouble); stdcall;
-  TParameterName = function(ParamNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
-  TStateName = function(StateNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
-  TOtherObjectClass = function(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
-  TOtherObjectDescription = function(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
-  TGetDefaultParameterValue = procedure(ParamsAndStates : PTxMyModelData); stdcall;
-  TGetStringParamDefaultValue = function(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
-  TSignalSelection = function(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer; stdcall;
-  TSubIntervalPower2Exponent = function(ParamsAndStates : PTxMyModelData; TimeStepSeconds : PDouble) : integer; stdcall;
-  TInitializeYourself = procedure(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions); stdcall;
-  TCalculateFofX = procedure(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits; dotX : PDoubleArray); stdcall;
-  TPropagateIgnoredStateAndInput = procedure(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions); stdcall;
-  TGetNonWindUpLimits = function(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits): Integer; stdcall;
-  TTimeStepEnd = function(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; index : PInteger; MaxPossibleEventIndex : PInteger; EventTime : PDouble; ExtraObjectIndex : PInteger) : boolean; stdcall;
-  TTimeStepEndAction = function(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; index : PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer; stdcall;
+  TDLLVersion = function: Integer;
+  TModelClassName = function(StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer;
+  TAllParamCounts = procedure(numbersOfEverything : PTxParamCounts; TimeStepSeconds : PDouble);
+  TParameterName = function(ParamNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
+  TStateName = function(StateNum: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
+  TOtherObjectClass = function(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
+  TOtherObjectDescription = function(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
+  TGetDefaultParameterValue = procedure(ParamsAndStates : PTxMyModelData);
+  TGetStringParamDefaultValue = function(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
+  TSignalSelection = function(Num: PInteger; StrSize: PInteger; StrBuf: PChar; dummy: Integer): Integer;
+  TSubIntervalPower2Exponent = function(ParamsAndStates : PTxMyModelData; TimeStepSeconds : PDouble) : integer;
+  TInitializeYourself = procedure(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions);
+  TCalculateFofX = procedure(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits; dotX : PDoubleArray);
+  TPropagateIgnoredStateAndInput = procedure(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions);
+  TGetNonWindUpLimits = function(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits): Integer;
+  TTimeStepEnd = function(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; index : PInteger; MaxPossibleEventIndex : PInteger; EventTime : PDouble; ExtraObjectIndex : PInteger) : boolean;
+  TTimeStepEndAction = function(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; index : PInteger; StrSize: PInteger; StrBuf: PChar; dummy : Integer): Integer;
 
 implementation
 
@@ -128,7 +131,7 @@ begin
   end;
 end;
 
-function pwStringCopy(StrBuf : PChar; StrSize : PInteger; SourceString : PChar) : Integer;
+function pwProvideString(StrBuf : PChar; StrSize : PInteger; SourceString : PChar) : Integer;
 begin
   result := length(SourceString);
   if (result > 0) and (StrSize^ >= Result) then strcopy(StrBuf, SourceString);

@@ -28,7 +28,7 @@ const
 // The signatures of the Governor-specific routines a model exports. The model unit checks its routines
 // against these types at compile time (see the end of its implementation section).
 type
-  TGovernorPmechOut = function(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions) : double; stdcall;
+  TGovernorPmechOut = function(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions) : double;
 
 implementation
 
