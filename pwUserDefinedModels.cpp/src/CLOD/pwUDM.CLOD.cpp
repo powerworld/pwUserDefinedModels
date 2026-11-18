@@ -506,20 +506,20 @@ double GetZIP_Total(double local_VoltMag, double fZVal, double fIVal, double fSV
 namespace pwUDM::CLOD {
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall DLLVersion()
+extern "C" __declspec(dllexport) int DLLVersion()
 {
     return(1);
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall modelClassName(int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int modelClassName(int* StrSize, char16_t* StrBuf, int dummy)
 {
-    int result = pwStringCopy(StrBuf, StrSize, pwModelClassString(ModelClass::Load));
+    int result = pwProvideString(StrBuf, StrSize, pwModelClassString(ModelClass::Load));
     return result;
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall allParamCounts(TxParamCounts* numbersOfEverything, double* TimeStepSeconds)
+extern "C" __declspec(dllexport) void allParamCounts(TxParamCounts* numbersOfEverything, double* TimeStepSeconds)
 {
     // -------The model-specific parameters-----
     numbersOfEverything->nFloatParams  = N_F_PARAMS;
@@ -532,85 +532,85 @@ extern "C" __declspec(dllexport) void __stdcall allParamCounts(TxParamCounts* nu
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall parameterName(int* ParamNum, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int parameterName(int* ParamNum, int* StrSize, char16_t* StrBuf, int dummy)
 {
-    const wchar_t* ts;
+    const char16_t* ts;
 
     // Double parameters
     switch ((*ParamNum))
     {
-        case PARAM_PercLmotor: ts = L"%Lmotor"; break;
-        case PARAM_PercSmotor: ts = L"%Smotor"; break;
-        case PARAM_PercTex:    ts = L"%Tex"; break;
-        case PARAM_PercDis:    ts = L"%Dis"; break;
-        case PARAM_PercP:      ts = L"%P"; break;
-        case PARAM_Kp:         ts = L"Kp"; break;
-        case PARAM_Vi:         ts = L"Low V Trip Pickup (pu)"; break;
-        case PARAM_Ti:         ts = L"Low V Trip Timer (sec)"; break;
-        case PARAM_Tb:         ts = L"Low V Trip Breaker Delay (sec)"; break;
-        default:               ts = L""; break;
+        case PARAM_PercLmotor: ts = u"%Lmotor"; break;
+        case PARAM_PercSmotor: ts = u"%Smotor"; break;
+        case PARAM_PercTex:    ts = u"%Tex"; break;
+        case PARAM_PercDis:    ts = u"%Dis"; break;
+        case PARAM_PercP:      ts = u"%P"; break;
+        case PARAM_Kp:         ts = u"Kp"; break;
+        case PARAM_Vi:         ts = u"Low V Trip Pickup (pu)"; break;
+        case PARAM_Ti:         ts = u"Low V Trip Timer (sec)"; break;
+        case PARAM_Tb:         ts = u"Low V Trip Breaker Delay (sec)"; break;
+        default:               ts = u""; break;
     }
 
-    int result = pwStringCopy(StrBuf, StrSize, ts);
+    int result = pwProvideString(StrBuf, StrSize, ts);
     return result;
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall stateName(int* StateNum, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int stateName(int* StateNum, int* StrSize, char16_t* StrBuf, int dummy)
 {
-    const wchar_t* ts;
+    const char16_t* ts;
 
     switch (*StateNum)
     {
-        case STATE_IM1SpeedWr: ts = L"IM 1 Speed wr"; break;
-        case STATE_IM1Epr:     ts = L"IM 1 Epr"; break;
-        case STATE_IM1Epi:     ts = L"IM 1 Epi"; break;
-        case STATE_IM2SpeedWr: ts = L"IM 2 Speed wr"; break;
-        case STATE_IM2Epr:     ts = L"IM 2 Epr"; break;
-        case STATE_IM2Epi:     ts = L"IM 2 Epi"; break;
-        default:               ts = L""; break;
+        case STATE_IM1SpeedWr: ts = u"IM 1 Speed wr"; break;
+        case STATE_IM1Epr:     ts = u"IM 1 Epr"; break;
+        case STATE_IM1Epi:     ts = u"IM 1 Epi"; break;
+        case STATE_IM2SpeedWr: ts = u"IM 2 Speed wr"; break;
+        case STATE_IM2Epr:     ts = u"IM 2 Epr"; break;
+        case STATE_IM2Epi:     ts = u"IM 2 Epi"; break;
+        default:               ts = u""; break;
     }
 
-    int result = pwStringCopy(StrBuf, StrSize, ts);
+    int result = pwProvideString(StrBuf, StrSize, ts);
     return result;
 }
 
 //******************************************************************************
 /* non specified for this model
-extern "C" __declspec(dllexport) int __stdcall OtherObjectClass(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int OtherObjectClass(int* Num, int* StrSize, char16_t* StrBuf, int dummy)
 {
-    const wchar_t* ts;
+    const char16_t* ts;
 
     switch (*Num)
     {
-        case 0:   ts = L"Bus"; break;
-        default:  ts = L""; break;
+        case 0:   ts = u"Bus"; break;
+        default:  ts = u""; break;
     }
 
-    int result = pwStringCopy(StrBuf, StrSize, ts);
+    int result = pwProvideString(StrBuf, StrSize, ts);
     return result;
 }
 */
 
 //******************************************************************************
 /* non specified for this model
-extern "C" __declspec(dllexport) int __stdcall OtherObjectDescription(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int OtherObjectDescription(int* Num, int* StrSize, char16_t* StrBuf, int dummy)
 {
-    const wchar_t* ts;
+    const char16_t* ts;
 
     switch (*Num)
     {
-        case 0:   ts = L"Signal Bus"; break;
-        default:  ts = L""; break;
+        case 0:   ts = u"Signal Bus"; break;
+        default:  ts = u""; break;
     }
 
-    int result = pwStringCopy(StrBuf, StrSize, ts);
+    int result = pwProvideString(StrBuf, StrSize, ts);
     return result;
 }
 */
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall getDefaultParameterValue(TxMyModelData* ParamsAndStates)
+extern "C" __declspec(dllexport) void getDefaultParameterValue(TxMyModelData* ParamsAndStates)
 {
     DoubleArray* pDoubArr;
 
@@ -628,24 +628,24 @@ extern "C" __declspec(dllexport) void __stdcall getDefaultParameterValue(TxMyMod
 
 /* non specified for this model
 
-extern "C" __declspec(dllexport) int __stdcall signalSelection(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int signalSelection(int* Num, int* StrSize, char16_t* StrBuf, int dummy)
 {
-    const wchar_t* ts;
+    const char16_t* ts;
 
-    ts = L""; // there are none!
+    ts = u""; // there are none!
     switch (*Num)
     {
-        case ALG_XXX: ts = L"TSXXX"; break;
-        default:  ts = L""; break;
+        case ALG_XXX: ts = u"TSXXX"; break;
+        default:  ts = u""; break;
     }
 
-    int result = pwStringCopy(StrBuf, StrSize, ts);
+    int result = pwProvideString(StrBuf, StrSize, ts);
     return result;
 }
 */
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall SubIntervalPower2Exponent(TxMyModelData* ParamsAndStates, double* TimeStepSeconds)
+extern "C" __declspec(dllexport) int SubIntervalPower2Exponent(TxMyModelData* ParamsAndStates, double* TimeStepSeconds)
 {
     // Return an integer value between 0 and 7
     // This function returns the EXPONENT of 2 for the number subintervals.
@@ -655,7 +655,7 @@ extern "C" __declspec(dllexport) int __stdcall SubIntervalPower2Exponent(TxMyMod
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall initializeYourself(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
+extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
     //--------------------------------------------------------------------------
     auto LOCAL_InitalizeMotor = [&](PWDComplex LoadObjBusVolt_In,
@@ -792,7 +792,7 @@ extern "C" __declspec(dllexport) void __stdcall initializeYourself(TxMyModelData
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall calculateFofX(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits, DoubleArray* dotX)
+extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits, DoubleArray* dotX)
 {
     auto LOCAL_GetMotorDerivatives = [&](PWDComplex LoadObjBusVolt_In,
                                          bool inService_In,
@@ -929,20 +929,20 @@ extern "C" __declspec(dllexport) void __stdcall calculateFofX(TxMyModelData* Par
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall PropagateIgnoredStateAndInput(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
+extern "C" __declspec(dllexport) void PropagateIgnoredStateAndInput(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
     // nothing here
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall getNonWindUpLimits(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits)
+extern "C" __declspec(dllexport) int getNonWindUpLimits(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits)
 {
     return(0);   // None
 }
 
 //------------------------------------------------------------------------------
 // 'TimeStepEnd'
-extern "C" __declspec(dllexport) bool __stdcall TimeStepEnd(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, int* index, int* MaxPossibleEventIndex, double* EventTime, int* ExtraObjectIndex)
+extern "C" __declspec(dllexport) bool TimeStepEnd(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, int* index, int* MaxPossibleEventIndex, double* EventTime, int* ExtraObjectIndex)
 {
     double local_NewTime;
     double fVi, fTi, fTb;
@@ -1002,22 +1002,22 @@ extern "C" __declspec(dllexport) bool __stdcall TimeStepEnd(TxMyModelData* Param
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall TimeStepEndAction(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, int* index, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int TimeStepEndAction(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, int* index, int* StrSize, char16_t* StrBuf, int dummy)
 {
-    const wchar_t* ts;
+    const char16_t* ts;
 
     // Anything after the last Pipe character | will be treated as an extra log message to show in event reporting
     switch (*index)
     {
-        case 0: ts = L"OPEN|User_CLOD Under Voltage Trip: "; break;
-        default: ts = L""; break;
+        case 0: ts = u"OPEN|User_CLOD Under Voltage Trip: "; break;
+        default: ts = u""; break;
     }
 
-    int result = pwStringCopy(StrBuf, StrSize, ts);
+    int result = pwProvideString(StrBuf, StrSize, ts);
     return result;
 }
 
-extern "C" __declspec(dllexport) void __stdcall LoadNortonAdmittance(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* theG, double* theB)
+extern "C" __declspec(dllexport) void LoadNortonAdmittance(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* theG, double* theB)
 {
     double t;
     double IML_Rs, IML_Xp;
@@ -1068,7 +1068,7 @@ extern "C" __declspec(dllexport) void __stdcall LoadNortonAdmittance(TxMyModelDa
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall LoadNortonCurrent(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* IReal, double* IImag)
+extern "C" __declspec(dllexport) void LoadNortonCurrent(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* IReal, double* IImag)
 {
     PWDComplex ImpSys;
     PWDComplex IntVolt;
@@ -1229,7 +1229,7 @@ extern "C" __declspec(dllexport) void __stdcall LoadNortonCurrent(TxMyModelData*
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall LoadNortonCurrentAlgebraicDerivative(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* IReal_dVreal, double* IReal_dVimag, double* IImag_dVreal, double* IImag_dVimag)
+extern "C" __declspec(dllexport) void LoadNortonCurrentAlgebraicDerivative(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* IReal_dVreal, double* IReal_dVimag, double* IImag_dVreal, double* IImag_dVimag)
 {
 //{****************************************************************************************************************}
 //  { Class Procedure TTxDynamicLoadModel.CurrentDerivativesExponentialVoltage returns with the derivatives of the current w.r.t. to the rectangular
@@ -1481,7 +1481,7 @@ extern "C" __declspec(dllexport) void __stdcall LoadNortonCurrentAlgebraicDeriva
 // Any difference will be automatically made-up for within
 // Simulator by embedding an impedance with the load that makes the
 // NetP and NetQ match SteadyStateP and SteadyStateQ initially
-extern "C" __declspec(dllexport) bool __stdcall LoadInitializeAlgebraic(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double INPUT_PUTol, double SteadyStateP, double SteadyStateQ, double SteadyStateV, double* InitLoadP, double* InitLoadQ)
+extern "C" __declspec(dllexport) bool LoadInitializeAlgebraic(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double INPUT_PUTol, double SteadyStateP, double SteadyStateQ, double SteadyStateV, double* InitLoadP, double* InitLoadQ)
 {
     //----------------------------------------------------------------------------
     auto LOCAL_InitializeAlgebraicMotor = [&](double INPUT_PUTol, double loadObjNomFreq_In, double SteadyStateV,

@@ -18,8 +18,8 @@ inline constexpr int HARDCODE_STAB_BusVoltMagPU        = 4;
 inline constexpr int HARDCODE_STAB_GenVcomp            = 5;
 
 // These functions need to be exported in the DLL
-extern "C" __declspec(dllexport) double __stdcall StabilizerVsOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
+extern "C" __declspec(dllexport) double StabilizerVsOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
 // The following function is optional: export it from a model only if it needs it
-extern "C" __declspec(dllexport) double __stdcall StabilizerPitchOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
+extern "C" __declspec(dllexport) double StabilizerPitchOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
 
 }

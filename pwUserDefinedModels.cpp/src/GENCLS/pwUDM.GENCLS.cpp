@@ -7,20 +7,20 @@ import pwUDM.Machine;
 namespace pwUDM::GENCLS {
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall DLLVersion()
+extern "C" __declspec(dllexport) int DLLVersion()
 {
 	return(1);
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall modelClassName(int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int modelClassName(int* StrSize, char16_t* StrBuf, int dummy)
 {	
-    int result = pwStringCopy(StrBuf, StrSize, pwModelClassString(ModelClass::Machine));
+    int result = pwProvideString(StrBuf, StrSize, pwModelClassString(ModelClass::Machine));
     return result;
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall allParamCounts(TxParamCounts* numbersOfEverything, double* TimeStepSeconds)
+extern "C" __declspec(dllexport) void allParamCounts(TxParamCounts* numbersOfEverything, double* TimeStepSeconds)
 {
 	// The model-specific parameters
 	numbersOfEverything->nFloatParams = N_F_PARAMS;
@@ -33,77 +33,77 @@ extern "C" __declspec(dllexport) void __stdcall allParamCounts(TxParamCounts* nu
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall parameterName(int* ParamNum, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int parameterName(int* ParamNum, int* StrSize, char16_t* StrBuf, int dummy)
 {
-	const wchar_t* ts;
+	const char16_t* ts;
 
 	switch (*ParamNum)
 	{
-		case PARAM_H:     ts = L"H"; break;
-		case PARAM_D:     ts = L"D"; break;
-		case PARAM_Ra:    ts = L"Ra"; break;
-		case PARAM_Xdp:   ts = L"Xdp"; break;
-		case PARAM_Rcomp: ts = L"Rcomp"; break;
-		case PARAM_Xcomp: ts = L"Xcomp"; break;
-		default:          ts = L""; break;
+		case PARAM_H:     ts = u"H"; break;
+		case PARAM_D:     ts = u"D"; break;
+		case PARAM_Ra:    ts = u"Ra"; break;
+		case PARAM_Xdp:   ts = u"Xdp"; break;
+		case PARAM_Rcomp: ts = u"Rcomp"; break;
+		case PARAM_Xcomp: ts = u"Xcomp"; break;
+		default:          ts = u""; break;
 	}
 
-	int result = pwStringCopy(StrBuf, StrSize, ts);
+	int result = pwProvideString(StrBuf, StrSize, ts);
 	return result;
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall stateName(int* StateNum, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int stateName(int* StateNum, int* StrSize, char16_t* StrBuf, int dummy)
 {
-	const wchar_t* ts;
+	const char16_t* ts;
 
 	switch (*StateNum)
 	{
-		case STATE_Angle: ts = L"Angle"; break;
-		case STATE_Speed: ts = L"Speed"; break;
-		default:          ts = L""; break;
+		case STATE_Angle: ts = u"Angle"; break;
+		case STATE_Speed: ts = u"Speed"; break;
+		default:          ts = u""; break;
 	}
 
-	int result = pwStringCopy(StrBuf, StrSize, ts);
+	int result = pwProvideString(StrBuf, StrSize, ts);
 	return result;
 }
 
 //******************************************************************************
 /* non specified for this model
-extern "C" __declspec(dllexport) int __stdcall OtherObjectClass(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int OtherObjectClass(int* Num, int* StrSize, char16_t* StrBuf, int dummy)
 {
-    const wchar_t* ts;
+    const char16_t* ts;
 
     switch (*Num)
     {
-        case 0:   ts = L"Bus"; break;
-        default:  ts = L""; break;
+        case 0:   ts = u"Bus"; break;
+        default:  ts = u""; break;
     }
 
-    int result = pwStringCopy(StrBuf, StrSize, ts);
+    int result = pwProvideString(StrBuf, StrSize, ts);
     return result;
 }
 */
 
 //******************************************************************************
 /* non specified for this model
-extern "C" __declspec(dllexport) int __stdcall OtherObjectDescription(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int OtherObjectDescription(int* Num, int* StrSize, char16_t* StrBuf, int dummy)
 {
-    const wchar_t* ts;
+    const char16_t* ts;
 
     switch (*Num)
     {
-        case 0:   ts = L"Signal Bus"; break;
-        default:  ts = L""; break;
+        case 0:   ts = u"Signal Bus"; break;
+        default:  ts = u""; break;
     }
 
-    int result = pwStringCopy(StrBuf, StrSize, ts);
+    int result = pwProvideString(StrBuf, StrSize, ts);
     return result;
 }
 */
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall getDefaultParameterValue(TxMyModelData* ParamsAndStates)
+extern "C" __declspec(dllexport) void getDefaultParameterValue(TxMyModelData* ParamsAndStates)
 {
 	DoubleArray* pDoubArr;
 
@@ -118,41 +118,41 @@ extern "C" __declspec(dllexport) void __stdcall getDefaultParameterValue(TxMyMod
 }
 
 /* non specified for this model
-extern "C" __declspec(dllexport) int __stdcall getStringParamDefaultValue(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int getStringParamDefaultValue(int* Num, int* StrSize, char16_t* StrBuf, int dummy)
 {
-    const wchar_t* ts;
+    const char16_t* ts;
 
     switch (*Num)
     {
-        case 0:   ts = L"DefaultString0"; break;
-        default:  ts = L""; break;
+        case 0:   ts = u"DefaultString0"; break;
+        default:  ts = u""; break;
     }
 
-    int result = pwStringCopy(StrBuf, StrSize, ts);
+    int result = pwProvideString(StrBuf, StrSize, ts);
     return result;
 }
 */
 
 //******************************************************************************
 /* non specified for this model
-extern "C" __declspec(dllexport) int __stdcall signalSelection(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int signalSelection(int* Num, int* StrSize, char16_t* StrBuf, int dummy)
 {
-    const wchar_t* ts;
+    const char16_t* ts;
 
-    ts = L""; // there are none!
+    ts = u""; // there are none!
     switch (*Num)
     {
-        case ALG_XXX: ts = L"TSXXX"; break;
-        default:  ts = L""; break;
+        case ALG_XXX: ts = u"TSXXX"; break;
+        default:  ts = u""; break;
     }
 
-    int result = pwStringCopy(StrBuf, StrSize, ts);
+    int result = pwProvideString(StrBuf, StrSize, ts);
     return result;
 }
 */
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall SubIntervalPower2Exponent(TxMyModelData* ParamsAndStates,	double* TimeStepSeconds)
+extern "C" __declspec(dllexport) int SubIntervalPower2Exponent(TxMyModelData* ParamsAndStates,	double* TimeStepSeconds)
 {
 	// Return an integer value between 0 and 7
 	// This function returns the EXPONENT of 2 for the number subintervals.
@@ -162,7 +162,7 @@ extern "C" __declspec(dllexport) int __stdcall SubIntervalPower2Exponent(TxMyMod
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall initializeYourself(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
+extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
     /****************************************************************************************************************/
     /* Four quadrant arctangent function.  Returns values between -Pi and Pi */
@@ -272,7 +272,7 @@ extern "C" __declspec(dllexport) void __stdcall initializeYourself(TxMyModelData
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall calculateFofX(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits, DoubleArray* dotX)
+extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits, DoubleArray* dotX)
 {
 	// First there are the parameters,
 	double H, fInv2H, fD;
@@ -323,20 +323,20 @@ extern "C" __declspec(dllexport) void __stdcall calculateFofX(TxMyModelData* Par
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall PropagateIgnoredStateAndInput(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
+extern "C" __declspec(dllexport) void PropagateIgnoredStateAndInput(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
     // no ignored states or handling of algebraics here
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall getNonWindUpLimits(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits)
+extern "C" __declspec(dllexport) int getNonWindUpLimits(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits)
 {
 	return(0);
 }
 
 //******************************************************************************
 /* non specified for this model
-extern "C" __declspec(dllexport) double __stdcall MachineHighVReactiveCurrentLim(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
+extern "C" __declspec(dllexport) double MachineHighVReactiveCurrentLim(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
     DoubleArray* pFloatParamArr;
 
@@ -347,7 +347,7 @@ extern "C" __declspec(dllexport) double __stdcall MachineHighVReactiveCurrentLim
 
 //******************************************************************************
 /* non specified for this model
-extern "C" __declspec(dllexport) void __stdcall MachineLowVActiveCurrentPoints(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* Lvpnt1, double* Lvpnt0)
+extern "C" __declspec(dllexport) void MachineLowVActiveCurrentPoints(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* Lvpnt1, double* Lvpnt0)
 {
     DoubleArray* pFloatParamArr;
 
@@ -358,7 +358,7 @@ extern "C" __declspec(dllexport) void __stdcall MachineLowVActiveCurrentPoints(T
 */
 
 //******************************************************************************
-extern "C" __declspec(dllexport) double __stdcall MachineSpeedDeviationOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
+extern "C" __declspec(dllexport) double MachineSpeedDeviationOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
 	DoubleArray* pStatesArr;
 
@@ -373,7 +373,7 @@ extern "C" __declspec(dllexport) double __stdcall MachineSpeedDeviationOut(TxMyM
 // (declared in pwUDM.Machine) and remove the two Thevenin functions below.
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall MachineTheveninVoltage(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* Delta, double* Vd, double* Vq)
+extern "C" __declspec(dllexport) void MachineTheveninVoltage(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* Delta, double* Vd, double* Vq)
 {
     DoubleArray* pStatesArr;
     DoubleArray* pHardCodedArr;
@@ -386,13 +386,13 @@ extern "C" __declspec(dllexport) void __stdcall MachineTheveninVoltage(TxMyModel
 }
 
 /* non specified for this model
-extern "C" __declspec(dllexport) void __stdcall MachineNortonCurrent(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* IReal, double* IImag)
+extern "C" __declspec(dllexport) void MachineNortonCurrent(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* IReal, double* IImag)
 {
 }
 */
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall MachineTheveninImpedance(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* theR, double* theX)
+extern "C" __declspec(dllexport) void MachineTheveninImpedance(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* theR, double* theX)
 {
     DoubleArray* pFloatParamArr;
 
@@ -401,7 +401,7 @@ extern "C" __declspec(dllexport) void __stdcall MachineTheveninImpedance(TxMyMod
     *theX = (*pFloatParamArr)[PARAM_Xdp];
 }
 
-extern "C" __declspec(dllexport) double __stdcall MachineFieldCurrent(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
+extern "C" __declspec(dllexport) double MachineFieldCurrent(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
 	DoubleArray* pHardCodedArr;
 
@@ -410,7 +410,7 @@ extern "C" __declspec(dllexport) double __stdcall MachineFieldCurrent(TxMyModelD
 	return((*pHardCodedArr)[HARDCODE_MACHINE_TSGenFieldV]);
 }
 
-extern "C" __declspec(dllexport) double __stdcall MachineElectricalTorque(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
+extern "C" __declspec(dllexport) double MachineElectricalTorque(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
 	DoubleArray* pHardCodedArr;
 	double fVd, fVq, fStateId, fStateIq;
@@ -424,7 +424,7 @@ extern "C" __declspec(dllexport) double __stdcall MachineElectricalTorque(TxMyMo
 }
 
 /* non specified for this model
-extern "C" __declspec(dllexport) void __stdcall MachineCompensatingImpedance(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* Rcomp, double* Xcomp)
+extern "C" __declspec(dllexport) void MachineCompensatingImpedance(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* Rcomp, double* Xcomp)
 {
     DoubleArray* pFloatParamArr;
 

@@ -19,6 +19,6 @@ inline constexpr int HARDCODE_GOV_GovResponseLimits   = 5;
 inline constexpr int HARDCODE_GOV_StabStatePitch      = 6;
 
 // These functions need to be exported in the DLL
-extern "C" __declspec(dllexport) double __stdcall GovernorPmechOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
+extern "C" __declspec(dllexport) double GovernorPmechOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
 
 }

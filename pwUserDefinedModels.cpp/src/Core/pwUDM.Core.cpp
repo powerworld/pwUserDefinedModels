@@ -4,29 +4,29 @@ import std;
 
 namespace pwUDM {
 
-const wchar_t* pwModelClassString(ModelClass modelClass)
+const char16_t* pwModelClassString(ModelClass modelClass)
 {
     switch (modelClass)
     {
-        case ModelClass::Exciter:       return L"UserDefinedExciter";
-        case ModelClass::Governor:      return L"UserDefinedGovernor";
-        case ModelClass::Load:          return L"UserDefinedLoadModel";
-        case ModelClass::Machine:       return L"UserDefinedMachineModel";
-        case ModelClass::Stabilizer:    return L"UserDefinedStabilizer";
-        case ModelClass::MTDCConvertor: return L"UserDefinedMTDCConverter";
-        case ModelClass::MTDCLine:      return L"UserDefinedMultiTerminalDC";
+        case ModelClass::Exciter:       return u"UserDefinedExciter";
+        case ModelClass::Governor:      return u"UserDefinedGovernor";
+        case ModelClass::Load:          return u"UserDefinedLoadModel";
+        case ModelClass::Machine:       return u"UserDefinedMachineModel";
+        case ModelClass::Stabilizer:    return u"UserDefinedStabilizer";
+        case ModelClass::MTDCConvertor: return u"UserDefinedMTDCConverter";
+        case ModelClass::MTDCLine:      return u"UserDefinedMultiTerminalDC";
         // Add here in the future
     }
-    return L"";
+    return u"";
 }
 
-int pwStringCopy(wchar_t* StrBuf, int* StrSize, const wchar_t* SourceString)
+int pwProvideString(char16_t* StrBuf, int* StrSize, const char16_t* SourceString)
 {
-    const int result = int(std::wcslen(SourceString));
+    const int result = int(std::char_traits<char16_t>::length(SourceString));
     if ((result > 0) && (*StrSize >= result))
     {
-        std::wmemcpy(StrBuf, SourceString, std::size_t(result));
-        StrBuf[result] = L'\0';
+        std::char_traits<char16_t>::copy(StrBuf, SourceString, std::size_t(result));
+        StrBuf[result] = u'\0';
     }
     return result;
 }

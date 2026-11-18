@@ -14,7 +14,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_MODULE_STD ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# The PowerWorld DLL contract uses __declspec(dllexport) and __stdcall, so this project is Windows-only.
+# The PowerWorld DLL contract uses __declspec(dllexport), so this project is Windows-only.
 if(NOT WIN32)
     message(FATAL_ERROR "pwUserDefinedModels builds Windows DLLs. Use: cmake --preset Debug")
 endif()

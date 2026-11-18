@@ -7,20 +7,20 @@ import pwUDM.Stabilizer;
 namespace pwUDM::IEEEST {
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall DLLVersion()
+extern "C" __declspec(dllexport) int DLLVersion()
 {
 	return(1);
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall modelClassName(int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int modelClassName(int* StrSize, char16_t* StrBuf, int dummy)
 {	
-    int result = pwStringCopy(StrBuf, StrSize, pwModelClassString(ModelClass::Stabilizer));
+    int result = pwProvideString(StrBuf, StrSize, pwModelClassString(ModelClass::Stabilizer));
     return result;
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall allParamCounts(TxParamCounts* numbersOfEverything, double* TimeStepSeconds)
+extern "C" __declspec(dllexport) void allParamCounts(TxParamCounts* numbersOfEverything, double* TimeStepSeconds)
 {
 	// -------The model-specific parameters-----
 	numbersOfEverything->nFloatParams		= N_F_PARAMS;
@@ -33,101 +33,101 @@ extern "C" __declspec(dllexport) void __stdcall allParamCounts(TxParamCounts* nu
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall parameterName(int* ParamNum, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int parameterName(int* ParamNum, int* StrSize, char16_t* StrBuf, int dummy)
 {
-	const wchar_t* ts;
+	const char16_t* ts;
 
 	// Integer parameters
 	switch (*ParamNum)
 	{
-		case PARAM_Ics:    ts = L"Ics"; break;
-		default:           ts = L""; break;
+		case PARAM_Ics:    ts = u"Ics"; break;
+		default:           ts = u""; break;
 	}
 
 	// Double parameters
-	if (std::wcslen(ts) == 0)
+	if (std::char_traits<char16_t>::length(ts) == 0)
 	{
 		switch (*ParamNum - N_I_PARAMS)
 		{
-			case PARAM_A1:     ts = L"A1"; break;
-			case PARAM_A2:     ts = L"A2"; break;
-			case PARAM_A3:     ts = L"A3"; break;
-			case PARAM_A4:     ts = L"A4"; break;
-			case PARAM_A5:     ts = L"A5"; break;
-			case PARAM_A6:     ts = L"A6"; break;
-			case PARAM_T1:     ts = L"T1"; break;
-			case PARAM_T2:     ts = L"T2"; break;
-			case PARAM_T3:     ts = L"T3"; break;
-			case PARAM_T4:     ts = L"T4"; break;
-			case PARAM_T5:     ts = L"T5"; break;
-			case PARAM_T6:     ts = L"T6"; break;
-			case PARAM_Ks:     ts = L"Ks"; break;
-			case PARAM_Lsmax:  ts = L"Lsmax"; break;
-			case PARAM_Lsmin:  ts = L"Lsmin"; break;
-			case PARAM_Vcu:    ts = L"Vcu"; break;
-			case PARAM_Vcl:    ts = L"Vcl"; break;
-			case PARAM_Tdelay: ts = L"Tdelay"; break;
-			default:             ts = L""; break;
+			case PARAM_A1:     ts = u"A1"; break;
+			case PARAM_A2:     ts = u"A2"; break;
+			case PARAM_A3:     ts = u"A3"; break;
+			case PARAM_A4:     ts = u"A4"; break;
+			case PARAM_A5:     ts = u"A5"; break;
+			case PARAM_A6:     ts = u"A6"; break;
+			case PARAM_T1:     ts = u"T1"; break;
+			case PARAM_T2:     ts = u"T2"; break;
+			case PARAM_T3:     ts = u"T3"; break;
+			case PARAM_T4:     ts = u"T4"; break;
+			case PARAM_T5:     ts = u"T5"; break;
+			case PARAM_T6:     ts = u"T6"; break;
+			case PARAM_Ks:     ts = u"Ks"; break;
+			case PARAM_Lsmax:  ts = u"Lsmax"; break;
+			case PARAM_Lsmin:  ts = u"Lsmin"; break;
+			case PARAM_Vcu:    ts = u"Vcu"; break;
+			case PARAM_Vcl:    ts = u"Vcl"; break;
+			case PARAM_Tdelay: ts = u"Tdelay"; break;
+			default:             ts = u""; break;
 		}
 	}
 
-	int result = pwStringCopy(StrBuf, StrSize, ts);
+	int result = pwProvideString(StrBuf, StrSize, ts);
 	return result;
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall stateName(int* StateNum, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int stateName(int* StateNum, int* StrSize, char16_t* StrBuf, int dummy)
 {
-	const wchar_t* ts;
+	const char16_t* ts;
 
 	switch (*StateNum)
 	{
-		case STATE_Filter1:         ts = L"Filter 1"; break;
-		case STATE_Filter2:         ts = L"Filter 2"; break;
-		case STATE_Filter3:         ts = L"Filter 3"; break;
-		case STATE_FilterOut:       ts = L"Filter Out"; break;
-		case STATE_LL1:             ts = L"LL1"; break;
-		case STATE_LL2:             ts = L"LL2"; break;
-		case STATE_UnlimitedSignal: ts = L"Unlimited Signal"; break;
-		default:                    ts = L""; break;
+		case STATE_Filter1:         ts = u"Filter 1"; break;
+		case STATE_Filter2:         ts = u"Filter 2"; break;
+		case STATE_Filter3:         ts = u"Filter 3"; break;
+		case STATE_FilterOut:       ts = u"Filter Out"; break;
+		case STATE_LL1:             ts = u"LL1"; break;
+		case STATE_LL2:             ts = u"LL2"; break;
+		case STATE_UnlimitedSignal: ts = u"Unlimited Signal"; break;
+		default:                    ts = u""; break;
 	}
 
-	int result = pwStringCopy(StrBuf, StrSize, ts);
+	int result = pwProvideString(StrBuf, StrSize, ts);
 	return result;
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall OtherObjectClass(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int OtherObjectClass(int* Num, int* StrSize, char16_t* StrBuf, int dummy)
 {
-	const wchar_t* ts;
+	const char16_t* ts;
 
 	switch (*Num)
 	{
-		case 0:   ts = L"Bus"; break;
-		default:  ts = L""; break;
+		case 0:   ts = u"Bus"; break;
+		default:  ts = u""; break;
 	}
 
-	int result = pwStringCopy(StrBuf, StrSize, ts);
+	int result = pwProvideString(StrBuf, StrSize, ts);
 	return result;
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall OtherObjectDescription(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int OtherObjectDescription(int* Num, int* StrSize, char16_t* StrBuf, int dummy)
 {
-	const wchar_t* ts;
+	const char16_t* ts;
 
 	switch (*Num)
 	{
-		case 0:   ts = L"Signal Bus"; break;
-		default:  ts = L""; break;
+		case 0:   ts = u"Signal Bus"; break;
+		default:  ts = u""; break;
 	}
 
-	int result = pwStringCopy(StrBuf, StrSize, ts);
+	int result = pwProvideString(StrBuf, StrSize, ts);
 	return result;
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall getDefaultParameterValue(TxMyModelData* ParamsAndStates)
+extern "C" __declspec(dllexport) void getDefaultParameterValue(TxMyModelData* ParamsAndStates)
 {
 	DoubleArray* pDoubArr;
 	IntegerArray* pIntegerArr;
@@ -159,41 +159,41 @@ extern "C" __declspec(dllexport) void __stdcall getDefaultParameterValue(TxMyMod
 }
 
 /* non specified for this model
-extern "C" __declspec(dllexport) int __stdcall getStringParamDefaultValue(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int getStringParamDefaultValue(int* Num, int* StrSize, char16_t* StrBuf, int dummy)
 {
-    const wchar_t* ts;
+    const char16_t* ts;
 
     switch (*Num)
     {
-        case 0:   ts = L"DefaultString0"; break;
-        default:  ts = L""; break;
+        case 0:   ts = u"DefaultString0"; break;
+        default:  ts = u""; break;
     }
 
-    int result = pwStringCopy(StrBuf, StrSize, ts);
+    int result = pwProvideString(StrBuf, StrSize, ts);
     return result;
 }
 */
 
 //******************************************************************************
 /* non specified for this model
-extern "C" __declspec(dllexport) int __stdcall signalSelection(int* Num, int* StrSize, wchar_t* StrBuf, int dummy)
+extern "C" __declspec(dllexport) int signalSelection(int* Num, int* StrSize, char16_t* StrBuf, int dummy)
 {
-    const wchar_t* ts;
+    const char16_t* ts;
 
-    ts = L""; // there are none!
+    ts = u""; // there are none!
     switch (*Num)
     {
-        case ALG_XXX: ts = L"TSXXX"; break;
-        default:  ts = L""; break;
+        case ALG_XXX: ts = u"TSXXX"; break;
+        default:  ts = u""; break;
     }
 
-    int result = pwStringCopy(StrBuf, StrSize, ts);
+    int result = pwProvideString(StrBuf, StrSize, ts);
     return result;
 }
 */
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall SubIntervalPower2Exponent(TxMyModelData* ParamsAndStates,	double* TimeStepSeconds)
+extern "C" __declspec(dllexport) int SubIntervalPower2Exponent(TxMyModelData* ParamsAndStates,	double* TimeStepSeconds)
 {
 	double fA1, fA2, fA3, fA4, timeStep;
 	DoubleArray* pFloatParamArr;
@@ -224,7 +224,7 @@ extern "C" __declspec(dllexport) int __stdcall SubIntervalPower2Exponent(TxMyMod
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall initializeYourself(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
+extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
 	double local_Signal;
 	double coef_a0, coef_a1, coef_a2, coef_a3, coef_a4;
@@ -312,7 +312,7 @@ extern "C" __declspec(dllexport) void __stdcall initializeYourself(TxMyModelData
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall calculateFofX(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits, DoubleArray* dotX)
+extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits, DoubleArray* dotX)
 {
 
 	// parameters
@@ -544,7 +544,7 @@ extern "C" __declspec(dllexport) void __stdcall calculateFofX(TxMyModelData* Par
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) void __stdcall PropagateIgnoredStateAndInput(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
+extern "C" __declspec(dllexport) void PropagateIgnoredStateAndInput(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
 	int fIcs;
 	double local_Signal;
@@ -595,7 +595,7 @@ extern "C" __declspec(dllexport) void __stdcall PropagateIgnoredStateAndInput(Tx
 }
 
 //******************************************************************************
-extern "C" __declspec(dllexport) int __stdcall getNonWindUpLimits(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits)
+extern "C" __declspec(dllexport) int getNonWindUpLimits(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits)
 {
 	return(0);   // None
 }
@@ -606,7 +606,7 @@ extern "C" __declspec(dllexport) int __stdcall getNonWindUpLimits(TxMyModelData*
 //******************************************************************************
 // At least one of StabilizerVsOut and StabilizerPitchOut is required (declared in pwUDM.Stabilizer).
 // This model implements StabilizerVsOut only.
-extern "C" __declspec(dllexport) double __stdcall StabilizerVsOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
+extern "C" __declspec(dllexport) double StabilizerVsOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions)
 {
 
 	double fLsmax, fLsmin, fVcu, fVcl;
@@ -660,7 +660,7 @@ extern "C" __declspec(dllexport) double __stdcall StabilizerVsOut(TxMyModelData*
 }
 
 /* NOT defined for this object
-extern "C" __declspec(dllexport) double __stdcall StabilizerPitchOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
+extern "C" __declspec(dllexport) double StabilizerPitchOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
 */
 
 }

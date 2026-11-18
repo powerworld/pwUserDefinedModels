@@ -19,6 +19,7 @@ using DoubleArray = double[MaxInt / 64];
 using IntegerArray = int[MaxInt / 32];
 using ByteArray = unsigned char[MaxInt / 8];
 using BooleanArray = bool[MaxInt / 8];
+using WideStringArray = char16_t*[MaxInt / 64];
 
 // The kinds of user defined model; the DLL reports which one it is through modelClassName.
 enum class ModelClass
@@ -33,18 +34,21 @@ enum class ModelClass
 };
 
 // Returns the class name string that Simulator expects for a model class.
-const wchar_t* pwModelClassString(ModelClass modelClass);
+const char16_t* pwModelClassString(ModelClass modelClass);
 
+// Provides SourceString to Simulator for the name functions that return a string.
+// Simulator owns StrBuf: write into it only during this call, and never keep, free or resize it.
 // Copies SourceString (plus terminator) into StrBuf when it is non-empty and fits in StrSize^.
-// Always returns the length of SourceString so the caller can retry with a larger buffer.
-int pwStringCopy(wchar_t* StrBuf, int* StrSize, const wchar_t* SourceString);
+// Always returns the length of SourceString, so Simulator can ask first with StrSize^ = 0
+// (and no buffer) and then supply a buffer of that length.
+int pwProvideString(char16_t* StrBuf, int* StrSize, const char16_t* SourceString);
 
 // These types should be the same for all models and model types
 struct TxMyModelData
 {
     DoubleArray* FloatParams;  // Array of float parameters
     IntegerArray* IntParams;   // Array of integer parameters
-    wchar_t** StrParams;  // Array of string parameters
+    WideStringArray* StrParams;  // Array of string parameters
 
     DoubleArray* HardCodedSignals;  // Array of Input signals
 
@@ -87,22 +91,22 @@ struct TxParamCounts
     int nNonWindUpLimits; // N_NONWINDUPLIMITS
 };
 
-// These functions need to be exported in the DLL. Declaring them here, with C linkage and
-// __stdcall, makes the compiler check every model's definition against this signature.
-extern "C" __declspec(dllexport) int __stdcall DLLVersion();
-extern "C" __declspec(dllexport) int __stdcall modelClassName(int* StrSize, wchar_t* StrBuf, int dummy);
-extern "C" __declspec(dllexport) void __stdcall allParamCounts(TxParamCounts* numbersOfEverything, double* TimeStepSeconds);
-extern "C" __declspec(dllexport) int __stdcall parameterName(int* ParamNum, int* StrSize, wchar_t* StrBuf, int dummy);
-extern "C" __declspec(dllexport) int __stdcall stateName(int* StateNum, int* StrSize, wchar_t* StrBuf, int dummy);
-extern "C" __declspec(dllexport) int __stdcall OtherObjectClass(int* Num, int* StrSize, wchar_t* StrBuf, int dummy);
-extern "C" __declspec(dllexport) int __stdcall OtherObjectDescription(int* Num, int* StrSize, wchar_t* StrBuf, int dummy);
-extern "C" __declspec(dllexport) void __stdcall getDefaultParameterValue(TxMyModelData* ParamsAndStates);
-extern "C" __declspec(dllexport) int __stdcall SubIntervalPower2Exponent(TxMyModelData* ParamsAndStates, double* TimeStepSeconds);
-extern "C" __declspec(dllexport) void __stdcall initializeYourself(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
-extern "C" __declspec(dllexport) void __stdcall calculateFofX(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits, DoubleArray* dotX);
-extern "C" __declspec(dllexport) void __stdcall PropagateIgnoredStateAndInput(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
-extern "C" __declspec(dllexport) int __stdcall getNonWindUpLimits(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits);
-extern "C" __declspec(dllexport) bool __stdcall TimeStepEnd(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, int* index, int* MaxPossibleEventIndex, double* EventTime, int* ExtraObjectIndex);
-extern "C" __declspec(dllexport) int __stdcall TimeStepEndAction(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, int* index, int* StrSize, wchar_t* StrBuf, int dummy);
+// These functions need to be exported in the DLL. Declaring them here, with C linkage,
+// makes the compiler check every model's definition against this signature.
+extern "C" __declspec(dllexport) int DLLVersion();
+extern "C" __declspec(dllexport) int modelClassName(int* StrSize, char16_t* StrBuf, int dummy);
+extern "C" __declspec(dllexport) void allParamCounts(TxParamCounts* numbersOfEverything, double* TimeStepSeconds);
+extern "C" __declspec(dllexport) int parameterName(int* ParamNum, int* StrSize, char16_t* StrBuf, int dummy);
+extern "C" __declspec(dllexport) int stateName(int* StateNum, int* StrSize, char16_t* StrBuf, int dummy);
+extern "C" __declspec(dllexport) int OtherObjectClass(int* Num, int* StrSize, char16_t* StrBuf, int dummy);
+extern "C" __declspec(dllexport) int OtherObjectDescription(int* Num, int* StrSize, char16_t* StrBuf, int dummy);
+extern "C" __declspec(dllexport) void getDefaultParameterValue(TxMyModelData* ParamsAndStates);
+extern "C" __declspec(dllexport) int SubIntervalPower2Exponent(TxMyModelData* ParamsAndStates, double* TimeStepSeconds);
+extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
+extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits, DoubleArray* dotX);
+extern "C" __declspec(dllexport) void PropagateIgnoredStateAndInput(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
+extern "C" __declspec(dllexport) int getNonWindUpLimits(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits);
+extern "C" __declspec(dllexport) bool TimeStepEnd(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, int* index, int* MaxPossibleEventIndex, double* EventTime, int* ExtraObjectIndex);
+extern "C" __declspec(dllexport) int TimeStepEndAction(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, int* index, int* StrSize, char16_t* StrBuf, int dummy);
 
 }

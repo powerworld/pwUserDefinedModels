@@ -23,6 +23,6 @@ inline constexpr int HARDCODE_EXCITER_UELActive           = 9;
 inline constexpr int HARDCODE_EXCITER_UELSignal           = 10;
 
 // These functions need to be exported in the DLL
-extern "C" __declspec(dllexport) double __stdcall ExciterEfieldOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
+extern "C" __declspec(dllexport) double ExciterEfieldOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
 
 }

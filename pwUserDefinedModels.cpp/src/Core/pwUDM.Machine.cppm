@@ -20,15 +20,15 @@ inline constexpr int HARDCODE_MACHINE_TSstateId   = 6;
 inline constexpr int HARDCODE_MACHINE_TSstateIq   = 7;
 
 // These functions need to be exported in the DLL
-extern "C" __declspec(dllexport) double __stdcall MachineSpeedDeviationOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
-extern "C" __declspec(dllexport) void __stdcall MachineTheveninImpedance(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* theR, double* theX);
-extern "C" __declspec(dllexport) void __stdcall MachineTheveninVoltage(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* Delta, double* Vd, double* Vq);
-extern "C" __declspec(dllexport) double __stdcall MachineFieldCurrent(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
-extern "C" __declspec(dllexport) double __stdcall MachineElectricalTorque(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
+extern "C" __declspec(dllexport) double MachineSpeedDeviationOut(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
+extern "C" __declspec(dllexport) void MachineTheveninImpedance(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* theR, double* theX);
+extern "C" __declspec(dllexport) void MachineTheveninVoltage(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* Delta, double* Vd, double* Vq);
+extern "C" __declspec(dllexport) double MachineFieldCurrent(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
+extern "C" __declspec(dllexport) double MachineElectricalTorque(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
 // The following four functions are optional: export them from a model only if it needs them
-extern "C" __declspec(dllexport) double __stdcall MachineNortonCurrent(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* IReal, double* IImag);
-extern "C" __declspec(dllexport) double __stdcall MachineHighVReactiveCurrentLim(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
-extern "C" __declspec(dllexport) void __stdcall MachineLowVActiveCurrentPoints(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* LVPnt1, double* LVPnt0);
-extern "C" __declspec(dllexport) void __stdcall MachineCompensatingImpedance(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* RComp, double* XComp);
+extern "C" __declspec(dllexport) double MachineNortonCurrent(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* IReal, double* IImag);
+extern "C" __declspec(dllexport) double MachineHighVReactiveCurrentLim(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions);
+extern "C" __declspec(dllexport) void MachineLowVActiveCurrentPoints(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* LVPnt1, double* LVPnt0);
+extern "C" __declspec(dllexport) void MachineCompensatingImpedance(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* RComp, double* XComp);
 
 }
