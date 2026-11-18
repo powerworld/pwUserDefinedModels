@@ -3,6 +3,9 @@ unit pwUDM.Core;
 
 interface
 
+// The records below are shared with Simulator, so they use 8-byte alignment, like the C++ structs.
+{$A8}
+
 //------------------------------------------------------------------------------
 // The following declaration are made just to make the code easier to read
 // Allows us to access variablues using an "array syntax"
@@ -87,6 +90,11 @@ type
     nNonWindUpLimits : Integer; // N_NONWINDUPLIMITS
   end;
   PTxParamCounts = ^TTxParamCounts;
+
+// The layout of these records is part of the DLL contract with Simulator (64-bit).
+{$IF (SizeOf(TTxMyModelData) <> 56) or (SizeOf(TTxSystemOptions) <> 64) or (SizeOf(TTxNonWindUpLimits) <> 32) or (SizeOf(TTxParamCounts) <> 24)}
+  {$MESSAGE FATAL 'A record in pwUDM.Core no longer has the layout Simulator expects'}
+{$IFEND}
 
 
 //------------------------------------------------------------------------------

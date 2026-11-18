@@ -43,6 +43,9 @@ const char16_t* pwModelClassString(ModelClass modelClass);
 // (and no buffer) and then supply a buffer of that length.
 int pwProvideString(char16_t* StrBuf, int* StrSize, const char16_t* SourceString);
 
+// The records below are shared with Simulator, so they are packed to 8 bytes, like Delphi's {$A8}.
+#pragma pack(push, 8)
+
 // These types should be the same for all models and model types
 struct TxMyModelData
 {
@@ -90,6 +93,18 @@ struct TxParamCounts
     // Nonwindup Limits
     int nNonWindUpLimits; // N_NONWINDUPLIMITS
 };
+
+#pragma pack(pop)
+
+// The layout of these records is part of the DLL contract with Simulator (64-bit).
+static_assert(sizeof(TxMyModelData) == 56);
+static_assert(sizeof(TxSystemOptions) == 64);
+static_assert(sizeof(TxNonWindUpLimits) == 32);
+static_assert(sizeof(TxParamCounts) == 24);
+static_assert(alignof(TxMyModelData) == 8 && alignof(TxSystemOptions) == 8 && alignof(TxNonWindUpLimits) == 8);
+static_assert(alignof(TxParamCounts) == 4);
+// IgnoreLimitChecking is padded up to the 8-byte boundary of the first double, as Delphi's {$A8} does.
+static_assert(__builtin_offsetof(TxSystemOptions, TimeStepSeconds) == 8);
 
 // These functions need to be exported in the DLL. Declaring them here, with C linkage,
 // makes the compiler check every model's definition against this signature.

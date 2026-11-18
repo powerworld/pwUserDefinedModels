@@ -1667,7 +1667,6 @@ extern "C" __declspec(dllexport) bool LoadInitializeAlgebraic(TxMyModelData* Par
     tzMW = 0;
     tsmvr = tsmw;
     timvr = 0;
-    tzMVR = 0;
     if (std::llrint(fKp) == 0) tsmw = 100 - pIMLight;  // All the rest as constant power
     else if (std::llrint(fKp) == 1) timw = 100 - pIMLight - tsmw;
     else tzMW = 100 - pIMLight - tsmw; // Constant impedance is what is left

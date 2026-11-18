@@ -53,6 +53,9 @@ target_compile_options(pwudm_options INTERFACE
     -Wno-unused-parameter
     -fno-exceptions
     -fno-rtti
+    # Match Delphi's arithmetic: no fused multiply-add (one rounding step) and wrapping signed overflow.
+    -ffp-contract=off
+    -fwrapv
     # CMake already adds -g for Debug; CodeView lets Visual Studio and WinDbg read the symbols
     $<$<CONFIG:Debug>:-gcodeview>
 )

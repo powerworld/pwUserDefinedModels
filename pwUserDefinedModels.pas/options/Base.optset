@@ -7,6 +7,11 @@
         <DCC_N>false</DCC_N>
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
+        <DCC_NO_RETVAL>error</DCC_NO_RETVAL>
+        <DCC_USE_BEFORE_DEF>error</DCC_USE_BEFORE_DEF>
+        <DCC_SUSPICIOUS_TYPECAST>error</DCC_SUSPICIOUS_TYPECAST>
+        <DCC_COMPARING_SIGNED_UNSIGNED>error</DCC_COMPARING_SIGNED_UNSIGNED>
+        <DCC_COMBINING_SIGNED_UNSIGNED>error</DCC_COMBINING_SIGNED_UNSIGNED>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>

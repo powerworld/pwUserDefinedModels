@@ -1748,7 +1748,6 @@ begin
   tzMW := 0;
   tsmvr := tsmw;
   timvr := 0;
-  tzmvr := 0;
   If Round(fKp) = 0 Then tsmw := 100 - pIMLight  // All the rest as constant power
   Else If Round(fKp) = 1 Then tiMW := 100 - pIMLight - tsMW
   Else tzMW := 100 - pIMLight - tsMW; // Constant impedance is what is left
