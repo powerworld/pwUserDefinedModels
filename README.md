@@ -12,7 +12,7 @@ pwUserDefinedModels.cpp/
   src/<NAME>/         one DLL per model: CLOD, GENCLS, IEEEST, IEEET1, TGOV1
 ```
 
-Requirements: clang 23+ with libc++ (the [llvm-mingw](https://github.com/mstorsjo/llvm-mingw) UCRT x86_64 build works and needs no Visual Studio), CMake 4.2+, and Ninja, all on `PATH`. The project is Windows-only because the DLL contract uses `__declspec` and `__stdcall`.
+Requirements: clang 23+ with libc++ (the [llvm-mingw](https://github.com/mstorsjo/llvm-mingw) UCRT x86_64 build works and needs no Visual Studio), CMake 4.2+, and Ninja, all on `PATH`. The project is Windows-only because the DLL contract uses `__declspec(dllexport)`.
 
 ```
 cd pwUserDefinedModels.cpp
