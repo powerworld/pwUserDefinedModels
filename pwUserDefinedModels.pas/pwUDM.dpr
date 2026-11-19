@@ -8,6 +8,8 @@ library pwUDM;
 {$ELSEIF DEFINED(MODEL_GENCLS)} {$LIBSUFFIX '.GENCLS.pas'}
 {$ELSEIF DEFINED(MODEL_IEEEST)} {$LIBSUFFIX '.IEEEST.pas'}
 {$ELSEIF DEFINED(MODEL_IEEET1)} {$LIBSUFFIX '.IEEET1.pas'}
+{$ELSEIF DEFINED(MODEL_MTDCCONV)} {$LIBSUFFIX '.MTDCCONV.pas'}
+{$ELSEIF DEFINED(MODEL_MTDCLINE)} {$LIBSUFFIX '.MTDCLINE.pas'}
 {$ELSEIF DEFINED(MODEL_TGOV1)}  {$LIBSUFFIX '.TGOV1.pas'}
 {$ELSE}
   {$MESSAGE FATAL 'No model selected: use a build configuration such as pwUDM.TGOV1_Release (it defines MODEL_TGOV1)'}
@@ -30,6 +32,14 @@ uses
 {$IFDEF MODEL_IEEET1}
   pwUDM.Exciter in 'src\Core\pwUDM.Exciter.pas',
   pwUDM.IEEET1 in 'src\IEEET1\pwUDM.IEEET1.pas'
+{$ENDIF}
+{$IFDEF MODEL_MTDCCONV}
+  pwUDM.MTDCConverter in 'src\Core\pwUDM.MTDCConverter.pas',
+  pwUDM.MTDCCONV in 'src\MTDCCONV\pwUDM.MTDCCONV.pas'
+{$ENDIF}
+{$IFDEF MODEL_MTDCLINE}
+  pwUDM.MultiTerminalDC in 'src\Core\pwUDM.MultiTerminalDC.pas',
+  pwUDM.MTDCLINE in 'src\MTDCLINE\pwUDM.MTDCLINE.pas'
 {$ENDIF}
 {$IFDEF MODEL_TGOV1}
   pwUDM.Governor in 'src\Core\pwUDM.Governor.pas',

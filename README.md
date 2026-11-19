@@ -1,6 +1,20 @@
 # pwUserDefinedModels
 Solutions for creating a DLL that can be recognized by the PowerWorld Transient Stability add-on.
 
+## Models
+
+One example model for each of the seven user-defined model classes, written in both languages.
+
+| Model | Class | What it is |
+| :--- | :--- | :--- |
+| TGOV1 | governor | the existing TGOV1 model |
+| IEEET1 | exciter | the existing IEEET1 model |
+| IEEEST | stabilizer | the existing IEEEST model |
+| GENCLS | machine | the existing GENCLS model |
+| CLOD | load | the existing CLOD model |
+| MTDCCONV | MTDC converter | a generic converter: three sensor lags (DC current, DC voltage, AC voltage) and an integral current regulator that sets the cosine control angle |
+| MTDCLINE | multi-terminal DC | a generic multi-terminal line: shares the pole current order between up to 8 converters (the number of terminals is a parameter, because Simulator does not tell the DLL) |
+
 ## C++ (`pwUserDefinedModels.cpp`)
 
 One CMake project builds every model as its own DLL (`pwUDM.<MODEL>.cpp.dll`) with Ninja and clang. The code uses C++23 modules: no header files, every `.cppm` holds exported declarations, its `.cpp` holds the definitions, and the standard library comes from `import std;`.
@@ -9,7 +23,7 @@ One CMake project builds every model as its own DLL (`pwUDM.<MODEL>.cpp.dll`) wi
 pwUserDefinedModels.cpp/
   CMakeLists.txt, CMakePresets.json
   src/Core/           shared library: the PowerWorld DLL contract, helpers, per-model-class signals
-  src/<NAME>/         one DLL per model: CLOD, GENCLS, IEEEST, IEEET1, TGOV1
+  src/<NAME>/         one DLL per model: CLOD, GENCLS, IEEEST, IEEET1, MTDCCONV, MTDCLINE, TGOV1
 ```
 
 Requirements: clang 23+ with libc++ (the [llvm-mingw](https://github.com/mstorsjo/llvm-mingw) UCRT x86_64 build works and needs no Visual Studio), CMake 4.2+, and Ninja, all on `PATH`. The project is Windows-only because the DLL contract uses `__declspec(dllexport)`.
@@ -39,7 +53,7 @@ One Delphi project (`pwUDM.dproj`) builds every model as its own DLL (`pwUDM.<MO
 pwUserDefinedModels.pas/
   pwUDM.dpr, pwUDM.dproj, build.ps1
   src/Core/           shared units: the PowerWorld DLL contract types, helpers, per-model-class signals
-  src/<NAME>/         one unit per model: CLOD, GENCLS, IEEEST, IEEET1, TGOV1
+  src/<NAME>/         one unit per model: CLOD, GENCLS, IEEEST, IEEET1, MTDCCONV, MTDCLINE, TGOV1
 ```
 
 Requirements: Delphi (the project was made with 10.2 Tokyo, RAD Studio 19.0) and PowerShell 7 (`pwsh`) for the build script; the project targets 64-bit Windows. The script uses the RAD Studio folder in the `BDS` environment variable if it is set, otherwise the newest installation registered on the machine, and prints which one it picked. Set `BDS` to build with a specific version, for example `$env:BDS = 'C:\Program Files (x86)\Embarcadero\Studio\19.0'` for 10.2.

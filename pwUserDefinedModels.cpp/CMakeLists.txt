@@ -84,6 +84,8 @@ target_sources(Core
         src/Core/pwUDM.Governor.cppm
         src/Core/pwUDM.Load.cppm
         src/Core/pwUDM.Machine.cppm
+        src/Core/pwUDM.MTDCConverter.cppm
+        src/Core/pwUDM.MultiTerminalDC.cppm
         src/Core/pwUDM.Stabilizer.cppm
 )
 
@@ -140,6 +142,26 @@ target_sources(pwUDM.IEEET1
         src/IEEET1/pwUDM.IEEET1.cppm
 )
 pwudm_model_settings(pwUDM.IEEET1 pwUDM.IEEET1.cpp)
+
+add_library(pwUDM.MTDCCONV SHARED)
+target_sources(pwUDM.MTDCCONV
+    PRIVATE
+        src/MTDCCONV/pwUDM.MTDCCONV.cpp
+    PRIVATE
+        FILE_SET CXX_MODULES FILES
+        src/MTDCCONV/pwUDM.MTDCCONV.cppm
+)
+pwudm_model_settings(pwUDM.MTDCCONV pwUDM.MTDCCONV.cpp)
+
+add_library(pwUDM.MTDCLINE SHARED)
+target_sources(pwUDM.MTDCLINE
+    PRIVATE
+        src/MTDCLINE/pwUDM.MTDCLINE.cpp
+    PRIVATE
+        FILE_SET CXX_MODULES FILES
+        src/MTDCLINE/pwUDM.MTDCLINE.cppm
+)
+pwudm_model_settings(pwUDM.MTDCLINE pwUDM.MTDCLINE.cpp)
 
 add_library(pwUDM.TGOV1 SHARED)
 target_sources(pwUDM.TGOV1

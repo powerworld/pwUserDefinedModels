@@ -106,6 +106,34 @@
         <Cfg_3>true</Cfg_3>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.MTDCCONV_Release' or '$(Cfg_14)'!=''">
+        <Cfg_14>true</Cfg_14>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.MTDCCONV_Debug' or '$(Cfg_15)'!=''">
+        <Cfg_15>true</Cfg_15>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.MTDCLINE_Release' or '$(Cfg_16)'!=''">
+        <Cfg_16>true</Cfg_16>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='pwUDM.MTDCLINE_Debug' or '$(Cfg_17)'!=''">
+        <Cfg_17>true</Cfg_17>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Cfg_3>true</Cfg_3>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <SanitizedProjectName>pwUDM</SanitizedProjectName>
     </PropertyGroup>
@@ -152,6 +180,18 @@
     <PropertyGroup Condition="'$(Cfg_13)'!=''">
         <DCC_Define>MODEL_TGOV1;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_14)'!=''">
+        <DCC_Define>MODEL_MTDCCONV;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_15)'!=''">
+        <DCC_Define>MODEL_MTDCCONV;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_16)'!=''">
+        <DCC_Define>MODEL_MTDCLINE;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_17)'!=''">
+        <DCC_Define>MODEL_MTDCLINE;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
@@ -161,11 +201,15 @@
         <DCCReference Include="src\Core\pwUDM.Governor.pas"/>
         <DCCReference Include="src\Core\pwUDM.Load.pas"/>
         <DCCReference Include="src\Core\pwUDM.Machine.pas"/>
+        <DCCReference Include="src\Core\pwUDM.MTDCConverter.pas"/>
+        <DCCReference Include="src\Core\pwUDM.MultiTerminalDC.pas"/>
         <DCCReference Include="src\Core\pwUDM.Stabilizer.pas"/>
         <DCCReference Include="src\CLOD\pwUDM.CLOD.pas"/>
         <DCCReference Include="src\GENCLS\pwUDM.GENCLS.pas"/>
         <DCCReference Include="src\IEEEST\pwUDM.IEEEST.pas"/>
         <DCCReference Include="src\IEEET1\pwUDM.IEEET1.pas"/>
+        <DCCReference Include="src\MTDCCONV\pwUDM.MTDCCONV.pas"/>
+        <DCCReference Include="src\MTDCLINE\pwUDM.MTDCLINE.pas"/>
         <DCCReference Include="src\TGOV1\pwUDM.TGOV1.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -224,6 +268,22 @@
         </BuildConfiguration>
         <BuildConfiguration Include="pwUDM.TGOV1_Debug">
             <Key>Cfg_13</Key>
+            <CfgParent>Cfg_1</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.MTDCCONV_Release">
+            <Key>Cfg_14</Key>
+            <CfgParent>Cfg_2</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.MTDCCONV_Debug">
+            <Key>Cfg_15</Key>
+            <CfgParent>Cfg_1</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.MTDCLINE_Release">
+            <Key>Cfg_16</Key>
+            <CfgParent>Cfg_2</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="pwUDM.MTDCLINE_Debug">
+            <Key>Cfg_17</Key>
             <CfgParent>Cfg_1</CfgParent>
         </BuildConfiguration>
     </ItemGroup>

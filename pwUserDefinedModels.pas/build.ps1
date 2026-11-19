@@ -13,7 +13,7 @@
     Debug or Release (default Release).
 
 .PARAMETER Model
-    One or more of CLOD, GENCLS, IEEEST, IEEET1, TGOV1 (default: all five).
+    One or more of CLOD, GENCLS, IEEEST, IEEET1, MTDCCONV, MTDCLINE, TGOV1 (default: all seven).
     Separate several models with commas or spaces.
 
 .EXAMPLE
@@ -29,8 +29,8 @@ param(
     [string] $Mode = 'Release',
 
     [Parameter(Position = 1, ValueFromRemainingArguments)]
-    [ArgumentCompleter({ param($command, $parameter, $word) 'CLOD', 'GENCLS', 'IEEEST', 'IEEET1', 'TGOV1' | Where-Object { $_ -like "$word*" } })]
-    [string[]] $Model = @('CLOD', 'GENCLS', 'IEEEST', 'IEEET1', 'TGOV1')
+    [ArgumentCompleter({ param($command, $parameter, $word) 'CLOD', 'GENCLS', 'IEEEST', 'IEEET1', 'MTDCCONV', 'MTDCLINE', 'TGOV1' | Where-Object { $_ -like "$word*" } })]
+    [string[]] $Model = @('CLOD', 'GENCLS', 'IEEEST', 'IEEET1', 'MTDCCONV', 'MTDCLINE', 'TGOV1')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -41,7 +41,7 @@ function Fail([string] $Message, [int] $Code = 1) {
 }
 
 # "pwsh -File build.ps1 -Model TGOV1,CLOD" passes one string, so split a comma list here
-$allModels = 'CLOD', 'GENCLS', 'IEEEST', 'IEEET1', 'TGOV1'
+$allModels = 'CLOD', 'GENCLS', 'IEEEST', 'IEEET1', 'MTDCCONV', 'MTDCLINE', 'TGOV1'
 $Model = @($Model -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
 foreach ($name in $Model) {
     if ($name -notin $allModels) {
