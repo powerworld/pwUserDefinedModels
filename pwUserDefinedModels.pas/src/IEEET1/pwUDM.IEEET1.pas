@@ -10,11 +10,11 @@ uses
 const
   //-----------------------------------------------------------------------------
   // For the Model
-  N_F_PARAMS  = 15;     // number of float model params
-  N_I_PARAMS   = 0;     // number of integer model params
-  N_S_PARAMS   = 0;     // number of string model params
-  N_STATES     = 4;     // number of model states
-  N_ALGEBRAICS = 0;     // number of model algebraics
+  N_F_PARAMS   = 15;  // number of float model params
+  N_I_PARAMS   =  0;  // number of integer model params
+  N_S_PARAMS   =  0;  // number of string model params
+  N_STATES     =  4;  // number of model states
+  N_ALGEBRAICS =  0;  // number of model algebraics
 
   // For the NonWindUpLimits
   N_NONWINDUPLIMITS = 1;  // number of nonwindup
@@ -43,7 +43,7 @@ const
   STATE_VR       = 2;
   STATE_VF       = 3;
 
-  NONWINDUPINDEX_VR = 0; // index for list of non-windup limited states
+  NONWINDUPINDEX_VR = 0;  // index for list of non-windup limited states
 
   // Algebraic Value Indices
   // None ALG_TSXXX             = 0;

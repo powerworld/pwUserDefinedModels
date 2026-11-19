@@ -5,44 +5,48 @@ Solutions for creating a DLL that can be recognized by the PowerWorld Transient 
 
 One example model for each of the seven user-defined model classes, written in both languages.
 
-| Model | Class | What it is |
-| :--- | :--- | :--- |
-| TGOV1 | governor | the existing TGOV1 model |
-| IEEET1 | exciter | the existing IEEET1 model |
-| IEEEST | stabilizer | the existing IEEEST model |
-| GENCLS | machine | the existing GENCLS model |
-| CLOD | load | the existing CLOD model |
-| MTDCCONV | MTDC converter | a generic converter: three sensor lags (DC current, DC voltage, AC voltage) and an integral current regulator that sets the cosine control angle |
-| MTDCLINE | multi-terminal DC | a generic multi-terminal line: shares the pole current order between up to 8 converters (the number of terminals is a parameter, because Simulator does not tell the DLL) |
+| Model    | Class             | What it is                                                                                                  |
+| :------- | :---------------- | :---------------------------------------------------------------------------------------------------------- |
+| TGOV1    | governor          | the existing TGOV1 model                                                                                    |
+| IEEET1   | exciter           | the existing IEEET1 model                                                                                   |
+| IEEEST   | stabilizer        | the existing IEEEST model                                                                                   |
+| GENCLS   | machine           | the existing GENCLS model                                                                                   |
+| CLOD     | load              | the existing CLOD model                                                                                     |
+| MTDCCONV | MTDC converter    | a generic converter: three sensor lags and an integral current regulator that sets the cosine control angle |
+| MTDCLINE | multi-terminal DC | a generic multi-terminal line: shares the pole current order between up to 8 converters                     |
+
+MTDCCONV's three lags are on the DC current, the DC voltage and the AC voltage. MTDCLINE's number of terminals is a parameter, because Simulator does not tell the DLL how many converters the line has.
 
 ## Naming
 
 The same names are used in every model and in both languages, so a reader can move between them.
 
-| What | Name | Example |
-| :--- | :--- | :--- |
-| Model sizes | `N_F_PARAMS`, `N_I_PARAMS`, `N_S_PARAMS`, `N_STATES`, `N_ALGEBRAICS`, `N_NONWINDUPLIMITS` (in this order) | `N_STATES = 2` |
-| Float parameter index | `PARAM_<Name>` | `PARAM_Tord` |
-| Integer parameter index (own index space, from 0) | `IPARAM_<Name>` | `IPARAM_NumTerminals` |
-| State index | `STATE_<Name>` | `STATE_ValvePos` |
-| Algebraic index | `ALG_<Name>` | `ALG_IdRefInit` |
-| Position in the non-windup list | `NONWINDUPINDEX_<StateName>` | `NONWINDUPINDEX_VR` |
-| Hard-coded signal index | `HARDCODE_<CLASS>_<Name>` | `HARDCODE_GOV_Pref` |
-| Pointer to an array in the shared record | `pFloatParamArr`, `pIntParamArr`, `pStatesArr`, `pIgnoreStatesArr`, `pAlgebraicsArr`, `pHardCodedArr`, `pDotXArr`, `pByteActiveLimitArr` | same name in every routine |
-| Non-windup record field | `LimitStates`, `minLimits`, `maxLimits`, `activeLimits` | `nonWindUpLimits.LimitStates` |
-| Local copy of a model parameter | `f<Name>`, inverse time constant `fInv<Name>` | `fInvTord` |
-| Local copy of a state | `state<Name>` | `stateValve` |
-| Derivative of a state | `dotState<Name>` (not `dotX`, which is the output array) | `dotStateValve` |
-| Network or electrical local | `local_<Name>` | `local_V` |
-| Nested helper procedure (lambda in C++) | `LOCAL_<Name>` | `LOCAL_NumberOfTerminals` |
-| Argument of a nested helper | `_<Name>` | `_fPInitial` |
-| Value read from Simulator (a hard-coded signal or a system option) | `<Name>_In` | `GenObjectMVABase_In` |
-| Value written back to Simulator | `<Name>_Out` | `localUsedP_Out` |
-| Scratch value | `temp<Name>` | `tempPrevState` |
-| Any other local | lowerCamel | `cosDelta`, `maxOrder` |
-| Helper that is private to a model (anonymous namespace in C++) | `LOCAL_<Name>` | `LOCAL_HardCodedIndex` |
-| Constant that is private to a model | `MAX_<Name>` for a capacity limit, `GLOBAL_<Name>` for a model constant | `MAX_TERMINALS`, `GLOBAL_DL_PCoeff` |
-| File-level variable | none: every bit of state lives in the record Simulator passes in | |
+| What                                                               | Name                                                                                                      | Example                             |
+| :----------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- | :---------------------------------- |
+| Model sizes                                                        | `N_F_PARAMS`, `N_I_PARAMS`, `N_S_PARAMS`, `N_STATES`, `N_ALGEBRAICS`, `N_NONWINDUPLIMITS` (in this order) | `N_STATES = 2`                      |
+| Float parameter index                                              | `PARAM_<Name>`                                                                                            | `PARAM_Tord`                        |
+| Integer parameter index (own index space, from 0)                  | `IPARAM_<Name>`                                                                                           | `IPARAM_NumTerminals`               |
+| State index                                                        | `STATE_<Name>`                                                                                            | `STATE_ValvePos`                    |
+| Algebraic index                                                    | `ALG_<Name>`                                                                                              | `ALG_IdRefInit`                     |
+| Position in the non-windup list                                    | `NONWINDUPINDEX_<StateName>`                                                                              | `NONWINDUPINDEX_VR`                 |
+| Hard-coded signal index                                            | `HARDCODE_<CLASS>_<Name>`                                                                                 | `HARDCODE_GOV_Pref`                 |
+| Pointer to an array in the shared record                           | `p<Array>Arr`                                                                                             | `pFloatParamArr`                    |
+| Non-windup record field                                            | `LimitStates`, `minLimits`, `maxLimits`, `activeLimits`                                                   | `nonWindUpLimits.LimitStates`       |
+| Local copy of a model parameter                                    | `f<Name>`, inverse time constant `fInv<Name>`                                                             | `fInvTord`                          |
+| Local copy of a state                                              | `state<Name>`                                                                                             | `stateValve`                        |
+| Derivative of a state                                              | `dotState<Name>` (not `dotX`, which is the output array)                                                  | `dotStateValve`                     |
+| Network or electrical local                                        | `local_<Name>`                                                                                            | `local_V`                           |
+| Nested helper procedure (lambda in C++)                            | `LOCAL_<Name>`                                                                                            | `LOCAL_NumberOfTerminals`           |
+| Argument of a nested helper                                        | `_<Name>`                                                                                                 | `_fPInitial`                        |
+| Value read from Simulator (a hard-coded signal or a system option) | `<Name>_In`                                                                                               | `GenObjectMVABase_In`               |
+| Value written back to Simulator                                    | `<Name>_Out`                                                                                              | `localUsedP_Out`                    |
+| Scratch value                                                      | `temp<Name>`                                                                                              | `tempPrevState`                     |
+| Any other local                                                    | lowerCamel                                                                                                | `cosDelta`, `maxOrder`              |
+| Helper that is private to a model (anonymous namespace in C++)     | `LOCAL_<Name>`                                                                                            | `LOCAL_HardCodedIndex`              |
+| Constant that is private to a model                                | `MAX_<Name>` for a capacity limit, `GLOBAL_<Name>` for a model constant                                   | `MAX_TERMINALS`, `GLOBAL_DL_PCoeff` |
+| File-level variable                                                | none: every bit of state lives in the record Simulator passes in                                          |                                     |
+
+The array pointers are `pFloatParamArr`, `pIntParamArr`, `pStatesArr`, `pIgnoreStatesArr`, `pAlgebraicsArr`, `pHardCodedArr`, `pDotXArr` and `pByteActiveLimitArr`, and every routine uses the same name for the same array.
 
 CLOD keeps the names of the original model it was ported from (a state is `<Name>State`, for example `SpeedState`, and its derivative is `dot<Name>State`; its other locals such as `IML_fPInitial` and `temp_P` are kept too).
 

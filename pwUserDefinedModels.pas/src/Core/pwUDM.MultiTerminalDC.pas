@@ -18,13 +18,13 @@ const
   // using the "Algebraics"
   HARDCODE_MTDC_SignalsPerConverter = 7;
 
-  HARDCODE_MTDC_CurrentReference    = 0; // the current order of the converter (Amps)
-  HARDCODE_MTDC_CurrentDC           = 1; // DC current of the converter (Amps)
-  HARDCODE_MTDC_VoltageDC           = 2; // DC voltage of the converter (kV)
-  HARDCODE_MTDC_VoltageAC           = 3; // AC voltage of the converter (pu)
-  HARDCODE_MTDC_SensedCurrentDC     = 4; // sensed DC current of the converter (Amps)
-  HARDCODE_MTDC_SensedVoltageDC     = 5; // sensed DC voltage of the converter (kV)
-  HARDCODE_MTDC_SensedVoltageAC     = 6; // sensed AC voltage of the converter (pu)
+  HARDCODE_MTDC_CurrentReference = 0;  // the current order of the converter (Amps)
+  HARDCODE_MTDC_CurrentDC        = 1;  // DC current of the converter (Amps)
+  HARDCODE_MTDC_VoltageDC        = 2;  // DC voltage of the converter (kV)
+  HARDCODE_MTDC_VoltageAC        = 3;  // AC voltage of the converter (pu)
+  HARDCODE_MTDC_SensedCurrentDC  = 4;  // sensed DC current of the converter (Amps)
+  HARDCODE_MTDC_SensedVoltageDC  = 5;  // sensed DC voltage of the converter (kV)
+  HARDCODE_MTDC_SensedVoltageAC  = 6;  // sensed AC voltage of the converter (pu)
 
   // These functions need to be exported in the DLL (add them to the exports clause of the model unit)
   //   MultiTerminalDCGetIDRef

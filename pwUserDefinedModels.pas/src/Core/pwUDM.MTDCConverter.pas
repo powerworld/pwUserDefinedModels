@@ -12,12 +12,12 @@ const
   // Simulator ALWAYS passes to the DLL
   // If additional inputs are needed from Simulator, then you MUST define them
   // using the "Algebraics"
-  HARDCODE_MTDCCONV_CurrentReference       = 0; // output from initialization, input afterward (Amps)
-  HARDCODE_MTDCCONV_CurrentOrderUnassigned = 1; // input for initialization: pole current order not yet given to a converter
-  HARDCODE_MTDCCONV_CosControlAngle        = 2; // input for initialization: cos(alpha) at a rectifier, cos(beta) at an inverter
-  HARDCODE_MTDCCONV_CurrentDC              = 3; // DC current (Amps)
-  HARDCODE_MTDCCONV_VoltageDC              = 4; // DC voltage (kV)
-  HARDCODE_MTDCCONV_VoltageAC              = 5; // AC voltage (pu)
+  HARDCODE_MTDCCONV_CurrentReference       = 0;  // output from initialization, input afterward (Amps)
+  HARDCODE_MTDCCONV_CurrentOrderUnassigned = 1;  // input for initialization: pole current order not yet given to a converter
+  HARDCODE_MTDCCONV_CosControlAngle        = 2;  // input for initialization: cos(alpha) at a rectifier, cos(beta) at an inverter
+  HARDCODE_MTDCCONV_CurrentDC              = 3;  // DC current (Amps)
+  HARDCODE_MTDCCONV_VoltageDC              = 4;  // DC voltage (kV)
+  HARDCODE_MTDCCONV_VoltageAC              = 5;  // AC voltage (pu)
 
   // These functions need to be exported in the DLL (add them to the exports clause of the model unit)
   // The ones marked (optional) are commented out in the exports clause unless the model needs them

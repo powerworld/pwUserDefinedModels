@@ -9,11 +9,11 @@ uses
 
 const
   // For the Model
-  N_F_PARAMS   =  6;   // number of float model params
-  N_I_PARAMS   =  0;   // number of integer model params
-  N_S_PARAMS   =  0;   // number of string model params
-  N_STATES     =  2;   // number of model states
-  N_ALGEBRAICS =  0;   // number of model algebraics
+  N_F_PARAMS   = 6;  // number of float model params
+  N_I_PARAMS   = 0;  // number of integer model params
+  N_S_PARAMS   = 0;  // number of string model params
+  N_STATES     = 2;  // number of model states
+  N_ALGEBRAICS = 0;  // number of model algebraics
 
   // For the NonWindUpLimits
   N_NONWINDUPLIMITS = 0;  // number of nonwindup

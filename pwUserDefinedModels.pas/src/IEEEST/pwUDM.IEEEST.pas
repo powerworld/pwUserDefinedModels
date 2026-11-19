@@ -9,11 +9,11 @@ uses
 
 const
   // For the Model
-  N_F_PARAMS     = 18;   // number of float model params
-  N_I_PARAMS     =  1;   // number of integer model params
-  N_S_PARAMS     =  0;   // number of string model params
-  N_STATES       =  7;   // number of model states
-  N_ALGEBRAICS   =  0;   // number of model algebraics
+  N_F_PARAMS   = 18;  // number of float model params
+  N_I_PARAMS   =  1;  // number of integer model params
+  N_S_PARAMS   =  0;  // number of string model params
+  N_STATES     =  7;  // number of model states
+  N_ALGEBRAICS =  0;  // number of model algebraics
 
   // For the NonWindUpLimits
   N_NONWINDUPLIMITS = 0;  // number of nonwindup limits
@@ -41,7 +41,7 @@ const
   PARAM_Tdelay = 17;
 
   // Integer Parameter Value indices.
-  IPARAM_Ics   =  0;
+  IPARAM_Ics = 0;
 
   // State Value Indices.
   STATE_Filter1         = 0;

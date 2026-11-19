@@ -382,7 +382,7 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
     dotStateFilter[2] = 0;
     dotStateFilter[3] = 0;
 
-	// kate 1/5/12 Reading in parameters we need for the network:  inNetworkParams
+	//  kate 1/5/12 Reading in parameters we need for the network:  inNetworkParams
 	if ((fIcs > 5) | (fIcs < 0)) {  // error check for bad input
 		local_Signal = 0;
 	}
@@ -396,9 +396,9 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
 	// seems that this is the way the big filter block is handled in Simulator
 	// b's = numerator, a's = denominator
 
-	// | b0 + b1*s + b2*s^2 + b3*s^3 + b4*s^4 |
+	//           | b0 + b1*s + b2*s^2 + b3*s^3 + b4*s^4 |
 	// INPUT --> |--------------------------------------| --> OUTPUT
-	// | a0 + a1*s + a2*s^2 + a3*s^3 + 1*s^4  |
+	//           | a0 + a1*s + a2*s^2 + a3*s^3 + 1*s^4  |
 
 	// Writing these in "observable cononical form" (look in a control system theory book)
 
@@ -407,7 +407,7 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
 	// dotx0 =    - a0*OUTPUT + (b0 - a0*b4)*INPUT
 	// dotx1 = x0 - a1*OUTPUT + (b1 - a1*b4)*INPUT
 	// dotx2 = x1 - a2*OUTPUT + (b2 - a2*b4)*INPUT
-	// dotx3 = x2 - a3*OUTPUT + (b3 - a3*b4)*INPUT
+	//   dotx3 = x2 - a3*OUTPUT + (b3 - a3*b4)*INPUT
 	// Written generically for entry "k" assuming highest order is "N"
 	// dotx(k) = X(k-1) - a(k)*OUTPUT + [b(k) - a(k)*b(N)]*INPUT
 	//----------------------------------------------------------------------------
@@ -479,9 +479,9 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
 	//----------------------------------------------------------------------------
 	// Lead-lag blocks
 	//----------------------------------------------------------------------------
-	// | b0+b1s |                 | b1     b0-b1/a1 |
-	// u --> |------- | --> y           |---- + ----------|
-	// | a0+a1s |                 | a1      1+a1*s  |
+	//         | b0+b1s |                 | b1     b0-b1/a1 |
+	//   u --> |------- | --> y           |---- + ----------|
+	//         | a0+a1s |                 | a1      1+a1*s  |
 
 	// dotOUT = 1/a1*(-OUT*a0 + b0*IN + b1*dotIN);
 	// Treat the STATE as the OUTPUT of the lead/lag block
@@ -627,7 +627,7 @@ extern "C" __declspec(dllexport) double StabilizerVsOut(TxMyModelData* ParamsAnd
 
 	//--------------------------------------------------------------------
 	// Grab States, Params, Algebraics Needed for this method
-	// -------------------------------+-------------------------------------
+	//-------------------------------+-------------------------------------
 	stateUnlimitedSignal = (*pStatesArr)[STATE_UnlimitedSignal];
     fLsmax   = (*pFloatParamArr)[PARAM_Lsmax];
     fLsmin   = (*pFloatParamArr)[PARAM_Lsmin];

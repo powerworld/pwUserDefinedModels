@@ -12,11 +12,11 @@ const
   // Simulator ALWAYS passes to the DLL
   // If additional inputs are needed from Simulator, then you MUST define them
   // using the "Algebraics" signals and include them at the BEGINNING of the ALG vector
-  HARDCODE_LOAD_DeviceVPU      =  0;
-  HARDCODE_LOAD_DeviceAngleRad =  1;
-  HARDCODE_LOAD_DeltaFreqPU    =  2;
-  HARDCODE_LOAD_DeviceStatus   =  3;
-  HARDCODE_LOAD_LoadScalar     =  4;
+  HARDCODE_LOAD_DeviceVPU      = 0;
+  HARDCODE_LOAD_DeviceAngleRad = 1;
+  HARDCODE_LOAD_DeltaFreqPU    = 2;
+  HARDCODE_LOAD_DeviceStatus   = 3;
+  HARDCODE_LOAD_LoadScalar     = 4;
 
   // These functions need to be exported in the DLL (add them to the exports clause of the model unit)
   //   LoadNortonAdmittance
@@ -25,7 +25,6 @@ const
   //   LoadInitializeAlgebraic
 
 //------------------------------------------------------------------------------
-// The DLL contract: the signature of each routine a model exports. Each model unit checks
 // The signatures of the Load-specific routines a model exports. The model unit checks its routines
 // against these types at compile time (see the end of its implementation section).
 type

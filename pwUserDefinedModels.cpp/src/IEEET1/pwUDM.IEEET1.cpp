@@ -368,16 +368,16 @@ extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAn
 
     //--------------------------------------------------------
     // Model of a Derivative "Washout" block
-    // Ks                     /  -K/T        \
+    //         Ks                     /  -K/T        \
     // OUT = ------ * IN  ==>>  OUT = | ------ + K/T | * IN
-    // [1+Ts]                   \ [1+Ts]       /
+    //       [1+Ts]                   \ [1+Ts]       /
     // OUT = (StateInter + K/T) * IN
     //--------------------------------------------------------
     if (fTf == 0) { fInvTF = 0; } else { fInvTF = 1/fTf; }
     local_VF = -fKf*fInvTF*local_EField;
-    // local_VF := (fVRef - local_VTerminalSensed) - local_VR/fKa; // kate 3/15/13
+    //  local_VF := (fVRef - local_VTerminalSensed) - local_VR/fKa; // kate 3/15/13
     
-    // // Write out initial state vector
+    //  // Write out initial state vector
     (*pStatesArr)[STATE_EField] = local_EField;  // local_EField should be the same thing as fEfdInit, which is effecitvely just read in from Simulator.
     (*pStatesArr)[STATE_SensedVt] = local_VTerminalSensed;
     (*pStatesArr)[STATE_VR] = local_VR;
@@ -482,9 +482,9 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
 
     //--------------------------------------------------------
     // Model of a Derivative "Washout" block
-    // Ks                      -K/T
+    //         Ks                      -K/T
     // OUT = ------ * IN  ==>>  OUT = ------ * IN   +   K/T * IN
-    // [1+Ts]                   [1+Ts]
+    //       [1+Ts]                   [1+Ts]
     // OUT = StateInter + K/T * IN
     //--------------------------------------------------------
     fPIOFeedbackoutput = stateVF + fKf*fInvTF*stateEField;  // this value should be zero until something happens
@@ -493,7 +493,7 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
     vInputState = VRef_In - stateSensedVt + StateVsWith_OEL_UEL_In;
 
     dotStateVR = fInvTA*(fKa*(vInputState - fPIOFeedbackoutput) - stateVR);
-    // dotStateVR := fInvTA*(fKA*(vInputState - stateVf) - stateVR); // kate 3/15/13 test
+    //  dotStateVR := fInvTA*(fKA*(vInputState - stateVf) - stateVR); // kate 3/15/13 test
 
     // kate 8/8/12 add limit checking, not sure this is necessary since it already seemed to match the built in model
     if (fActiveLimitHLStateVr > 0)
@@ -503,14 +503,14 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
     }
 
     //--------------------------------------------------------
-    // -K/T
+    //            -K/T
     // StateVf = ------ * StateEField
-    // [1+Ts]
+    //           [1+Ts]
 
     // DOTStateVf = 1/T * (-K/T*StateEField - StateVf)
     //--------------------------------------------------------
     dotStateVF = - fInvTF*(fPIOFeedbackoutput); // kate 3/7/12
-    // dotStateVF := fInvTF*( fKf*dotStateEField - stateVf ); // kate 3/15/13 test
+    //  dotStateVF := fInvTF*( fKf*dotStateEField - stateVf ); // kate 3/15/13 test
 
     // Push the resulting derivatives to the appropriate memory
     (*pDotXArr)[STATE_EField] = dotStateEField;  // dotEFieldBeforeWindupLimit

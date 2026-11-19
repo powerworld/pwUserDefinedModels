@@ -218,13 +218,13 @@ extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAn
 	//--------------------------------------------------------------------
 	// Calculate the Internal Voltage
 	//--------------------------------------------------------------------
-	// = Itr + jIti
-	// Iterm-->
-	// /------Ra+jXdp-----------             Vint = Vterm + Iterm*(Ra+jXdp)
-	// |+                 +                       = Vtr+jVti + (Itr+jIti)*(Ra+jXdp)
-	// Vint              Vterm = Vtr+jVti          = (Vtr + Itr*Ra - Iti*Xdp) + j(Vti + Iti*Ra + Itr*Xdp)
-	// |-                 -                       = Vintr + jVinti
-	// Ground
+	//                       = Itr + jIti
+	//                    Iterm-->
+	//   /------Ra+jXdp-----------             Vint = Vterm + Iterm*(Ra+jXdp)
+	//   |+                 +                       = Vtr+jVti + (Itr+jIti)*(Ra+jXdp)
+	//  Vint              Vterm = Vtr+jVti          = (Vtr + Itr*Ra - Iti*Xdp) + j(Vti + Iti*Ra + Itr*Xdp)
+	//   |-                 -                       = Vintr + jVinti
+	//  Ground
 
 	local_Vintr = local_Vtr + local_Itr*fRa - local_Iti*fXdp;
 	local_Vinti = local_Vti + local_Iti*fRa + local_Itr*fXdp;
@@ -261,8 +261,8 @@ extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAn
 
 	//--------------------------------------------------------------------
 	// Pass back initial inputs
-	// exciter input Efd
-	// governor input Pmech
+	//      exciter input Efd
+	//      governor input Pmech
 	//--------------------------------------------------------------------
 	(*pHardCodedArr)[HARDCODE_MACHINE_TSGenFieldV] = Efd_In;
 	(*pHardCodedArr)[HARDCODE_MACHINE_TSPmech] = Pmech_In;

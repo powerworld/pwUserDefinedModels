@@ -9,11 +9,11 @@ export namespace pwUDM::MTDCLINE {
     inline constexpr int MAX_TERMINALS = 8;
 
     // For the Model
-    inline constexpr int N_F_PARAMS   = 2;               // number of float model params
-    inline constexpr int N_I_PARAMS   = 1;               // number of integer model params
-    inline constexpr int N_S_PARAMS   = 0;               // number of string model params
-    inline constexpr int N_STATES     = MAX_TERMINALS;   // number of model states
-    inline constexpr int N_ALGEBRAICS = MAX_TERMINALS;   // number of model algebraics
+    inline constexpr int N_F_PARAMS   = 2;              // number of float model params
+    inline constexpr int N_I_PARAMS   = 1;              // number of integer model params
+    inline constexpr int N_S_PARAMS   = 0;              // number of string model params
+    inline constexpr int N_STATES     = MAX_TERMINALS;  // number of model states
+    inline constexpr int N_ALGEBRAICS = MAX_TERMINALS;  // number of model algebraics
 
     // For the NonWindUpLimits
     inline constexpr int N_NONWINDUPLIMITS = 0;  // number of nonwindup limits

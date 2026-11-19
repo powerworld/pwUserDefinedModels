@@ -4,10 +4,10 @@ export module pwUDM.CLOD;
 export namespace pwUDM::CLOD {
 
     // For the Model
-    inline constexpr int N_F_PARAMS   = 9;  // number of float model params
-    inline constexpr int N_I_PARAMS   = 0;  // number of int model params
-    inline constexpr int N_S_PARAMS   = 0;  // number of string model params
-    inline constexpr int N_STATES     = 6;  // number of model states
+    inline constexpr int N_F_PARAMS   =  9;  // number of float model params
+    inline constexpr int N_I_PARAMS   =  0;  // number of int model params
+    inline constexpr int N_S_PARAMS   =  0;  // number of string model params
+    inline constexpr int N_STATES     =  6;  // number of model states
     inline constexpr int N_ALGEBRAICS = 30;  // number of model algebraics
     // For the NonWindUpLimits
     inline constexpr int N_NONWINDUPLIMITS = 0;  // number of nonwindup
@@ -59,18 +59,18 @@ export namespace pwUDM::CLOD {
     inline constexpr int ALG_IMS_fQInitial   = 18;
     inline constexpr int ALG_IMS_Tnom        = 19;
     // Discharge Lighting algebraics
-    inline constexpr int ALG_DL_P_at_1_PU    = 20;
-    inline constexpr int ALG_DL_Q_at_1_PU    = 21;
+    inline constexpr int ALG_DL_P_at_1_PU = 20;
+    inline constexpr int ALG_DL_Q_at_1_PU = 21;
     // ZIP Model algebraics
-    inline constexpr int ALG_ZIP_ZMW         = 22;
-    inline constexpr int ALG_ZIP_IMW         = 23;
-    inline constexpr int ALG_ZIP_SMW         = 24;
-    inline constexpr int ALG_ZIP_ZMVR        = 25;
-    inline constexpr int ALG_ZIP_IMVR        = 26;
-    inline constexpr int ALG_ZIP_SMVR        = 27;
+    inline constexpr int ALG_ZIP_ZMW  = 22;
+    inline constexpr int ALG_ZIP_IMW  = 23;
+    inline constexpr int ALG_ZIP_SMW  = 24;
+    inline constexpr int ALG_ZIP_ZMVR = 25;
+    inline constexpr int ALG_ZIP_IMVR = 26;
+    inline constexpr int ALG_ZIP_SMVR = 27;
     // Timer for Load Tripping
     inline constexpr int ALG_TIMER_LowVoltTimeSet = 28;
-    inline constexpr int ALG_TIMER_LowVoltTime = 29;
+    inline constexpr int ALG_TIMER_LowVoltTime    = 29;
 
 
     // These are hard-coded parameters for modeling the discharge lighting load

@@ -14,11 +14,11 @@ const
   MAX_TERMINALS = 8;
 
   // For the Model
-  N_F_PARAMS   = 2;                // number of float model params
-  N_I_PARAMS   = 1;                // number of integer model params
-  N_S_PARAMS   = 0;                // number of string model params
-  N_STATES     = MAX_TERMINALS;    // number of model states
-  N_ALGEBRAICS = MAX_TERMINALS;    // number of model algebraics
+  N_F_PARAMS   = 2;              // number of float model params
+  N_I_PARAMS   = 1;              // number of integer model params
+  N_S_PARAMS   = 0;              // number of string model params
+  N_STATES     = MAX_TERMINALS;  // number of model states
+  N_ALGEBRAICS = MAX_TERMINALS;  // number of model algebraics
 
   // For the NonWindUpLimits
   N_NONWINDUPLIMITS = 0;  // number of nonwindup limits

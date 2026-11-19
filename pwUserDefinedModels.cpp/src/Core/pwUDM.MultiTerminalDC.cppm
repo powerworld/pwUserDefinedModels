@@ -16,13 +16,13 @@ export namespace pwUDM {
 // using the "Algebraics"
 inline constexpr int HARDCODE_MTDC_SignalsPerConverter = 7;
 
-inline constexpr int HARDCODE_MTDC_CurrentReference    = 0;  // the current order of the converter (Amps)
-inline constexpr int HARDCODE_MTDC_CurrentDC           = 1;  // DC current of the converter (Amps)
-inline constexpr int HARDCODE_MTDC_VoltageDC           = 2;  // DC voltage of the converter (kV)
-inline constexpr int HARDCODE_MTDC_VoltageAC           = 3;  // AC voltage of the converter (pu)
-inline constexpr int HARDCODE_MTDC_SensedCurrentDC     = 4;  // sensed DC current of the converter (Amps)
-inline constexpr int HARDCODE_MTDC_SensedVoltageDC     = 5;  // sensed DC voltage of the converter (kV)
-inline constexpr int HARDCODE_MTDC_SensedVoltageAC     = 6;  // sensed AC voltage of the converter (pu)
+inline constexpr int HARDCODE_MTDC_CurrentReference = 0;  // the current order of the converter (Amps)
+inline constexpr int HARDCODE_MTDC_CurrentDC        = 1;  // DC current of the converter (Amps)
+inline constexpr int HARDCODE_MTDC_VoltageDC        = 2;  // DC voltage of the converter (kV)
+inline constexpr int HARDCODE_MTDC_VoltageAC        = 3;  // AC voltage of the converter (pu)
+inline constexpr int HARDCODE_MTDC_SensedCurrentDC  = 4;  // sensed DC current of the converter (Amps)
+inline constexpr int HARDCODE_MTDC_SensedVoltageDC  = 5;  // sensed DC voltage of the converter (kV)
+inline constexpr int HARDCODE_MTDC_SensedVoltageAC  = 6;  // sensed AC voltage of the converter (pu)
 
 // These functions need to be exported in the DLL
 // Returns the current order of converter number Converter^ (counting from 0)

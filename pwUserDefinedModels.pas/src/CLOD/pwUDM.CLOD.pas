@@ -9,28 +9,28 @@ uses
 
 const
   // For the Model
-  N_F_PARAMS   =  9;     // number of float model params
-  N_I_PARAMS   =  0;     // number of int model params
-  N_S_PARAMS   =  0;     // number of string model params
-  N_STATES     =  6;     // number of model states
-  N_ALGEBRAICS = 30;     // number of model algebraics
+  N_F_PARAMS   =  9;  // number of float model params
+  N_I_PARAMS   =  0;  // number of int model params
+  N_S_PARAMS   =  0;  // number of string model params
+  N_STATES     =  6;  // number of model states
+  N_ALGEBRAICS = 30;  // number of model algebraics
   // For the NonWindUpLimits
-  N_NONWINDUPLIMITS = 0; // number of nonwindup
+  N_NONWINDUPLIMITS = 0;  // number of nonwindup
 
   //---------------------------------------------------------------------------
   // These are just to make the code easier to read
   // Parameter Value indices.
 
   // Double Parameters
-  PARAM_PercLmotor =  0;
-  PARAM_PercSmotor =  1;
-  PARAM_PercTex    =  2;
-  PARAM_PercDis    =  3;
-  PARAM_PercP      =  4;
-  PARAM_Kp         =  5;
-  PARAM_Vi         =  6;
-  PARAM_Ti         =  7;
-  PARAM_Tb         =  8;
+  PARAM_PercLmotor = 0;
+  PARAM_PercSmotor = 1;
+  PARAM_PercTex    = 2;
+  PARAM_PercDis    = 3;
+  PARAM_PercP      = 4;
+  PARAM_Kp         = 5;
+  PARAM_Vi         = 6;
+  PARAM_Ti         = 7;
+  PARAM_Tb         = 8;
 
   // State Value Indices.
   STATE_IM1SpeedWr = 0;
@@ -42,16 +42,16 @@ const
 
   // Algebraic Value Indices
   // Large Motor Algebraics
-  ALG_IML_Rs          =  0;
-  ALG_IML_Xs          =  1;
-  ALG_IML_fWo         =  2;
-  ALG_IMLfInvTp       =  3;
-  ALG_IML_Xp          =  4;
-  ALG_IML_X           =  5;
-  ALG_IML_SlipInitial =  6;
-  ALG_IML_fPInitial   =  7;
-  ALG_IML_fQInitial   =  8;
-  ALG_IML_Tnom        =  9;
+  ALG_IML_Rs          = 0;
+  ALG_IML_Xs          = 1;
+  ALG_IML_fWo         = 2;
+  ALG_IMLfInvTp       = 3;
+  ALG_IML_Xp          = 4;
+  ALG_IML_X           = 5;
+  ALG_IML_SlipInitial = 6;
+  ALG_IML_fPInitial   = 7;
+  ALG_IML_fQInitial   = 8;
+  ALG_IML_Tnom        = 9;
   // Small Motor Algebraics
   ALG_IMS_Rs          = 10;
   ALG_IMS_Xs          = 11;
@@ -64,23 +64,23 @@ const
   ALG_IMS_fQInitial   = 18;
   ALG_IMS_Tnom        = 19;
   // Discharge Lighting algebraics
-  ALG_DL_P_at_1_PU    = 20;
-  ALG_DL_Q_at_1_PU    = 21;
+  ALG_DL_P_at_1_PU = 20;
+  ALG_DL_Q_at_1_PU = 21;
   // ZIP Model algebraics
-  ALG_ZIP_ZMW         = 22;
-  ALG_ZIP_IMW         = 23;
-  ALG_ZIP_SMW         = 24;
-  ALG_ZIP_ZMVR        = 25;
-  ALG_ZIP_IMVR        = 26;
-  ALG_ZIP_SMVR        = 27;
+  ALG_ZIP_ZMW  = 22;
+  ALG_ZIP_IMW  = 23;
+  ALG_ZIP_SMW  = 24;
+  ALG_ZIP_ZMVR = 25;
+  ALG_ZIP_IMVR = 26;
+  ALG_ZIP_SMVR = 27;
   // Timer for Load Tripping
   ALG_TIMER_LowVoltTimeSet = 28;
-  ALG_TIMER_LowVoltTime = 29;
+  ALG_TIMER_LowVoltTime    = 29;
 
 
   // These are hard-coded parameters for modeling the discharge lighting load
-  GLOBAL_DL_PCoeff  = 1.0; // constant CURRENT Real Power
-  GLOBAL_DL_QCoeff  = 4.5; // much higher coefficent for Reactive Power
+  GLOBAL_DL_PCoeff  =  1.0;  // constant CURRENT Real Power
+  GLOBAL_DL_QCoeff  =  4.5;  // much higher coefficent for Reactive Power
   GLOBAL_DL_VoltBP  = 0.75;
   GLOBAL_DL_VoltExt = 0.65;
 

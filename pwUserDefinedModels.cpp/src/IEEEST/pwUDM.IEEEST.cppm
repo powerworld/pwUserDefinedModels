@@ -4,11 +4,11 @@ export module pwUDM.IEEEST;
 export namespace pwUDM::IEEEST {
 
     // For the Model
-    inline constexpr int N_F_PARAMS     = 18;  // number of float model params
-    inline constexpr int N_I_PARAMS     = 1;  // number of integer model params
-    inline constexpr int N_S_PARAMS     = 0;  // number of string model params
-    inline constexpr int N_STATES       = 7;  // number of model states
-    inline constexpr int N_ALGEBRAICS   = 0;  // number of model algebraics
+    inline constexpr int N_F_PARAMS   = 18;  // number of float model params
+    inline constexpr int N_I_PARAMS   =  1;  // number of integer model params
+    inline constexpr int N_S_PARAMS   =  0;  // number of string model params
+    inline constexpr int N_STATES     =  7;  // number of model states
+    inline constexpr int N_ALGEBRAICS =  0;  // number of model algebraics
 
     // For the NonWindUpLimits
     inline constexpr int N_NONWINDUPLIMITS = 0;  // number of nonwindup limits
@@ -16,16 +16,16 @@ export namespace pwUDM::IEEEST {
     //---------------------------------------------------------------------------
     // These are just to make the code easier to read
     // Parameter Value indices.
-    inline constexpr int PARAM_A1     = 0;
-    inline constexpr int PARAM_A2     = 1;
-    inline constexpr int PARAM_A3     = 2;
-    inline constexpr int PARAM_A4     = 3;
-    inline constexpr int PARAM_A5     = 4;
-    inline constexpr int PARAM_A6     = 5;
-    inline constexpr int PARAM_T1     = 6;
-    inline constexpr int PARAM_T2     = 7;
-    inline constexpr int PARAM_T3     = 8;
-    inline constexpr int PARAM_T4     = 9;
+    inline constexpr int PARAM_A1     =  0;
+    inline constexpr int PARAM_A2     =  1;
+    inline constexpr int PARAM_A3     =  2;
+    inline constexpr int PARAM_A4     =  3;
+    inline constexpr int PARAM_A5     =  4;
+    inline constexpr int PARAM_A6     =  5;
+    inline constexpr int PARAM_T1     =  6;
+    inline constexpr int PARAM_T2     =  7;
+    inline constexpr int PARAM_T3     =  8;
+    inline constexpr int PARAM_T4     =  9;
     inline constexpr int PARAM_T5     = 10;
     inline constexpr int PARAM_T6     = 11;
     inline constexpr int PARAM_Ks     = 12;
@@ -36,7 +36,7 @@ export namespace pwUDM::IEEEST {
     inline constexpr int PARAM_Tdelay = 17;
 
     // Integer Parameter Value indices.
-    inline constexpr int IPARAM_Ics   = 0;
+    inline constexpr int IPARAM_Ics = 0;
 
     // State Value Indices.
     inline constexpr int STATE_Filter1         = 0;
