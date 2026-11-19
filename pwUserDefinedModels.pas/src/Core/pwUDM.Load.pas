@@ -37,7 +37,9 @@ type
   // Any difference will be automatically made-up for within
   // Simulator by embedding an impedance with the load that makes the
   // NetP and NetQ match SteadyStateP and SteadyStateQ initially
-  TLoadInitializeAlgebraic = function(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; INPUT_PUTol, SteadyStateP, SteadyStateQ, SteadyStateV : Double; InitLoadP, InitLoadQ : PDouble) : boolean;
+  // Simulator passes the tolerance and the steady state P, Q and V by reference, like everything else
+  // it hands to a DLL, so they are pointers: read them, but never write to them.
+  TLoadInitializeAlgebraic = function(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; pPUTol, pSteadyStateP, pSteadyStateQ, pSteadyStateV : PDouble; InitLoadP, InitLoadQ : PDouble) : boolean;
 
 implementation
 

@@ -110,7 +110,7 @@ procedure LoadNortonCurrentAlgebraicDerivative(ParamsAndStates : PTxMyModelData;
 // Any difference will be automatically made-up for within
 // Simulator by embedding an impedance with the load that makes the
 // NetP and NetQ match SteadyStateP and SteadyStateQ initially
-function LoadInitializeAlgebraic(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; INPUT_PUTol, SteadyStateP, SteadyStateQ, SteadyStateV : Double; InitLoadP, InitLoadQ : PDouble) : boolean;
+function LoadInitializeAlgebraic(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; pPUTol, pSteadyStateP, pSteadyStateQ, pSteadyStateV : PDouble; InitLoadP, InitLoadQ : PDouble) : boolean;
 
 exports DLLVersion
         , modelClassName
@@ -1561,7 +1561,7 @@ end;
 // Any difference will be automatically made-up for within
 // Simulator by embedding an impedance with the load that makes the
 // NetP and NetQ match SteadyStateP and SteadyStateQ initially
-function LoadInitializeAlgebraic(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; INPUT_PUTol, SteadyStateP, SteadyStateQ, SteadyStateV : Double; InitLoadP, InitLoadQ : PDouble) : boolean;
+function LoadInitializeAlgebraic(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; pPUTol, pSteadyStateP, pSteadyStateQ, pSteadyStateV : PDouble; InitLoadP, InitLoadQ : PDouble) : boolean;
   //----------------------------------------------------------------------------
   procedure LOCAL_InitializeAlgebraicMotor(INPUT_PUTol, loadObjNomFreq_In, SteadyStateV : double;
                                            var _fPInitial, _fQInitial, _SlipInitial,
@@ -1598,7 +1598,8 @@ function LoadInitializeAlgebraic(ParamsAndStates : PTxMyModelData; SystemOptions
   end;
   //----------------------------------------------------------------------------
 
-Var fLmotor, fSmotor, fTex, fDis, fP, fKp : Double;
+Var INPUT_PUTol, SteadyStateP, SteadyStateQ, SteadyStateV : Double; // local copies of the values behind the pointers
+    fLmotor, fSmotor, fTex, fDis, fP, fKp : Double;
     loadObjNomFreq_In : Double;
     localUsedP_out, localUsedQ_out : Double;
 
@@ -1625,6 +1626,12 @@ Var fLmotor, fSmotor, fTex, fDis, fP, fKp : Double;
     pFloatParamArr : PDoubleArray;
     pAlgebraicsArr : PDoubleArray;
 begin
+
+  // Simulator passes these four by reference, so work on local copies and leave Simulator's values alone
+  INPUT_PUTol   := pPUTol^;
+  SteadyStateP  := pSteadyStateP^;
+  SteadyStateQ  := pSteadyStateQ^;
+  SteadyStateV  := pSteadyStateV^;
 
   If SteadyStateV = 0 Then SteadyStateV := 1;  // Set to unity if not in service
 

@@ -1481,7 +1481,7 @@ extern "C" __declspec(dllexport) void LoadNortonCurrentAlgebraicDerivative(TxMyM
 // Any difference will be automatically made-up for within
 // Simulator by embedding an impedance with the load that makes the
 // NetP and NetQ match SteadyStateP and SteadyStateQ initially
-extern "C" __declspec(dllexport) bool LoadInitializeAlgebraic(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double INPUT_PUTol, double SteadyStateP, double SteadyStateQ, double SteadyStateV, double* InitLoadP, double* InitLoadQ)
+extern "C" __declspec(dllexport) bool LoadInitializeAlgebraic(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* pPUTol, double* pSteadyStateP, double* pSteadyStateQ, double* pSteadyStateV, double* InitLoadP, double* InitLoadQ)
 {
     //----------------------------------------------------------------------------
     auto LOCAL_InitializeAlgebraicMotor = [&](double INPUT_PUTol, double loadObjNomFreq_In, double SteadyStateV,
@@ -1518,6 +1518,8 @@ extern "C" __declspec(dllexport) bool LoadInitializeAlgebraic(TxMyModelData* Par
     };
     //----------------------------------------------------------------------------
 
+    // Local copies of the values behind the pointers
+    double INPUT_PUTol, SteadyStateP, SteadyStateQ, SteadyStateV;
     double fLmotor, fSmotor, fTex, fDis, fP, fKp;
     double loadObjNomFreq_In;
     double localUsedP_out, localUsedQ_out;
@@ -1544,6 +1546,12 @@ extern "C" __declspec(dllexport) bool LoadInitializeAlgebraic(TxMyModelData* Par
 
     DoubleArray* pFloatParamArr;
     DoubleArray* pAlgebraicsArr;
+
+    // Simulator passes these four by reference, so work on local copies and leave Simulator's values alone
+    INPUT_PUTol   = *pPUTol;
+    SteadyStateP  = *pSteadyStateP;
+    SteadyStateQ  = *pSteadyStateQ;
+    SteadyStateV  = *pSteadyStateV;
 
     if (SteadyStateV == 0) SteadyStateV = 1;  // Set to unity if not in service
 

@@ -18,10 +18,11 @@ inline constexpr int HARDCODE_LOAD_LoadScalar     = 4;
 
 // These functions need to be exported in the DLL
 // The signatures follow the Delphi reference implementation (pwUserDefinedModels.pas): the three Norton
-// functions return nothing, and LoadInitializeAlgebraic takes its first four values by value.
+// functions return nothing, and LoadInitializeAlgebraic takes the tolerance and the steady state P, Q and V
+// by reference, like everything else Simulator hands to a DLL: read them, but never write to them.
 extern "C" __declspec(dllexport) void LoadNortonAdmittance(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* theG, double* theB);
 extern "C" __declspec(dllexport) void LoadNortonCurrent(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* IReal, double* IImag);
 extern "C" __declspec(dllexport) void LoadNortonCurrentAlgebraicDerivative(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* IReal_dVreal, double* IReal_dVimag, double* IImag_dVreal, double* IImag_dVimag);
-extern "C" __declspec(dllexport) bool LoadInitializeAlgebraic(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double INPUT_PUTol, double SteadyStateP, double SteadyStateQ, double SteadyStateV, double* InitLoadP, double* InitLoadQ);
+extern "C" __declspec(dllexport) bool LoadInitializeAlgebraic(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, double* pPUTol, double* pSteadyStateP, double* pSteadyStateQ, double* pSteadyStateV, double* InitLoadP, double* InitLoadQ);
 
 }
