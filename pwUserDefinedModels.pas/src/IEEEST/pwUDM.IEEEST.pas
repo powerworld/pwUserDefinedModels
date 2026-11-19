@@ -9,22 +9,18 @@ uses
 
 const
   // For the Model
-  N_S_PARAMS     =  0;   // number of string model params
-  N_I_PARAMS     =  1;   // number of integer model params
   N_F_PARAMS     = 18;   // number of float model params
+  N_I_PARAMS     =  1;   // number of integer model params
+  N_S_PARAMS     =  0;   // number of string model params
   N_STATES       =  7;   // number of model states
   N_ALGEBRAICS   =  0;   // number of model algebraics
+
   // For the NonWindUpLimits
-  N_NONWINDUPLIMITS = 0;  // number of nonwindup
+  N_NONWINDUPLIMITS = 0;  // number of nonwindup limits
 
   //---------------------------------------------------------------------------
   // These are just to make the code easier to read
   // Parameter Value indices.
-
-  // Integers
-  PARAM_Ics    =  0;
-
-  // Doubles
   PARAM_A1     =  0;
   PARAM_A2     =  1;
   PARAM_A3     =  2;
@@ -43,6 +39,9 @@ const
   PARAM_Vcu    = 15;
   PARAM_Vcl    = 16;
   PARAM_Tdelay = 17;
+
+  // Integer Parameter Value indices.
+  IPARAM_Ics   =  0;
 
   // State Value Indices.
   STATE_Filter1         = 0;
@@ -137,7 +136,7 @@ var ts : PChar;
 begin
   // Integer parameters
   case ParamNum^ of
-    PARAM_Ics    : ts := 'Ics';
+    IPARAM_Ics    : ts := 'Ics';
    else ts := '';
   end;
 
@@ -209,33 +208,33 @@ end;
 
 //******************************************************************************
 procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData);
-var pDoubArr: PDoubleArray;
-    pIntegerArr : PIntegerArray;
+var pFloatParamArr: PDoubleArray;
+    pIntParamArr : PIntegerArray;
 begin
   // Integers
-  pIntegerArr := ParamsAndStates^.IntParams;
-  pIntegerArr^[PARAM_Ics   ] := 1;
+  pIntParamArr := ParamsAndStates^.IntParams;
+  pIntParamArr^[IPARAM_Ics   ] := 1;
 
   // Doubles
-  pDoubArr := ParamsAndStates^.FloatParams;
-  pDoubArr^[PARAM_A1    ] :=  1.013;
-  pDoubArr^[PARAM_A2    ] :=  0.013;
-  pDoubArr^[PARAM_A3    ] :=  0.0;
-  pDoubArr^[PARAM_A4    ] :=  0.0;
-  pDoubArr^[PARAM_A5    ] :=  1.013;
-  pDoubArr^[PARAM_A6    ] :=  0.113;
-  pDoubArr^[PARAM_T1    ] :=  0.0;
-  pDoubArr^[PARAM_T2    ] :=  0.02;
-  pDoubArr^[PARAM_T3    ] :=  0.0;
-  pDoubArr^[PARAM_T4    ] :=  0.0;
-  pDoubArr^[PARAM_T5    ] :=  1.65;
-  pDoubArr^[PARAM_T6    ] :=  1.65;
-  pDoubArr^[PARAM_Ks    ] :=  3.00;
-  pDoubArr^[PARAM_Lsmax ] :=  0.1;
-  pDoubArr^[PARAM_Lsmin ] := -0.1;
-  pDoubArr^[PARAM_Vcu   ] :=  0.0;
-  pDoubArr^[PARAM_Vcl   ] :=  0.0;
-  pDoubArr^[PARAM_Tdelay] :=  0.0;
+  pFloatParamArr := ParamsAndStates^.FloatParams;
+  pFloatParamArr^[PARAM_A1    ] :=  1.013;
+  pFloatParamArr^[PARAM_A2    ] :=  0.013;
+  pFloatParamArr^[PARAM_A3    ] :=  0.0;
+  pFloatParamArr^[PARAM_A4    ] :=  0.0;
+  pFloatParamArr^[PARAM_A5    ] :=  1.013;
+  pFloatParamArr^[PARAM_A6    ] :=  0.113;
+  pFloatParamArr^[PARAM_T1    ] :=  0.0;
+  pFloatParamArr^[PARAM_T2    ] :=  0.02;
+  pFloatParamArr^[PARAM_T3    ] :=  0.0;
+  pFloatParamArr^[PARAM_T4    ] :=  0.0;
+  pFloatParamArr^[PARAM_T5    ] :=  1.65;
+  pFloatParamArr^[PARAM_T6    ] :=  1.65;
+  pFloatParamArr^[PARAM_Ks    ] :=  3.00;
+  pFloatParamArr^[PARAM_Lsmax ] :=  0.1;
+  pFloatParamArr^[PARAM_Lsmin ] := -0.1;
+  pFloatParamArr^[PARAM_Vcu   ] :=  0.0;
+  pFloatParamArr^[PARAM_Vcl   ] :=  0.0;
+  pFloatParamArr^[PARAM_Tdelay] :=  0.0;
 end;
 
 { non specified for this model
@@ -317,7 +316,7 @@ begin
   //--------------------------------------------------------------------
   // Grab States, Params, Algebraics Needed for this method
   //--------------------------------------------------------------------
-  fIcs    := pIntParamArr^[PARAM_Ics];
+  fIcs    := pIntParamArr^[IPARAM_Ics];
 
   fA1     := pFloatParamArr^[PARAM_A1    ];
   fA2     := pFloatParamArr^[PARAM_A2    ];
@@ -384,13 +383,12 @@ var // parameters
     dotStateFilter : array[0..3] of double;
     coefA : array[0..4] of double;
     coefB : array[0..4] of double;
-    DivideBy : double;
-    MaxOrder : integer;
+    divideBy : double;
+    maxOrder : integer;
     tempIN : double;
     tempOUT : double;
-    temp : double;
+    tempPrevState : double;
 
-    TinvT : double;
     stateLL1, stateLL2, stateUnlimitedSignal : Double;
     dotStateLL1, dotStateLL2, dotStateUnlimitedSignal : Double;
     local_Signal : Double;
@@ -421,7 +419,7 @@ begin
   stateLL2             := pStatesArr^[STATE_LL2            ];
   stateUnlimitedSignal := pStatesArr^[STATE_UnlimitedSignal];
 
-  fIcs := pIntParamArr^[PARAM_Ics];
+  fIcs := pIntParamArr^[IPARAM_Ics];
 
   fA1     := pFloatParamArr^[PARAM_A1    ];
   fA2     := pFloatParamArr^[PARAM_A2    ];
@@ -490,20 +488,20 @@ begin
 
   // Must also convert coefficients so that the "a4 = 1", so write as follows
   // Must also convert so coefficent is "1" on the highest order term in denominator
-  DivideBy := 1;
-  MaxOrder := -1;
+  divideBy := 1;
+  maxOrder := -1;
   for i := 4 downto 0 do begin
     if (coefA[i] <> 0) then begin
-      DivideBy := coefA[i];
-      MaxOrder := i;
+      divideBy := coefA[i];
+      maxOrder := i;
       break; // jump OUT of the for i loop
     end;
   end;
 
   // Divide all coefficients so that the highest order non-zero A termi is 1.
   for i := 0 to 4 do begin
-    coefA[i] := coefA[i]/DivideBy;
-    coefB[i] := coefB[i]/DivideBy;
+    coefA[i] := coefA[i]/divideBy;
+    coefB[i] := coefB[i]/divideBy;
   end;
 
   // INPUT = localsignal
@@ -512,18 +510,18 @@ begin
   // dotx1 = x0 - a1*OUTPUT + (b1 - a1*b4)*INPUT
   // dotx2 = x1 - a2*OUTPUT + (b2 - a2*b4)*INPUT
 
-  if MaxOrder > 0 then begin
-    tempOUT := StateFilter[MaxOrder-1];
+  if maxOrder > 0 then begin
+    tempOUT := StateFilter[maxOrder-1];
     tempIN := local_Signal;
-    for i := 0 to MaxOrder-1 do begin
-      if i > 0 then temp := StateFilter[i-1] else temp := 0;
+    for i := 0 to maxOrder-1 do begin
+      if i > 0 then tempPrevState := StateFilter[i-1] else tempPrevState := 0;
       // we can ignore the terms which multiply by b4 because it's ALWAYS zero in this example
       //  dotx(k) = X(k-1) - a(k)*OUTPUT + [b(k) - a(k)*b(N)]*INPUT
-      dotStateFilter[i] := temp - coefA[i]*tempOUT + coefB[i]*tempIN;
+      dotStateFilter[i] := tempPrevState - coefA[i]*tempOUT + coefB[i]*tempIN;
     end;
     // Make all ignored states have the same derivative
     // needed because I'm treating the OUTPUT variable as the state of this polyintegration object!
-    for i := MaxOrder to 3 do begin
+    for i := maxOrder to 3 do begin
       dotStateFilter[i] := dotStateFilter[i-1];
     end;
   end;
@@ -561,7 +559,6 @@ begin
   end
   else begin
     fInvT2 := 1/fT2;
-    TinvT := fT1*fInvT2;
     dotStateLL1 := fInvT2*(-stateLL1 + stateFilter[3] + fT1*dotStateFilter[3]);   // kate 3/18/13
   end;
 
@@ -570,7 +567,6 @@ begin
   end
   else begin
     fInvT4 := 1/fT4;
-    TinvT := fT3*fInvT4;
     dotStateLL2 := fInvT4*(-stateLL2 + stateLL1 + fT3*dotStateLL1);  // kate 3/18/13
   end;
 
@@ -582,7 +578,6 @@ begin
   end
   else begin
     fInvT6 := 1/fT6;
-    TinvT := fKs*fT5*fInvT6;
     dotStateUnlimitedSignal := fInvT6*(-stateUnlimitedSignal + fKs*fT5*dotStateLL2); // kate 3/18/13
 
   end;
@@ -617,7 +612,7 @@ Begin
   pHardCodedArr := ParamsAndStates.HardCodedSignals;
 
   pIntParamArr := ParamsAndStates.IntParams;
-  fIcs := pIntParamArr^[PARAM_Ics];
+  fIcs := pIntParamArr^[IPARAM_Ics];
 
   if (fIcs > 5) or (fIcs < 0) then local_Signal := 0 // error check for bad input
   else local_Signal := pHardCodedArr^[fIcs];
@@ -647,7 +642,7 @@ end;
 function StabilizerVsOut(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions) : double;
 var fLsmax, fLsmin, fVcu, fVcl : Double;
     stateUnlimitedSignal : Double;
-    GenVcomp : Double;
+    GenVcomp_In : Double;
 
     pFloatParamArr: PDoubleArray;
     pHardCodedArr : PDoubleArray;
@@ -667,7 +662,7 @@ begin
   fLsmax   := pFloatParamArr^[PARAM_Lsmax ];
   fLsmin   := pFloatParamArr^[PARAM_Lsmin ];
 
-  GenVcomp := pHardCodedArr^[HARDCODE_STAB_GenVcomp];
+  GenVcomp_In := pHardCodedArr^[HARDCODE_STAB_GenVcomp];
   fVcu     := pFloatParamArr^[PARAM_Vcu   ];
   fVcl     := pFloatParamArr^[PARAM_Vcl   ];
 
@@ -681,8 +676,8 @@ begin
   end;
 
   // Check for output limiter signals.
-  If      (fVCu <> 0) and (fVCu <  999) and (GenVcomp > fVCu) Then result := 0
-  Else If (fVCl <> 0) and (fVcl > -999) and (GenVcomp < fVcl) Then result := 0;
+  If      (fVCu <> 0) and (fVCu <  999) and (GenVcomp_In > fVCu) Then result := 0
+  Else If (fVCl <> 0) and (fVcl > -999) and (GenVcomp_In < fVcl) Then result := 0;
 end;
 
 { NOT defined for this object

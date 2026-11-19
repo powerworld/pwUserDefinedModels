@@ -129,16 +129,16 @@ extern "C" __declspec(dllexport) int OtherObjectDescription(int* Num, int* StrSi
 //******************************************************************************
 extern "C" __declspec(dllexport) void getDefaultParameterValue(TxMyModelData* ParamsAndStates)
 {
-    DoubleArray* pDoubArr;
-    IntegerArray* pIntArr;
+    DoubleArray* pFloatParamArr;
+    IntegerArray* pIntParamArr;
 
     // Example MTDCLINE parameters
-    pDoubArr = ParamsAndStates->FloatParams;
-    (*pDoubArr)[PARAM_Tord] = 0.5;
-    (*pDoubArr)[PARAM_IordScale] = 1.0;
+    pFloatParamArr = ParamsAndStates->FloatParams;
+    (*pFloatParamArr)[PARAM_Tord] = 0.5;
+    (*pFloatParamArr)[PARAM_IordScale] = 1.0;
 
-    pIntArr = ParamsAndStates->IntParams;
-    (*pIntArr)[IPARAM_NumTerminals] = 3;
+    pIntParamArr = ParamsAndStates->IntParams;
+    (*pIntParamArr)[IPARAM_NumTerminals] = 3;
 }
 
 /* non specified for this model
@@ -252,7 +252,7 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
     double stateIdRef;
 
     // FofX or xdot,
-    double dotIdRef;
+    double dotStateIdRef;
 
     DoubleArray* pFloatParamArr;
     DoubleArray* pStatesArr;
@@ -283,14 +283,14 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
         if (i < nTerminals)
         {
             stateIdRef = (*pStatesArr)[STATE_IdRef + i];
-            dotIdRef = fInvTord*(fIordScale*(*pAlgebraicsArr)[ALG_IdRefInit + i] - stateIdRef);
+            dotStateIdRef = fInvTord*(fIordScale*(*pAlgebraicsArr)[ALG_IdRefInit + i] - stateIdRef);
         }
-        else { dotIdRef = 0; }
+        else { dotStateIdRef = 0; }
 
         //--------------------------------------------------------------------
         // Push the resulting derivatives to the appropriate memory
         //--------------------------------------------------------------------
-        (*pDotXArr)[STATE_IdRef + i] = dotIdRef;
+        (*pDotXArr)[STATE_IdRef + i] = dotStateIdRef;
     }
 }
 

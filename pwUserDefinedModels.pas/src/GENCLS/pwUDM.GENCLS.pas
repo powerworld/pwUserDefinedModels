@@ -180,16 +180,16 @@ end;
 
 //******************************************************************************
 procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData);
-var pDoubArr: PDoubleArray;
+var pFloatParamArr: PDoubleArray;
 begin
   // Example TGOV1 parameters
-  pDoubArr := ParamsAndStates^.FloatParams;
-  pDoubArr^[PARAM_H    ] := 3.0;
-  pDoubArr^[PARAM_D    ] := 0.0;
-  pDoubArr^[PARAM_Ra   ] := 0.0;
-  pDoubArr^[PARAM_Xdp  ] := 0.2;
-  pDoubArr^[PARAM_Rcomp] := 0.0;
-  pDoubArr^[PARAM_Xcomp] := 0.0;
+  pFloatParamArr := ParamsAndStates^.FloatParams;
+  pFloatParamArr^[PARAM_H    ] := 3.0;
+  pFloatParamArr^[PARAM_D    ] := 0.0;
+  pFloatParamArr^[PARAM_Ra   ] := 0.0;
+  pFloatParamArr^[PARAM_Xdp  ] := 0.2;
+  pFloatParamArr^[PARAM_Rcomp] := 0.0;
+  pFloatParamArr^[PARAM_Xcomp] := 0.0;
 end;
 
 { non specified for this model
@@ -255,7 +255,7 @@ var local_Vd,local_Vq : Double;  // Vdq voltage used locally
     local_Itr, local_Iti,
     local_Vtr, local_Vti,
     local_Vintr, local_Vinti : double;
-    CosDelta, SinDelta : double;
+    cosDelta, sinDelta : double;
 
     pFloatParamArr: PDoubleArray;
     pStatesArr : PDoubleArray;
@@ -299,12 +299,12 @@ begin
   // Convert terminal Current and Voltage to the "DQ reference frame"
   // Simular the Figure 3.4 from Sauer/Pai book
   //--------------------------------------------------------------------
-  CosDelta := cos(local_Delta);
-  SinDelta := sin(local_Delta);
-  fStateId := -CosDelta*local_Iti + SinDelta*local_Itr;
-  fStateIq :=  CosDelta*local_Itr + SinDelta*local_Iti;
-  local_Vd := -CosDelta*local_Vti + SinDelta*local_Vtr;
-  local_Vq :=  CosDelta*local_Vtr + SinDelta*local_Vti;
+  cosDelta := cos(local_Delta);
+  sinDelta := sin(local_Delta);
+  fStateId := -cosDelta*local_Iti + sinDelta*local_Itr;
+  fStateIq :=  cosDelta*local_Itr + sinDelta*local_Iti;
+  local_Vd := -cosDelta*local_Vti + sinDelta*local_Vtr;
+  local_Vq :=  cosDelta*local_Vtr + sinDelta*local_Vti;
 
   //--------------------------------------------------------------------
   // Perform calculations
@@ -338,14 +338,14 @@ end;
 //******************************************************************************
 procedure calculateFofX(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits; dotX : PDoubleArray);
 var // First there are the parameters,
-    H , fInv2H, fD : Double;
-    speedState : Double; // state at the beginning of the time is passed in
+    fH , fInv2H, fD : Double;
+    stateSpeed : Double; // state at the beginning of the time is passed in
 
     // dq stator currents always referred to gen side of any off-nominal step-up turns ratio
     fStateId, fStateIq   : Double;
 
     StateEInternalD, StateEInternalQ, StateTElec : Double;
-    SystemOmegaBase, ActualPMech, fInputFromExciter : Double;
+    SystemOmegaBase_In, ActualPMech_In, fInputFromExciter : Double;
 
     pFloatParamArr: PDoubleArray;
     pStatesArr : PDoubleArray;
@@ -363,14 +363,14 @@ begin
   //--------------------------------------------------------------------
   // Grab States, Params, Algebraics Needed for this method
   //--------------------------------------------------------------------
-  speedState := pStatesArr^[STATE_Speed];
+  stateSpeed := pStatesArr^[STATE_Speed];
 
-  H  := pFloatParamArr^[PARAM_H];
+  fH  := pFloatParamArr^[PARAM_H];
   fD := pFloatParamArr^[PARAM_D];
-  fInv2H := 1/(2*H);
+  fInv2H := 1/(2*fH);
 
-  SystemOmegaBase   := SystemOptions^.WBase;
-  ActualPMech       := pHardCodedArr^[HARDCODE_MACHINE_TSPmech    ];
+  SystemOmegaBase_In   := SystemOptions^.WBase;
+  ActualPMech_In       := pHardCodedArr^[HARDCODE_MACHINE_TSPmech    ];
   fInputFromExciter := pHardCodedArr^[HARDCODE_MACHINE_TSGenFieldV];
   fStateId          := pHardCodedArr^[HARDCODE_MACHINE_TSstateId  ];
   fStateIq          := pHardCodedArr^[HARDCODE_MACHINE_TSstateIq  ];
@@ -389,8 +389,8 @@ begin
   //--------------------------------------------------------------------
   // Push the resulting derivatives to the appropriate memory
   //--------------------------------------------------------------------
-  pDotXArr^[STATE_Angle] := speedState * SystemOmegaBase;
-  pDotXArr^[STATE_Speed] := fInv2H*((ActualPMech - fD*speedState)/(1+speedState)  - StateTElec);
+  pDotXArr^[STATE_Angle] := stateSpeed * SystemOmegaBase_In;
+  pDotXArr^[STATE_Speed] := fInv2H*((ActualPMech_In - fD*stateSpeed)/(1+stateSpeed)  - StateTElec);
 end;
 
 //******************************************************************************

@@ -40,7 +40,7 @@ extern "C" __declspec(dllexport) int parameterName(int* ParamNum, int* StrSize, 
 	// Integer parameters
 	switch (*ParamNum)
 	{
-		case PARAM_Ics:    ts = u"Ics"; break;
+		case IPARAM_Ics:    ts = u"Ics"; break;
 		default:           ts = u""; break;
 	}
 
@@ -129,33 +129,33 @@ extern "C" __declspec(dllexport) int OtherObjectDescription(int* Num, int* StrSi
 //******************************************************************************
 extern "C" __declspec(dllexport) void getDefaultParameterValue(TxMyModelData* ParamsAndStates)
 {
-	DoubleArray* pDoubArr;
-	IntegerArray* pIntegerArr;
+	DoubleArray* pFloatParamArr;
+	IntegerArray* pIntParamArr;
 
 	// Integers
-	pIntegerArr = ParamsAndStates->IntParams;
-	(*pIntegerArr)[PARAM_Ics] = 1;
+	pIntParamArr = ParamsAndStates->IntParams;
+	(*pIntParamArr)[IPARAM_Ics] = 1;
 
 	// Doubles
-	pDoubArr = ParamsAndStates->FloatParams;
-	(*pDoubArr)[PARAM_A1    ] =  1.013;
-	(*pDoubArr)[PARAM_A2    ] =  0.013;
-	(*pDoubArr)[PARAM_A3    ] =  0.0;
-	(*pDoubArr)[PARAM_A4    ] =  0.0;
-	(*pDoubArr)[PARAM_A5    ] =  1.013;
-	(*pDoubArr)[PARAM_A6    ] =  0.113;
-	(*pDoubArr)[PARAM_T1    ] =  0.0;
-	(*pDoubArr)[PARAM_T2    ] =  0.02;
-	(*pDoubArr)[PARAM_T3    ] =  0.0;
-	(*pDoubArr)[PARAM_T4    ] =  0.0;
-	(*pDoubArr)[PARAM_T5    ] =  1.65;
-	(*pDoubArr)[PARAM_T6    ] =  1.65;
-	(*pDoubArr)[PARAM_Ks    ] =  3.00;
-	(*pDoubArr)[PARAM_Lsmax ] =  0.1;
-	(*pDoubArr)[PARAM_Lsmin ] = -0.1;
-	(*pDoubArr)[PARAM_Vcu   ] =  0.0;
-	(*pDoubArr)[PARAM_Vcl   ] =  0.0;
-	(*pDoubArr)[PARAM_Tdelay] =  0.0;
+	pFloatParamArr = ParamsAndStates->FloatParams;
+	(*pFloatParamArr)[PARAM_A1    ] =  1.013;
+	(*pFloatParamArr)[PARAM_A2    ] =  0.013;
+	(*pFloatParamArr)[PARAM_A3    ] =  0.0;
+	(*pFloatParamArr)[PARAM_A4    ] =  0.0;
+	(*pFloatParamArr)[PARAM_A5    ] =  1.013;
+	(*pFloatParamArr)[PARAM_A6    ] =  0.113;
+	(*pFloatParamArr)[PARAM_T1    ] =  0.0;
+	(*pFloatParamArr)[PARAM_T2    ] =  0.02;
+	(*pFloatParamArr)[PARAM_T3    ] =  0.0;
+	(*pFloatParamArr)[PARAM_T4    ] =  0.0;
+	(*pFloatParamArr)[PARAM_T5    ] =  1.65;
+	(*pFloatParamArr)[PARAM_T6    ] =  1.65;
+	(*pFloatParamArr)[PARAM_Ks    ] =  3.00;
+	(*pFloatParamArr)[PARAM_Lsmax ] =  0.1;
+	(*pFloatParamArr)[PARAM_Lsmin ] = -0.1;
+	(*pFloatParamArr)[PARAM_Vcu   ] =  0.0;
+	(*pFloatParamArr)[PARAM_Vcl   ] =  0.0;
+	(*pFloatParamArr)[PARAM_Tdelay] =  0.0;
 }
 
 /* non specified for this model
@@ -249,7 +249,7 @@ extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAn
 	//--------------------------------------------------------------------
 	// Grab States, Params, Algebraics Needed for this method
 	//--------------------------------------------------------------------
-	fIcs = (*pIntParamArr)[PARAM_Ics];
+	fIcs = (*pIntParamArr)[IPARAM_Ics];
 
 	fA1 = (*pFloatParamArr)[PARAM_A1];
 	fA2 = (*pFloatParamArr)[PARAM_A2];
@@ -325,11 +325,11 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
 	double dotStateFilter[4];
 	double coefA[5];
 	double coefB[5];
-	double DivideBy;
-	int MaxOrder;
+	double divideBy;
+	int maxOrder;
 	double tempIN;
 	double tempOUT;
-	double temp;
+	double tempPrevState;
 
 	double stateLL1, stateLL2, stateUnlimitedSignal;
 	double dotStateLL1, dotStateLL2, dotStateUnlimitedSignal;
@@ -361,7 +361,7 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
 	stateLL2             = (*pStatesArr)[STATE_LL2            ];
 	stateUnlimitedSignal = (*pStatesArr)[STATE_UnlimitedSignal];
 
-	fIcs	= (*pIntParamArr)[PARAM_Ics];
+	fIcs	= (*pIntParamArr)[IPARAM_Ics];
 
 	fA1     = (*pFloatParamArr)[PARAM_A1    ];
 	fA2     = (*pFloatParamArr)[PARAM_A2    ];
@@ -428,21 +428,21 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
 
 	// Must also convert coefficients so that the "a4 = 1", so write as follows
 	// Must also convert so coefficent is "1" on the highest order term in denominator
-	DivideBy = 1;
-	MaxOrder = -1;
+	divideBy = 1;
+	maxOrder = -1;
 
 	for (i = 4; i >= 0; i = i - 1) {
 		if (coefA[i] != 0) {
-			DivideBy = coefA[i];
-			MaxOrder = i;
+			divideBy = coefA[i];
+			maxOrder = i;
 			break; // jump OUT of the for i loop
 		}
 	}
 
 	// Divide all coefficients so that the highest order non-zero A termi is 1.
 	for (i = 0; i <= 4; i = i + 1) {
-		coefA[i] = coefA[i]/DivideBy;
-		coefB[i] = coefB[i]/DivideBy;
+		coefA[i] = coefA[i]/divideBy;
+		coefB[i] = coefB[i]/divideBy;
 	}
 
 	// INPUT = localsignal
@@ -451,23 +451,23 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
 	// dotx1 = x0 - a1*OUTPUT + (b1 - a1*b4)*INPUT
 	// dotx2 = x1 - a2*OUTPUT + (b2 - a2*b4)*INPUT
 
-	if (MaxOrder > 0) {
-		tempOUT = stateFilter[MaxOrder-1];
+	if (maxOrder > 0) {
+		tempOUT = stateFilter[maxOrder-1];
 		tempIN = local_Signal;
-		for (i = 0; i <= MaxOrder-1; i = i + 1) {
+		for (i = 0; i <= maxOrder-1; i = i + 1) {
 			if (i > 0) {
-				temp = stateFilter[i-1];
+				tempPrevState = stateFilter[i-1];
 			}
 			else {
-				temp = 0;
+				tempPrevState = 0;
 			}
 			// we can ignore the terms which multiply by b4 because it's ALWAYS zero in this example
 			// dotx(k) = X(k-1) - a(k)*OUTPUT + [b(k) - a(k)*b(N)]*INPUT
-			dotStateFilter[i] = temp - coefA[i]*tempOUT + coefB[i]*tempIN;
+			dotStateFilter[i] = tempPrevState - coefA[i]*tempOUT + coefB[i]*tempIN;
 		}
 		// Make all ignored states have the same derivative
 		// needed because I'm treating the OUTPUT variable as the state of this polyintegration object!
-		for (i = MaxOrder; i <= 3; i = i + 1) {
+		for (i = maxOrder; i <= 3; i = i + 1) {
 			dotStateFilter[i] = dotStateFilter[i-1];
 		}
 	}
@@ -562,7 +562,7 @@ extern "C" __declspec(dllexport) void PropagateIgnoredStateAndInput(TxMyModelDat
 	pHardCodedArr = ParamsAndStates->HardCodedSignals;
 
 	pIntParamArr = ParamsAndStates->IntParams;
-	fIcs = (*pIntParamArr)[PARAM_Ics];
+	fIcs = (*pIntParamArr)[IPARAM_Ics];
 
 	if ((fIcs > 5) | (fIcs < 0)) {  // error check for bad input
 		local_Signal = 0;
@@ -611,7 +611,7 @@ extern "C" __declspec(dllexport) double StabilizerVsOut(TxMyModelData* ParamsAnd
 
 	double fLsmax, fLsmin, fVcu, fVcl;
     double stateUnlimitedSignal;
-    double GenVcomp;
+    double GenVcomp_In;
 	double result;
 
 	DoubleArray* pFloatParamArr;
@@ -632,7 +632,7 @@ extern "C" __declspec(dllexport) double StabilizerVsOut(TxMyModelData* ParamsAnd
     fLsmax   = (*pFloatParamArr)[PARAM_Lsmax];
     fLsmin   = (*pFloatParamArr)[PARAM_Lsmin];
 
-    GenVcomp = (*pHardCodedArr)[HARDCODE_STAB_GenVcomp];
+    GenVcomp_In = (*pHardCodedArr)[HARDCODE_STAB_GenVcomp];
     fVcu     = (*pFloatParamArr)[PARAM_Vcu];
     fVcl     = (*pFloatParamArr)[PARAM_Vcl];
 
@@ -650,10 +650,10 @@ extern "C" __declspec(dllexport) double StabilizerVsOut(TxMyModelData* ParamsAnd
 	}
 
 	// Check for output limiter signals.
-	if ((fVcu != 0) && (fVcu < 999) && (GenVcomp > fVcu)) {
+	if ((fVcu != 0) && (fVcu < 999) && (GenVcomp_In > fVcu)) {
 		result = 0;
 	}
-	else if ((fVcl != 0) && (fVcl > -999) && (GenVcomp < fVcl)) {
+	else if ((fVcl != 0) && (fVcl > -999) && (GenVcomp_In < fVcl)) {
 		result = 0;
 	}
 	return result;

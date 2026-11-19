@@ -108,18 +108,18 @@ extern "C" __declspec(dllexport) int OtherObjectDescription(int* Num, int* StrSi
 //******************************************************************************
 extern "C" __declspec(dllexport) void getDefaultParameterValue(TxMyModelData* ParamsAndStates)
 {
-	DoubleArray* pDoubArr;
+	DoubleArray* pFloatParamArr;
 
 	// Example TGOV1 parameters
-	pDoubArr = ParamsAndStates->FloatParams;
-	(*pDoubArr)[PARAM_R] = 0.05;
-	(*pDoubArr)[PARAM_T1] = 0.5;
-	(*pDoubArr)[PARAM_Vmax] = 1.0;
-	(*pDoubArr)[PARAM_Vmin] = 0.0;
-	(*pDoubArr)[PARAM_T2] = 2.5;
-	(*pDoubArr)[PARAM_T3] = 7.5;
-	(*pDoubArr)[PARAM_Dt] = 0.0;
-	(*pDoubArr)[PARAM_Trate] = 0.0;
+	pFloatParamArr = ParamsAndStates->FloatParams;
+	(*pFloatParamArr)[PARAM_R] = 0.05;
+	(*pFloatParamArr)[PARAM_T1] = 0.5;
+	(*pFloatParamArr)[PARAM_Vmax] = 1.0;
+	(*pFloatParamArr)[PARAM_Vmin] = 0.0;
+	(*pFloatParamArr)[PARAM_T2] = 2.5;
+	(*pFloatParamArr)[PARAM_T3] = 7.5;
+	(*pFloatParamArr)[PARAM_Dt] = 0.0;
+	(*pFloatParamArr)[PARAM_Trate] = 0.0;
 }
 
 /* non specified for this model
@@ -171,8 +171,8 @@ extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAn
 {
 	// Parameters,
 	double fR, fTrate;
-	double local_PMech, PMechObjectInitInternal, GenObjectMVABase;
-	unsigned char GovResponseLimits;
+	double local_PMech, PMechObjectInitInternal_In, GenObjectMVABase_In;
+	unsigned char GovResponseLimits_In;
 
 	DoubleArray* pHardCodedArr;
 	DoubleArray* pFloatParamArr;
@@ -191,26 +191,26 @@ extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAn
 	fR		= (*pFloatParamArr)[PARAM_R    ];
 	fTrate	= (*pFloatParamArr)[PARAM_Trate];
 	
-	PMechObjectInitInternal	= (*pHardCodedArr)[HARDCODE_GOV_InitPmech]; 
-	GenObjectMVABase		= (*pHardCodedArr)[HARDCODE_GOV_GenMVABase];
+	PMechObjectInitInternal_In	= (*pHardCodedArr)[HARDCODE_GOV_InitPmech]; 
+	GenObjectMVABase_In		= (*pHardCodedArr)[HARDCODE_GOV_GenMVABase];
 	// Same as Delphi Round: halves go to even, and the integer result wraps modulo 256 into the byte
-	GovResponseLimits		= std::llrint((*pHardCodedArr)[HARDCODE_GOV_GovResponseLimits]);
+	GovResponseLimits_In		= std::llrint((*pHardCodedArr)[HARDCODE_GOV_GovResponseLimits]);
 
 	if (fTrate == 0) {
-		fTrate = GenObjectMVABase;
+		fTrate = GenObjectMVABase_In;
 	}
 
 	//--------------------------------------------------------------------
 	// Back solve to determine the initial states.
 	//--------------------------------------------------------------------
-	local_PMech	= PMechObjectInitInternal;
-	local_PMech = local_PMech*GenObjectMVABase/fTrate;  // jamie 2/9/09
+	local_PMech	= PMechObjectInitInternal_In;
+	local_PMech = local_PMech*GenObjectMVABase_In/fTrate;  // jamie 2/9/09
 
 	// Handle the Governor Response Limits Options
     // A value of 1 means it's "Down Only", 2 means it's "Fixed"
     // This automatically change the Vmax and Vmin parameters as necessary.
 
-	switch (GovResponseLimits)
+	switch (GovResponseLimits_In)
 	{
 	case 1:  // "Down Only"
 		(*pFloatParamArr)[PARAM_Vmax] = local_PMech;
@@ -357,7 +357,7 @@ extern "C" __declspec(dllexport) double GovernorPmechOut(TxMyModelData* ParamsAn
 {
 	double fDt, fTrate;
 	double stateTurbinePower;
-	double GenObjectMVABase, deltaWPU_In;
+	double GenObjectMVABase_In, deltaWPU_In;
 	DoubleArray* pFloatParamArr;
 	DoubleArray* pStatesArr;
 	DoubleArray* pHardCodedArr;
@@ -377,17 +377,17 @@ extern "C" __declspec(dllexport) double GovernorPmechOut(TxMyModelData* ParamsAn
 	fDt		= (*pFloatParamArr)[PARAM_Dt   ];
 	fTrate	= (*pFloatParamArr)[PARAM_Trate];
 
-	GenObjectMVABase = (*pHardCodedArr)[HARDCODE_GOV_GenMVABase         ];
+	GenObjectMVABase_In = (*pHardCodedArr)[HARDCODE_GOV_GenMVABase         ];
 	deltaWPU_In      = (*pHardCodedArr)[HARDCODE_GOV_GenSpeedDeviationPU];
 
 	if (fTrate == 0) {
-		fTrate = GenObjectMVABase;
+		fTrate = GenObjectMVABase_In;
 	}
 
 	//--------------------------------------------------------------------
 	// Calculate Pmech output
 	//--------------------------------------------------------------------
-	return((stateTurbinePower - fDt*deltaWPU_In)/GenObjectMVABase*fTrate);
+	return((stateTurbinePower - fDt*deltaWPU_In)/GenObjectMVABase_In*fTrate);
 }
 
 }

@@ -105,16 +105,16 @@ extern "C" __declspec(dllexport) int OtherObjectDescription(int* Num, int* StrSi
 //******************************************************************************
 extern "C" __declspec(dllexport) void getDefaultParameterValue(TxMyModelData* ParamsAndStates)
 {
-	DoubleArray* pDoubArr;
+	DoubleArray* pFloatParamArr;
 
 	// Example TGOV1 parameters
-	pDoubArr = ParamsAndStates->FloatParams;
-	(*pDoubArr)[PARAM_H] = 3.0;
-	(*pDoubArr)[PARAM_D] = 0.0;
-	(*pDoubArr)[PARAM_Ra] = 0.0;
-	(*pDoubArr)[PARAM_Xdp] = 0.2;
-	(*pDoubArr)[PARAM_Rcomp] = 0.0;
-	(*pDoubArr)[PARAM_Xcomp] = 0.0;
+	pFloatParamArr = ParamsAndStates->FloatParams;
+	(*pFloatParamArr)[PARAM_H] = 3.0;
+	(*pFloatParamArr)[PARAM_D] = 0.0;
+	(*pFloatParamArr)[PARAM_Ra] = 0.0;
+	(*pFloatParamArr)[PARAM_Xdp] = 0.2;
+	(*pFloatParamArr)[PARAM_Rcomp] = 0.0;
+	(*pFloatParamArr)[PARAM_Xcomp] = 0.0;
 }
 
 /* non specified for this model
@@ -189,7 +189,7 @@ extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAn
     double local_Itr, local_Iti;
     double local_Vtr, local_Vti;
     double local_Vintr, local_Vinti;
-    double CosDelta, SinDelta;
+    double cosDelta, sinDelta;
 
 	DoubleArray* pFloatParamArr;
 	DoubleArray* pStatesArr;
@@ -235,12 +235,12 @@ extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAn
 	// Convert terminal Current and Voltage to the "DQ reference frame"
 	// Simular the Figure 3.4 from Sauer/Pai book
 	//--------------------------------------------------------------------
-	CosDelta = std::cos(local_Delta);
-	SinDelta = std::sin(local_Delta);
-	fStateId = -CosDelta*local_Iti + SinDelta*local_Itr;
-	fStateIq =  CosDelta*local_Itr + SinDelta*local_Iti;
-	local_Vd = -CosDelta*local_Vti + SinDelta*local_Vtr;
-	local_Vq =  CosDelta*local_Vtr + SinDelta*local_Vti;
+	cosDelta = std::cos(local_Delta);
+	sinDelta = std::sin(local_Delta);
+	fStateId = -cosDelta*local_Iti + sinDelta*local_Itr;
+	fStateIq =  cosDelta*local_Itr + sinDelta*local_Iti;
+	local_Vd = -cosDelta*local_Vti + sinDelta*local_Vtr;
+	local_Vq =  cosDelta*local_Vtr + sinDelta*local_Vti;
 
 	//--------------------------------------------------------------------
 	// Perform calculations
@@ -275,14 +275,14 @@ extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAn
 extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStates, TxSystemOptions* SystemOptions, TxNonWindUpLimits* nonWindUpLimits, DoubleArray* dotX)
 {
 	// First there are the parameters,
-	double H, fInv2H, fD;
-	double speedState;  // state at the beginning of the time is passed in
+	double fH, fInv2H, fD;
+	double stateSpeed;  // state at the beginning of the time is passed in
 
 	// dq stator currents always referred to gen side of any off-nominal step-up turns ratio
 	double fStateId, fStateIq;
 
 	double StateEInternalD, StateEInternalQ, StateTElec;
-	double SystemOmegaBase, ActualPMech, fInputFromExciter;
+	double SystemOmegaBase_In, ActualPMech_In, fInputFromExciter;
 
 	DoubleArray* pFloatParamArr;
 	DoubleArray* pStatesArr;
@@ -296,14 +296,14 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
 	pDotXArr = dotX;
 
 	// Grab States, Params, Algebraics Needed for this method
-	speedState = (*pStatesArr)[STATE_Speed];
+	stateSpeed = (*pStatesArr)[STATE_Speed];
 
-	H  = (*pFloatParamArr)[PARAM_H];
+	fH  = (*pFloatParamArr)[PARAM_H];
 	fD = (*pFloatParamArr)[PARAM_D];
-	fInv2H = 1/(2*H);
+	fInv2H = 1/(2*fH);
 
-	SystemOmegaBase   = SystemOptions->WBase;
-	ActualPMech       = (*pHardCodedArr)[HARDCODE_MACHINE_TSPmech    ];
+	SystemOmegaBase_In   = SystemOptions->WBase;
+	ActualPMech_In       = (*pHardCodedArr)[HARDCODE_MACHINE_TSPmech    ];
 	fInputFromExciter = (*pHardCodedArr)[HARDCODE_MACHINE_TSGenFieldV];
 	fStateId          = (*pHardCodedArr)[HARDCODE_MACHINE_TSstateId  ];
 	fStateIq          = (*pHardCodedArr)[HARDCODE_MACHINE_TSstateIq  ];
@@ -318,8 +318,8 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
 	// If SubInterval2PowerSpecified > 0 Then UpdateStateCurrent(GenObject.DeviceBusVoltage);  // Sets the state current values for the generators
 
 	// Push the resulting derivatives to the appropriate memory
-	(*pDotXArr)[STATE_Angle] = speedState*SystemOmegaBase; //  
-	(*pDotXArr)[STATE_Speed] = fInv2H*((ActualPMech - fD*speedState)/(1+speedState)  - StateTElec);
+	(*pDotXArr)[STATE_Angle] = stateSpeed*SystemOmegaBase_In; //  
+	(*pDotXArr)[STATE_Speed] = fInv2H*((ActualPMech_In - fD*stateSpeed)/(1+stateSpeed)  - StateTElec);
 }
 
 //******************************************************************************

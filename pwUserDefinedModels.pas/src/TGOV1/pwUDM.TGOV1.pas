@@ -171,18 +171,18 @@ end;
 
 //******************************************************************************
 procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData);
-var pDoubArr: PDoubleArray;
+var pFloatParamArr: PDoubleArray;
 begin
   // Example TGOV1 parameters
-  pDoubArr := ParamsAndStates^.FloatParams;
-  pDoubArr^[PARAM_R    ]  := 0.05;
-  pDoubArr^[PARAM_T1   ]  := 0.50;
-  pDoubArr^[PARAM_Vmax ]  := 1.0;
-  pDoubArr^[PARAM_Vmin ]  := 0.0;
-  pDoubArr^[PARAM_T2   ]  := 2.5;
-  pDoubArr^[PARAM_T3   ]  := 7.5;
-  pDoubArr^[PARAM_Dt   ]  := 0.0;
-  pDoubArr^[PARAM_Trate]  := 0.0;
+  pFloatParamArr := ParamsAndStates^.FloatParams;
+  pFloatParamArr^[PARAM_R    ]  := 0.05;
+  pFloatParamArr^[PARAM_T1   ]  := 0.50;
+  pFloatParamArr^[PARAM_Vmax ]  := 1.0;
+  pFloatParamArr^[PARAM_Vmin ]  := 0.0;
+  pFloatParamArr^[PARAM_T2   ]  := 2.5;
+  pFloatParamArr^[PARAM_T3   ]  := 7.5;
+  pFloatParamArr^[PARAM_Dt   ]  := 0.0;
+  pFloatParamArr^[PARAM_Trate]  := 0.0;
 end;
 
 { non specified for this model
@@ -225,8 +225,8 @@ end;
 procedure initializeYourself(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions);
 var // Parameters,
     fR, fTrate : Double;
-    local_PMech, PMechObjectInitInternal, GenObjectMVABase : Double;
-    GovResponseLimits : Byte;
+    local_PMech, PMechObjectInitInternal_In, GenObjectMVABase_In : Double;
+    GovResponseLimits_In : Byte;
 
     pHardCodedArr : PDoubleArray;
     pFloatParamArr: PDoubleArray;
@@ -245,22 +245,22 @@ begin
   fR     := pFloatParamArr^[PARAM_R];
   fTrate := pFloatParamArr^[PARAM_Trate];
 
-  PMechObjectInitInternal := pHardCodedArr^[HARDCODE_GOV_InitPmech];
-  GenObjectMVABase        := pHardCodedArr^[HARDCODE_GOV_GenMVABase];
-  GovResponseLimits       := Round(pHardCodedArr^[HARDCODE_GOV_GovResponseLimits]);
+  PMechObjectInitInternal_In := pHardCodedArr^[HARDCODE_GOV_InitPmech];
+  GenObjectMVABase_In        := pHardCodedArr^[HARDCODE_GOV_GenMVABase];
+  GovResponseLimits_In       := Round(pHardCodedArr^[HARDCODE_GOV_GovResponseLimits]);
 
-  If fTrate = 0 Then fTrate := GenObjectMVABase;
+  If fTrate = 0 Then fTrate := GenObjectMVABase_In;
 
   //--------------------------------------------------------------------
   // Back solve to determine the initial states.
   //--------------------------------------------------------------------
-  local_PMech := PMechObjectInitInternal;
-  local_PMech := local_PMech*GenObjectMVABase/fTrate; // jamie 2/9/09
+  local_PMech := PMechObjectInitInternal_In;
+  local_PMech := local_PMech*GenObjectMVABase_In/fTrate; // jamie 2/9/09
 
   // Handle the Governor Response Limits Options
   // A value of 1 means it's "Down Only", 2 means it's "Fixed"
   // This automatically change the Vmax and Vmin parameters as necessary.
-  case GovResponseLimits of
+  case GovResponseLimits_In of
     1 : begin // "Down Only"
           pFloatParamArr^[PARAM_Vmax] := local_PMech;
           // Make sure Min is less than Max still also...
@@ -370,7 +370,7 @@ begin
   Result := 1;   // only one state has a non windup limit
 
   pFloatParamArr := ParamsAndStates.FloatParams;
-  nonWindUpLimits.limitStates^[NONWINDUPINDEX_ValvePos] := STATE_ValvePos;
+  nonWindUpLimits.LimitStates^[NONWINDUPINDEX_ValvePos] := STATE_ValvePos;
   nonWindUpLimits.minLimits^[NONWINDUPINDEX_ValvePos] := pFloatParamArr^[PARAM_Vmin];
   nonWindUpLimits.maxLimits^[NONWINDUPINDEX_ValvePos] := pFloatParamArr^[PARAM_Vmax];
 end;
@@ -378,7 +378,7 @@ end;
 function GovernorPmechOut(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions) : double;
 var fDt, fTrate : Double;
     stateTurbinePower : Double;
-    GenObjectMVABase, deltaWPU_In : Double;
+    GenObjectMVABase_In, deltaWPU_In : Double;
     pFloatParamArr: PDoubleArray;
     pStatesArr : PDoubleArray;
     pHardCodedArr : PDoubleArray;
@@ -398,16 +398,16 @@ Begin
   fDt    := pFloatParamArr^[PARAM_Dt];
   fTrate := pFloatParamArr^[PARAM_Trate];
 
-  GenObjectMVABase := pHardCodedArr^[HARDCODE_GOV_GenMVABase];
+  GenObjectMVABase_In := pHardCodedArr^[HARDCODE_GOV_GenMVABase];
   deltaWPU_In      := pHardCodedArr^[HARDCODE_GOV_GenSpeedDeviationPU];
 
-  If fTrate = 0 Then fTrate := GenObjectMVABase;
+  If fTrate = 0 Then fTrate := GenObjectMVABase_In;
 
   //--------------------------------------------------------------------
   // Calculate Pmech output
   //--------------------------------------------------------------------
   Result := stateTurbinePower - fDt*deltaWPU_In;
-  Result := Result/GenObjectMVABase*fTrate;
+  Result := Result/GenObjectMVABase_In*fTrate;
 end;
 
 //******************************************************************************

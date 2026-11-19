@@ -676,18 +676,18 @@ end;
 
 //******************************************************************************
 procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData);
-var pDoubArr: PDoubleArray;
+var pFloatParamArr: PDoubleArray;
 begin
-  pDoubArr := ParamsAndStates^.FloatParams;
-  pDoubArr^[PARAM_PercLmotor]  := 25.0;
-  pDoubArr^[PARAM_PercSmotor]  := 25.0;
-  pDoubArr^[PARAM_PercTex   ]  :=  0.0;
-  pDoubArr^[PARAM_PercDis   ]  := 20.0;
-  pDoubArr^[PARAM_PercP     ]  :=  0.0;
-  pDoubArr^[PARAM_Kp        ]  :=  1.0;
-  pDoubArr^[PARAM_Vi        ]  :=  0.0;
-  pDoubArr^[PARAM_Ti        ]  :=  0.0;
-  pDoubArr^[PARAM_Tb        ]  :=  0.05;
+  pFloatParamArr := ParamsAndStates^.FloatParams;
+  pFloatParamArr^[PARAM_PercLmotor]  := 25.0;
+  pFloatParamArr^[PARAM_PercSmotor]  := 25.0;
+  pFloatParamArr^[PARAM_PercTex   ]  :=  0.0;
+  pFloatParamArr^[PARAM_PercDis   ]  := 20.0;
+  pFloatParamArr^[PARAM_PercP     ]  :=  0.0;
+  pFloatParamArr^[PARAM_Kp        ]  :=  1.0;
+  pFloatParamArr^[PARAM_Vi        ]  :=  0.0;
+  pFloatParamArr^[PARAM_Ti        ]  :=  0.0;
+  pFloatParamArr^[PARAM_Tb        ]  :=  0.05;
 end;
 
 { non specified for this model
@@ -1601,7 +1601,7 @@ function LoadInitializeAlgebraic(ParamsAndStates : PTxMyModelData; SystemOptions
 Var INPUT_PUTol, SteadyStateP, SteadyStateQ, SteadyStateV : Double; // local copies of the values behind the pointers
     fLmotor, fSmotor, fTex, fDis, fP, fKp : Double;
     loadObjNomFreq_In : Double;
-    localUsedP_out, localUsedQ_out : Double;
+    localUsedP_Out, localUsedQ_Out : Double;
 
     // Large Motor Variables
     IML_fPInitial, IML_fQInitial, IML_SlipInitial, IMLfInvTp,
@@ -1652,8 +1652,8 @@ begin
   minVoltSLoad_in   := SystemOptions^.MinVoltSLoad;
   minVoltILoad_in   := SystemOptions^.MinVoltILoad;
 
-  localUsedP_out := 0;
-  localUsedQ_out := 0;
+  localUsedP_Out := 0;
+  localUsedQ_Out := 0;
   If (SteadyStateV > 0) Then Begin
     //--------------------------------------------------------------------------
     // large motor first
@@ -1671,8 +1671,8 @@ begin
                                    IML_Rs, IML_Xs, IML_Xm, IML_R1, IML_X1,
                                    IML_fWo, IML_Xp, IML_X, IMLfInvTp
                                    );
-    localUsedP_out := IML_fPInitial;
-    localUsedQ_out := IML_fQInitial;
+    localUsedP_Out := IML_fPInitial;
+    localUsedQ_Out := IML_fQInitial;
 
     //--------------------------------------------------------------------------
     // large motor first
@@ -1689,8 +1689,8 @@ begin
                                    IMS_Rs, IMS_Xs, IMS_Xm, IMS_R1, IMS_X1,
                                    IMS_fWo, IMS_Xp, IMS_X, IMSfInvTp
                                    );
-    localUsedP_out := localUsedP_out + IMS_fPInitial;
-    localUsedQ_out := localUsedQ_out + IMS_fQInitial;
+    localUsedP_Out := localUsedP_Out + IMS_fPInitial;
+    localUsedQ_Out := localUsedQ_Out + IMS_fQInitial;
   end
   else begin // No voltage to initialize the motors with, so write zeros to their algebraics
     IML_Rs := 0; IML_Xs := 0; IML_fWo := 0; IMLfInvTp := 0; IML_Xp := 0; IML_X := 0;
@@ -1735,8 +1735,8 @@ begin
 
     DL_TotalP := GetDL_Total(SteadyStateV, GLOBAL_DL_PCoeff, GLOBAL_DL_VoltBP, GLOBAL_DL_VoltExt, DL_P_at_1_PU);
     DL_TotalQ := GetDL_Total(SteadyStateV, GLOBAL_DL_QCoeff, GLOBAL_DL_VoltBP, GLOBAL_DL_VoltExt, DL_Q_at_1_PU);
-    localUsedP_out  := localUsedP_out + DL_TotalP;
-    localUsedQ_out  := localUsedQ_out + DL_TotalQ;
+    localUsedP_Out  := localUsedP_Out + DL_TotalP;
+    localUsedQ_Out  := localUsedQ_Out + DL_TotalQ;
   End
   else begin
     DL_P_at_1_PU := 0;

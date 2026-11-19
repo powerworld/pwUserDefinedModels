@@ -191,16 +191,16 @@ end;
 
 //******************************************************************************
 procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData);
-var pDoubArr: PDoubleArray;
-    pIntArr : PIntegerArray;
+var pFloatParamArr: PDoubleArray;
+    pIntParamArr : PIntegerArray;
 begin
   // Example MTDCLINE parameters
-  pDoubArr := ParamsAndStates^.FloatParams;
-  pDoubArr^[PARAM_Tord     ]  := 0.5;
-  pDoubArr^[PARAM_IordScale]  := 1.0;
+  pFloatParamArr := ParamsAndStates^.FloatParams;
+  pFloatParamArr^[PARAM_Tord     ]  := 0.5;
+  pFloatParamArr^[PARAM_IordScale]  := 1.0;
 
-  pIntArr := ParamsAndStates^.IntParams;
-  pIntArr^[IPARAM_NumTerminals]  := 3;
+  pIntParamArr := ParamsAndStates^.IntParams;
+  pIntParamArr^[IPARAM_NumTerminals]  := 3;
 end;
 
 { non specified for this model
@@ -301,7 +301,7 @@ var // Parameters
     stateIdRef : Double;
 
     // FofX or xdot,
-    dotIdRef : Double;
+    dotStateIdRef : Double;
 
     pFloatParamArr: PDoubleArray;
     pStatesArr : PDoubleArray;
@@ -330,14 +330,14 @@ begin
     // The current order of each terminal follows its initial share of the scaled pole current order
     if i < nTerminals then begin
       stateIdRef := pStatesArr^[STATE_IdRef + i];
-      dotIdRef := fInvTord*(fIordScale*pAlgebraicsArr^[ALG_IdRefInit + i] - stateIdRef);
+      dotStateIdRef := fInvTord*(fIordScale*pAlgebraicsArr^[ALG_IdRefInit + i] - stateIdRef);
     end
-    else dotIdRef := 0;
+    else dotStateIdRef := 0;
 
     //--------------------------------------------------------------------
     // Push the resulting derivatives to the appropriate memory
     //--------------------------------------------------------------------
-    pDotXArr^[STATE_IdRef + i] := dotIdRef;
+    pDotXArr^[STATE_IdRef + i] := dotStateIdRef;
   end;
 end;
 

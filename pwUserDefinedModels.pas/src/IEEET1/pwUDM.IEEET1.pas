@@ -251,25 +251,25 @@ end;
 
 //******************************************************************************
 procedure getDefaultParameterValue(ParamsAndStates : PTxMyModelData);
-var pDoubArr: PDoubleArray;
+var pFloatParamArr: PDoubleArray;
 begin
   // Example TGOV1 parameters
-  pDoubArr := ParamsAndStates^.FloatParams;
-  pDoubArr^[PARAM_Tr    ]  :=  0.0;
-  pDoubArr^[PARAM_Ka    ]  := 50.0;
-  pDoubArr^[PARAM_Ta    ]  :=  0.04;
-  pDoubArr^[PARAM_Vrmax ]  :=  1.0;
-  pDoubArr^[PARAM_Vrmin ]  := -1.0;
-  pDoubArr^[PARAM_Ke    ]  := -0.06;
-  pDoubArr^[PARAM_Te    ]  :=  0.6;
-  pDoubArr^[PARAM_Kf    ]  :=  0.09;
-  pDoubArr^[PARAM_Tf    ]  :=  1.46;
-  pDoubArr^[PARAM_Switch]  :=  0.0;
-  pDoubArr^[PARAM_E1    ]  :=  2.80;
-  pDoubArr^[PARAM_SE1   ]  :=  0.04;
-  pDoubArr^[PARAM_E2    ]  :=  3.73;
-  pDoubArr^[PARAM_SE2   ]  :=  0.33;
-  pDoubArr^[PARAM_Spdmlt]  :=  0.0;
+  pFloatParamArr := ParamsAndStates^.FloatParams;
+  pFloatParamArr^[PARAM_Tr    ]  :=  0.0;
+  pFloatParamArr^[PARAM_Ka    ]  := 50.0;
+  pFloatParamArr^[PARAM_Ta    ]  :=  0.04;
+  pFloatParamArr^[PARAM_Vrmax ]  :=  1.0;
+  pFloatParamArr^[PARAM_Vrmin ]  := -1.0;
+  pFloatParamArr^[PARAM_Ke    ]  := -0.06;
+  pFloatParamArr^[PARAM_Te    ]  :=  0.6;
+  pFloatParamArr^[PARAM_Kf    ]  :=  0.09;
+  pFloatParamArr^[PARAM_Tf    ]  :=  1.46;
+  pFloatParamArr^[PARAM_Switch]  :=  0.0;
+  pFloatParamArr^[PARAM_E1    ]  :=  2.80;
+  pFloatParamArr^[PARAM_SE1   ]  :=  0.04;
+  pFloatParamArr^[PARAM_E2    ]  :=  3.73;
+  pFloatParamArr^[PARAM_SE2   ]  :=  0.33;
+  pFloatParamArr^[PARAM_Spdmlt]  :=  0.0;
 end;
 
 { non specified for this model
@@ -323,7 +323,7 @@ var // Right now this example is IEEET1 exciter
     local_VR     : Double;  // VR initial value
     local_VTerminalSensed : Double;  // Sensed terminal voltage
     local_VF : Double;
-    finvTf : Double;
+    fInvTF : Double;
 
     pFloatParamArr: PDoubleArray;
     pStatesArr : PDoubleArray;
@@ -385,8 +385,8 @@ begin
   //       [1+Ts]                   \ [1+Ts]       /
   // OUT = (StateInter + K/T) * IN
   //--------------------------------------------------------
-  if fTf = 0 then fInvTf := 0 else finvTf := 1/fTf;
-  local_VF := -fKf*finvTf*local_Efield;
+  if fTf = 0 then fInvTF := 0 else fInvTF := 1/fTf;
+  local_VF := -fKf*fInvTF*local_Efield;
 //  local_VF := (fVRef - local_VTerminalSensed) - local_VR/fKa; // kate 3/15/13
 
 //  // Write out initial state vector
@@ -400,13 +400,13 @@ end;
 procedure calculateFofX(ParamsAndStates : PTxMyModelData; SystemOptions : PTxSystemOptions; nonWindUpLimits : PTxNonWindUpLimits; dotX : PDoubleArray);
 var // First there are the parameters,
     fTr, fKa, fTa, fVrmax, fVrmin, fKe, fTe, fKf, fTf, fSwitch, fE1, fSEE1, fE2, fSEE2, fSpdmlt: Double;
-    fInvTE, fInvTR, finvTA, fInvTF : Double;
+    fInvTE, fInvTR, fInvTA, fInvTF : Double;
 
     // The state variables, state at the beginning of the time is passed in
     stateEField, stateSensedVt, stateVR, stateVF : Double;
 
     // The FofX or xdot,
-    dotEFieldBeforeWindupLimit, dotSensedVt, dotVr, dotVf : Double;
+    dotStateEField, dotStateSensedVt, dotStateVR, dotStateVF : Double;
 
     fSatA,fSatB : Double;
 
@@ -470,7 +470,7 @@ begin
   // Calculate Inverse of appropriate values
   if fTr = 0 then fInvTR := 0 else fInvTR := 1/fTr;
   if fTe = 0 then fInvTE := 0 else fInvTE := 1/fTe;
-  if fTa = 0 then finvTA := 0 else finvTA := 1/fTa;
+  if fTa = 0 then fInvTA := 0 else fInvTA := 1/fTa;
   if fTf = 0 then fInvTF := 0 else fInvTF := 1/fTf;
 
   //--------------------------------------------------------------------
@@ -481,10 +481,10 @@ begin
 
   If stateEField <= fSatA Then tempSatValTimesInput := 0 // no saturation
   Else tempSatValTimesInput := fSatB*stateEField*Sqr(stateEField-fSatA);
-  dotEFieldBeforeWindupLimit := fInvTE*(stateVR - stateEField*fKe - tempSatValTimesInput);
+  dotStateEField := fInvTE*(stateVR - stateEField*fKe - tempSatValTimesInput);
 
   // Calculate initial value of the second state.
-  dotSensedVt := fInvTR * (GenObjectVTerminalMayBeCompensated_In - stateSensedVt);
+  dotStateSensedVt := fInvTR * (GenObjectVTerminalMayBeCompensated_In - stateSensedVt);
 
   //--------------------------------------------------------
   // Model of a Derivative "Washout" block
@@ -493,18 +493,18 @@ begin
   //       [1+Ts]                   [1+Ts]
   // OUT = StateInter + K/T * IN
   //--------------------------------------------------------
-  fPIOFeedbackoutput := stateVf + fKf*finvTf*stateEField;  // this value should be zero until something happens
+  fPIOFeedbackoutput := stateVf + fKf*fInvTF*stateEField;  // this value should be zero until something happens
 
   // Calculate 3rd state init val
   vInputState := VRef_In - stateSensedVt + StateVsWith_OEL_UEL_In;
 
-  dotVR := finvTA*(fKA*(vInputState - fPIOFeedbackoutput) - stateVR);
-//  dotVR := finvTA*(fKA*(vInputState - stateVf) - stateVR); // kate 3/15/13 test
+  dotStateVR := fInvTA*(fKA*(vInputState - fPIOFeedbackoutput) - stateVR);
+//  dotStateVR := fInvTA*(fKA*(vInputState - stateVf) - stateVR); // kate 3/15/13 test
 
   // kate 8/8/12 add limit checking, not sure this is necessary since it already seemed to match the built in model
   if (fActiveLimitHLStateVr > 0) then begin
-    if      (fActiveLimitHLStateVr = 1) and (dotVR > 0) then dotVR := 0
-    else if (fActiveLimitHLStateVr = 2) and (dotVR < 0) then dotVR := 0;
+    if      (fActiveLimitHLStateVr = 1) and (dotStateVR > 0) then dotStateVR := 0
+    else if (fActiveLimitHLStateVr = 2) and (dotStateVR < 0) then dotStateVR := 0;
   end;
 
   //--------------------------------------------------------
@@ -514,14 +514,14 @@ begin
   //
   // DOTStateVf = 1/T * (-K/T*StateEField - StateVf)
   //--------------------------------------------------------
-  dotVf := - finvTf*(fPIOFeedbackoutput); // kate 3/7/12
-//  dotVf := fInvTf*( fKf*dotEFieldBeforeWindupLimit - stateVf ); // kate 3/15/13 test
+  dotStateVF := - fInvTF*(fPIOFeedbackoutput); // kate 3/7/12
+//  dotStateVF := fInvTF*( fKf*dotStateEField - stateVf ); // kate 3/15/13 test
 
   // Push the resulting derivatives to the appropriate memory
-  pDotXArr^[STATE_EField  ] := dotEFieldBeforeWindupLimit; // dotEFieldBeforeWindupLimit
-  pDotXArr^[STATE_SensedVt] := dotSensedVt;                // dotVTerminalSensed
-  pDotXArr^[STATE_VR      ] := dotVr;                      // dotVR
-  pDotXArr^[STATE_VF      ] := dotVf;                      // fPIOFeedback.xdot(1)
+  pDotXArr^[STATE_EField  ] := dotStateEField; // dotEFieldBeforeWindupLimit
+  pDotXArr^[STATE_SensedVt] := dotStateSensedVt;                // dotVTerminalSensed
+  pDotXArr^[STATE_VR      ] := dotStateVR;                      // dotVR
+  pDotXArr^[STATE_VF      ] := dotStateVF;                      // fPIOFeedback.xdot(1)
 end;
 
 //******************************************************************************
@@ -530,9 +530,9 @@ var GenObjectVTerminalMayBeCompensated_In : double;
     VRef_In : double;
     StateVsWith_OEL_UEL_In : double;
     stateSensedVt, stateEField, stateVf : double;
-    fKa, fVrmax, fVrmin, fKf, fTf, finvTf : double;
+    fKa, fVrmax, fVrmin, fKf, fTf, fInvTF : double;
     fPIOFeedbackoutput : double;
-    NewValue : double;
+    newValue : double;
 
     pStatesArr : PDoubleArray;
     pHardCodedArr : PDoubleArray;
@@ -571,12 +571,12 @@ begin
     if pHardCodedArr^[HARDCODE_EXCITER_UELActive] > 0 then begin
       StateVsWith_OEL_UEL_In := StateVsWith_OEL_UEL_In + pHardCodedArr^[HARDCODE_EXCITER_UELSignal];
     end;
-    if fTf = 0 then finvTf := 0 else finvTf := 1/fTf;
-    fPIOFeedbackoutput := stateVf + fKf*finvTf*stateEField;
-    NewValue := (VRef_In - stateSensedVt + StateVsWith_OEL_UEL_In - fPIOFeedbackoutput) * fKa;
-    if      NewValue > fVrmax then NewValue := fVrmax
-    else if NewValue < fVrmin then NewValue := fVrmin;
-    pStatesArr^[STATE_VR      ] := NewValue;
+    if fTf = 0 then fInvTF := 0 else fInvTF := 1/fTf;
+    fPIOFeedbackoutput := stateVf + fKf*fInvTF*stateEField;
+    newValue := (VRef_In - stateSensedVt + StateVsWith_OEL_UEL_In - fPIOFeedbackoutput) * fKa;
+    if      newValue > fVrmax then newValue := fVrmax
+    else if newValue < fVrmin then newValue := fVrmin;
+    pStatesArr^[STATE_VR      ] := newValue;
   end;
 end;
 

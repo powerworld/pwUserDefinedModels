@@ -4,22 +4,18 @@ export module pwUDM.IEEEST;
 export namespace pwUDM::IEEEST {
 
     // For the Model
-    inline constexpr int N_S_PARAMS     = 0;  // number of string model params
-    inline constexpr int N_I_PARAMS     = 1;  // number of integer model params
     inline constexpr int N_F_PARAMS     = 18;  // number of float model params
+    inline constexpr int N_I_PARAMS     = 1;  // number of integer model params
+    inline constexpr int N_S_PARAMS     = 0;  // number of string model params
     inline constexpr int N_STATES       = 7;  // number of model states
     inline constexpr int N_ALGEBRAICS   = 0;  // number of model algebraics
+
     // For the NonWindUpLimits
-    inline constexpr int N_NONWINDUPLIMITS = 0;  // number of nonwindup
+    inline constexpr int N_NONWINDUPLIMITS = 0;  // number of nonwindup limits
 
     //---------------------------------------------------------------------------
     // These are just to make the code easier to read
     // Parameter Value indices.
-
-    // Integers
-    inline constexpr int PARAM_Ics    = 0;
-
-    // Doubles
     inline constexpr int PARAM_A1     = 0;
     inline constexpr int PARAM_A2     = 1;
     inline constexpr int PARAM_A3     = 2;
@@ -38,6 +34,9 @@ export namespace pwUDM::IEEEST {
     inline constexpr int PARAM_Vcu    = 15;
     inline constexpr int PARAM_Vcl    = 16;
     inline constexpr int PARAM_Tdelay = 17;
+
+    // Integer Parameter Value indices.
+    inline constexpr int IPARAM_Ics   = 0;
 
     // State Value Indices.
     inline constexpr int STATE_Filter1         = 0;

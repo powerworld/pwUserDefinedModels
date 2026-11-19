@@ -111,19 +111,19 @@ extern "C" __declspec(dllexport) int OtherObjectDescription(int* Num, int* StrSi
 //******************************************************************************
 extern "C" __declspec(dllexport) void getDefaultParameterValue(TxMyModelData* ParamsAndStates)
 {
-    DoubleArray* pDoubArr;
+    DoubleArray* pFloatParamArr;
 
     // Example MTDCCONV parameters
-    pDoubArr = ParamsAndStates->FloatParams;
-    (*pDoubArr)[PARAM_Tf_Idc] = 0.02;
-    (*pDoubArr)[PARAM_Tf_Vdc] = 0.02;
-    (*pDoubArr)[PARAM_Tf_Vac] = 0.05;
-    (*pDoubArr)[PARAM_Ki] = 5.0;
-    (*pDoubArr)[PARAM_Id_base] = 1000.0;
-    (*pDoubArr)[PARAM_CosMin] = -1.0;
-    (*pDoubArr)[PARAM_CosMax] = 1.0;
-    (*pDoubArr)[PARAM_IdRefLim] = 0.0;
-    (*pDoubArr)[PARAM_Id_margin] = 0.0;
+    pFloatParamArr = ParamsAndStates->FloatParams;
+    (*pFloatParamArr)[PARAM_Tf_Idc] = 0.02;
+    (*pFloatParamArr)[PARAM_Tf_Vdc] = 0.02;
+    (*pFloatParamArr)[PARAM_Tf_Vac] = 0.05;
+    (*pFloatParamArr)[PARAM_Ki] = 5.0;
+    (*pFloatParamArr)[PARAM_Id_base] = 1000.0;
+    (*pFloatParamArr)[PARAM_CosMin] = -1.0;
+    (*pFloatParamArr)[PARAM_CosMax] = 1.0;
+    (*pFloatParamArr)[PARAM_IdRefLim] = 0.0;
+    (*pFloatParamArr)[PARAM_Id_margin] = 0.0;
 }
 
 /* non specified for this model
@@ -233,7 +233,7 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
     double stateIdcSense, stateVdcSense, stateVacSense;
 
     // FofX or xdot,
-    double dotIdcSense, dotVdcSense, dotVacSense, dotCosAngle;
+    double dotStateIdcSense, dotStateVdcSense, dotStateVacSense, dotStateCosAngle;
     double Id_Ref_In, Idc_In, Vdc_In, Vac_In;
     double fCurrentError;
 
@@ -284,32 +284,32 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
     fActiveLimitHLStateCos = (*pByteActiveLimitArr)[NONWINDUPINDEX_CosAngle];  // Only one nonwindup limit, so index is 0
 
     // dot sensed values: first order lags of the DC current, the DC voltage and the AC voltage
-    dotIdcSense = fInvTf_Idc*(Idc_In - stateIdcSense);
-    dotVdcSense = fInvTf_Vdc*(Vdc_In - stateVdcSense);
-    dotVacSense = fInvTf_Vac*(Vac_In - stateVacSense);
+    dotStateIdcSense = fInvTf_Idc*(Idc_In - stateIdcSense);
+    dotStateVdcSense = fInvTf_Vdc*(Vdc_In - stateVdcSense);
+    dotStateVacSense = fInvTf_Vac*(Vac_In - stateVacSense);
 
     // dot cos angle: an integral current regulator. The error is in pu of Id_base.
     fCurrentError = (Id_Ref_In - fId_margin - stateIdcSense)/fId_base;
-    dotCosAngle = fKi*fCurrentError;
-    // Note: the cos angle has a limit, and when that limit is active, we want dotCosAngle to be zero.
+    dotStateCosAngle = fKi*fCurrentError;
+    // Note: the cos angle has a limit, and when that limit is active, we want dotStateCosAngle to be zero.
     if (fActiveLimitHLStateCos > 0) {
         // 1 indicates it's stuck at the HIGH limit
         // 2 indicates it's stuck at the LOW limit
-        if ((fActiveLimitHLStateCos == 1) && (dotCosAngle > 0)) {
-            dotCosAngle = 0;
+        if ((fActiveLimitHLStateCos == 1) && (dotStateCosAngle > 0)) {
+            dotStateCosAngle = 0;
         }
-        else if ((fActiveLimitHLStateCos == 2) && (dotCosAngle < 0)) {
-            dotCosAngle = 0;
+        else if ((fActiveLimitHLStateCos == 2) && (dotStateCosAngle < 0)) {
+            dotStateCosAngle = 0;
         }
     }
 
     //--------------------------------------------------------------------
     // Push the resulting derivatives to the appropriate memory
     //--------------------------------------------------------------------
-    (*pDotXArr)[STATE_IdcSense] = dotIdcSense;
-    (*pDotXArr)[STATE_VdcSense] = dotVdcSense;
-    (*pDotXArr)[STATE_VacSense] = dotVacSense;
-    (*pDotXArr)[STATE_CosAngle] = dotCosAngle;
+    (*pDotXArr)[STATE_IdcSense] = dotStateIdcSense;
+    (*pDotXArr)[STATE_VdcSense] = dotStateVdcSense;
+    (*pDotXArr)[STATE_VacSense] = dotStateVacSense;
+    (*pDotXArr)[STATE_CosAngle] = dotStateCosAngle;
 }
 
 //******************************************************************************

@@ -218,25 +218,25 @@ extern "C" __declspec(dllexport) int OtherObjectDescription(int* Num, int* StrSi
 //******************************************************************************
 extern "C" __declspec(dllexport) void getDefaultParameterValue(TxMyModelData* ParamsAndStates)
 {
-    DoubleArray* pDoubArr;
+    DoubleArray* pFloatParamArr;
 
     // Example TGOV1 parameters
-    pDoubArr = ParamsAndStates->FloatParams;
-    (*pDoubArr)[PARAM_Tr] = 0.0;
-    (*pDoubArr)[PARAM_Ka] = 50.0;
-    (*pDoubArr)[PARAM_Ta] = 0.04;
-    (*pDoubArr)[PARAM_Vrmax] = 1.0;
-    (*pDoubArr)[PARAM_Vrmin] = -1.0;
-    (*pDoubArr)[PARAM_Ke] = -0.06;
-    (*pDoubArr)[PARAM_Te] = 0.6;
-    (*pDoubArr)[PARAM_Kf] = 0.09;
-    (*pDoubArr)[PARAM_Tf] = 1.46;
-    (*pDoubArr)[PARAM_Switch] = 0.0;
-    (*pDoubArr)[PARAM_E1] = 2.80;
-    (*pDoubArr)[PARAM_SE1] = 0.04;
-    (*pDoubArr)[PARAM_E2] = 3.73;
-    (*pDoubArr)[PARAM_SE2] = 0.33;
-    (*pDoubArr)[PARAM_Spdmlt] = 0.0;
+    pFloatParamArr = ParamsAndStates->FloatParams;
+    (*pFloatParamArr)[PARAM_Tr] = 0.0;
+    (*pFloatParamArr)[PARAM_Ka] = 50.0;
+    (*pFloatParamArr)[PARAM_Ta] = 0.04;
+    (*pFloatParamArr)[PARAM_Vrmax] = 1.0;
+    (*pFloatParamArr)[PARAM_Vrmin] = -1.0;
+    (*pFloatParamArr)[PARAM_Ke] = -0.06;
+    (*pFloatParamArr)[PARAM_Te] = 0.6;
+    (*pFloatParamArr)[PARAM_Kf] = 0.09;
+    (*pFloatParamArr)[PARAM_Tf] = 1.46;
+    (*pFloatParamArr)[PARAM_Switch] = 0.0;
+    (*pFloatParamArr)[PARAM_E1] = 2.80;
+    (*pFloatParamArr)[PARAM_SE1] = 0.04;
+    (*pFloatParamArr)[PARAM_E2] = 3.73;
+    (*pFloatParamArr)[PARAM_SE2] = 0.33;
+    (*pFloatParamArr)[PARAM_Spdmlt] = 0.0;
 }
 
 /* non specified for this model
@@ -297,7 +297,7 @@ extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAn
     double local_VR;  // VR initial value
     double local_VTerminalSensed;  // Sensed terminal voltage
     double local_VF;
-    double finvTf;
+    double fInvTF;
 
     DoubleArray* pFloatParamArr;
     DoubleArray* pStatesArr;
@@ -373,8 +373,8 @@ extern "C" __declspec(dllexport) void initializeYourself(TxMyModelData* ParamsAn
     // [1+Ts]                   \ [1+Ts]       /
     // OUT = (StateInter + K/T) * IN
     //--------------------------------------------------------
-    if (fTf == 0) { finvTf = 0; } else { finvTf = 1/fTf; }
-    local_VF = -fKf*finvTf*local_EField;
+    if (fTf == 0) { fInvTF = 0; } else { fInvTF = 1/fTf; }
+    local_VF = -fKf*fInvTF*local_EField;
     // local_VF := (fVRef - local_VTerminalSensed) - local_VR/fKa; // kate 3/15/13
     
     // // Write out initial state vector
@@ -389,13 +389,13 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
 {
     // First there are the parameters,
     double fTr, fKa, fTa, fKe, fTe, fKf, fTf, fE1, fSEE1, fE2, fSEE2;
-    double fInvTE, fInvTR, finvTA, fInvTF;
+    double fInvTE, fInvTR, fInvTA, fInvTF;
 
     // The state variables, state at the beginning of the time is passed in
     double stateEField, stateSensedVt, stateVR, stateVF;
 
     // The FofX or xdot,
-    double dotEFieldBeforeWindupLimit, dotSensedVt, dotVr, dotVf;
+    double dotStateEField, dotStateSensedVt, dotStateVR, dotStateVF;
 
     double fSatA, fSatB;
 
@@ -458,7 +458,7 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
     // Calculate Inverse of appropriate values
     if (fTr == 0) { fInvTR = 0;} else { fInvTR = 1/fTr; }
     if (fTe == 0) { fInvTE = 0;} else { fInvTE = 1/fTe; }
-    if (fTa == 0) { finvTA = 0;} else { finvTA = 1/fTa; }
+    if (fTa == 0) { fInvTA = 0;} else { fInvTA = 1/fTa; }
     if (fTf == 0) { fInvTF = 0;} else { fInvTF = 1/fTf; }
 
     //--------------------------------------------------------------------
@@ -475,10 +475,10 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
     {
         tempSatValTimesInput = fSatB*stateEField*std::pow(stateEField - fSatA, 2);
     }
-    dotEFieldBeforeWindupLimit = fInvTE*(stateVR - stateEField*fKe - tempSatValTimesInput);
+    dotStateEField = fInvTE*(stateVR - stateEField*fKe - tempSatValTimesInput);
     
     // Calculate initial value of the second state.
-    dotSensedVt = fInvTR*(GenObjectVTerminalMayBeCompensated_In - stateSensedVt);
+    dotStateSensedVt = fInvTR*(GenObjectVTerminalMayBeCompensated_In - stateSensedVt);
 
     //--------------------------------------------------------
     // Model of a Derivative "Washout" block
@@ -492,14 +492,14 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
     // Calculate 3rd state init val
     vInputState = VRef_In - stateSensedVt + StateVsWith_OEL_UEL_In;
 
-    dotVr = finvTA*(fKa*(vInputState - fPIOFeedbackoutput) - stateVR);
-    // dotVR := finvTA*(fKA*(vInputState - stateVf) - stateVR); // kate 3/15/13 test
+    dotStateVR = fInvTA*(fKa*(vInputState - fPIOFeedbackoutput) - stateVR);
+    // dotStateVR := fInvTA*(fKA*(vInputState - stateVf) - stateVR); // kate 3/15/13 test
 
     // kate 8/8/12 add limit checking, not sure this is necessary since it already seemed to match the built in model
     if (fActiveLimitHLStateVr > 0)
     {
-        if ((fActiveLimitHLStateVr == 1) & (dotVr > 0)) dotVr = 0;
-        else if ((fActiveLimitHLStateVr == 2) & (dotVr < 0)) dotVr = 0;
+        if ((fActiveLimitHLStateVr == 1) & (dotStateVR > 0)) dotStateVR = 0;
+        else if ((fActiveLimitHLStateVr == 2) & (dotStateVR < 0)) dotStateVR = 0;
     }
 
     //--------------------------------------------------------
@@ -509,14 +509,14 @@ extern "C" __declspec(dllexport) void calculateFofX(TxMyModelData* ParamsAndStat
 
     // DOTStateVf = 1/T * (-K/T*StateEField - StateVf)
     //--------------------------------------------------------
-    dotVf = - fInvTF*(fPIOFeedbackoutput); // kate 3/7/12
-    // dotVf := fInvTf*( fKf*dotEFieldBeforeWindupLimit - stateVf ); // kate 3/15/13 test
+    dotStateVF = - fInvTF*(fPIOFeedbackoutput); // kate 3/7/12
+    // dotStateVF := fInvTF*( fKf*dotStateEField - stateVf ); // kate 3/15/13 test
 
     // Push the resulting derivatives to the appropriate memory
-    (*pDotXArr)[STATE_EField] = dotEFieldBeforeWindupLimit;  // dotEFieldBeforeWindupLimit
-    (*pDotXArr)[STATE_SensedVt] = dotSensedVt;  // dotVTerminalSensed
-    (*pDotXArr)[STATE_VR] = dotVr;  // dotVR
-    (*pDotXArr)[STATE_VF] = dotVf;  // fPIOFeedback.xdot(1)
+    (*pDotXArr)[STATE_EField] = dotStateEField;  // dotEFieldBeforeWindupLimit
+    (*pDotXArr)[STATE_SensedVt] = dotStateSensedVt;  // dotVTerminalSensed
+    (*pDotXArr)[STATE_VR] = dotStateVR;  // dotVR
+    (*pDotXArr)[STATE_VF] = dotStateVF;  // fPIOFeedback.xdot(1)
 }
 
 //******************************************************************************
@@ -526,9 +526,9 @@ extern "C" __declspec(dllexport) void PropagateIgnoredStateAndInput(TxMyModelDat
     double VRef_In;
     double StateVsWith_OEL_UEL_In;
     double stateSensedVt, stateEField, stateVf;
-    double fKa, fVrmax, fVrmin, fKf, fTf, finvTf;
+    double fKa, fVrmax, fVrmin, fKf, fTf, fInvTF;
     double fPIOFeedbackoutput;
-    double NewValue;
+    double newValue;
 
     DoubleArray* pStatesArr;
     DoubleArray* pHardCodedArr;
@@ -572,11 +572,11 @@ extern "C" __declspec(dllexport) void PropagateIgnoredStateAndInput(TxMyModelDat
         {
             StateVsWith_OEL_UEL_In = StateVsWith_OEL_UEL_In + (*pHardCodedArr)[HARDCODE_EXCITER_UELSignal];
         }
-        if (fTf == 0) { finvTf = 0; } else { finvTf = 1/fTf; }
-        fPIOFeedbackoutput = stateVf + fKf*finvTf*stateEField;
-        NewValue = (VRef_In - stateSensedVt + StateVsWith_OEL_UEL_In - fPIOFeedbackoutput)*fKa;
-        if (NewValue > fVrmax) { NewValue = fVrmax;} else if (NewValue < fVrmin) {NewValue = fVrmin;}
-        (*pStatesArr)[STATE_VR] = NewValue;
+        if (fTf == 0) { fInvTF = 0; } else { fInvTF = 1/fTf; }
+        fPIOFeedbackoutput = stateVf + fKf*fInvTF*stateEField;
+        newValue = (VRef_In - stateSensedVt + StateVsWith_OEL_UEL_In - fPIOFeedbackoutput)*fKa;
+        if (newValue > fVrmax) { newValue = fVrmax;} else if (newValue < fVrmin) {newValue = fVrmin;}
+        (*pStatesArr)[STATE_VR] = newValue;
     }
 
 }
